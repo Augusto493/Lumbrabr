@@ -172,11 +172,11 @@
 <video id="bg-video" autoplay loop playsinline muted>
   <source src="video-bg.mp4" type="video/mp4">
 </video>
-<audio id="bg-audio" loop preload="auto" muted><source src="audio-bg.mp3" type="audio/mpeg"></audio>
+<audio id="bg-audio" autoplay loop muted preload="auto"><source src="audio-bg.mp3" type="audio/mpeg"></audio>
 <div class="bg-dark"></div>
-<button class="sound-toggle" id="soundBtn" onclick="toggleSound(this)" title="Ativar/desativar som">
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
-  Som desativado
+<button class="sound-toggle" id="soundBtn" onclick="toggleSound(this)" title="Pausar/retomar som">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+  Pausar som
 </button>
 
 
@@ -426,17 +426,34 @@
     });
   },11000);
 
-  const ICON_OFF='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg> Som desativado';
-  const ICON_ON='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> Som ativo';
+  const ICON_PLAYING='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> Pausar som';
+  const ICON_PAUSED='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg> Retomar som';
+
+  // Ativa o áudio na primeira interação do usuário (requisito do browser)
+  (function(){
+    function unlockAudio(){
+      const a=document.getElementById('bg-audio');
+      const btn=document.getElementById('soundBtn');
+      if(a){
+        a.muted=false;
+        a.play().catch(()=>{});
+        if(btn) btn.innerHTML=ICON_PLAYING;
+      }
+    }
+    ['click','touchstart','scroll','keydown'].forEach(function(ev){
+      document.addEventListener(ev, unlockAudio, {once:true, passive:true});
+    });
+  })();
+
   function toggleSound(btn){
     const a=document.getElementById('bg-audio');
-    if(a.paused||a.muted){
+    if(a.paused){
       a.muted=false;
       a.play().catch(()=>{});
-      btn.innerHTML=ICON_ON;
+      btn.innerHTML=ICON_PLAYING;
     } else {
-      a.muted=true;
-      btn.innerHTML=ICON_OFF;
+      a.pause();
+      btn.innerHTML=ICON_PAUSED;
     }
   }
 </script>
