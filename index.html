@@ -129,7 +129,7 @@
   footer .logo{justify-content:center;margin-bottom:10px}
   .reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
   .reveal.in{opacity:1;transform:none}
-  @media(max-width:768px){body{background-attachment:scroll;background-position:center top}}
+  
   /* ── WhatsApp Chat Mock ─────────────────────────────────────── */
   .wa-chat-mock{background:#0a1828;border-radius:18px;overflow:hidden;width:100%;box-shadow:0 32px 80px -20px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.07)}
   .wa-chat-hd{background:#132030;padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.06)}
@@ -161,11 +161,25 @@
   .demo-list li{display:flex;align-items:flex-start;gap:11px;font-size:15px;color:var(--muted-2);line-height:1.5}
   .demo-list li::before{content:"✓";color:var(--accent);font-weight:700;flex-shrink:0;margin-top:2px}
   .demo-chat{position:relative;display:flex;flex-direction:column;gap:12px}
+
+  #bg-video{position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:-2;pointer-events:none}
+  .bg-dark{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,8,7,.58);z-index:-1;pointer-events:none}
+  .sound-toggle{position:fixed;bottom:90px;right:20px;z-index:1000;background:rgba(22,18,16,.82);border:1px solid rgba(255,122,24,.35);color:var(--muted-2);border-radius:50px;padding:9px 16px;cursor:pointer;font-size:12px;font-weight:600;letter-spacing:.05em;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:all .2s;display:flex;align-items:center;gap:7px}
+  .sound-toggle:hover{border-color:var(--accent);color:var(--accent)}
 </style>
 </head>
 <body>
+<video id="bg-video" autoplay loop playsinline muted>
+  <source src="video-bg.mp4" type="video/mp4">
+</video>
+<div class="bg-dark"></div>
+<button class="sound-toggle" id="soundBtn" onclick="toggleSound(this)" title="Ativar/desativar som">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+  Som desativado
+</button>
 
-<a class="wa-float" href="https://wa.me/55SEUNUMERO?text=Oi!%20Vi%20a%20p%C3%A1gina%20e%20quero%20saber%20mais" target="_blank">
+
+<a class="wa-float" href="https://wa.me/5541996185919?text=Ol%C3%A1%21+Vim+pelo+site+da+Lumbra+e+gostaria+de+saber+mais.?text=Oi!%20Vi%20a%20p%C3%A1gina%20e%20quero%20saber%20mais" target="_blank">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg>
   Falar agora
 </a>
@@ -179,7 +193,7 @@
       <a href="#preco">Investimento</a>
       <a href="#faq">Dúvidas</a>
     </nav>
-    <a class="btn btn-ghost" href="https://wa.me/55SEUNUMERO" target="_blank" style="padding:11px 20px">Fale conosco</a>
+    <a class="btn btn-ghost" href="https://wa.me/5541996185919?text=Ol%C3%A1%21+Vim+pelo+menu+do+site+da+Lumbra+e+gostaria+de+saber+mais+sobre+os+servi%C3%A7os." target="_blank" style="padding:11px 20px">Fale conosco</a>
   </div>
 </header>
 
@@ -190,7 +204,7 @@
       <h1>Sua página de vendas pronta.<br>Seus clientes de volta.<br><span class="grad-text">Resultado em até 24h.</span></h1>
       <p class="sub">Criamos sua página de vendas profissional do zero. E te damos acesso a um sistema simples que manda mensagem pra quem já comprou de você e sumiu — de forma natural, sem parecer robô. Primeiro mês grátis.</p>
       <div class="cta-row" style="justify-content:center">
-        <a class="btn btn-primary" href="https://wa.me/55SEUNUMERO?text=Quero%20minha%20p%C3%A1gina%20de%20vendas" target="_blank">
+        <a class="btn btn-primary" href="https://wa.me/5541996185919?text=Ol%C3%A1%21+Vim+pelo+hero+do+site+e+quero+solicitar+uma+proposta+para+minha+p%C3%A1gina+de+vendas." target="_blank">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg>
           Solicite uma proposta
         </a>
@@ -352,7 +366,7 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Primeiro mês de reativação gratuito</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>Suporte direto comigo, sem fidelidade</li>
         </ul>
-        <a class="btn btn-primary" href="https://wa.me/55SEUNUMERO?text=Quero%20o%20combo%20de%20R$697%20-%20p%C3%A1gina%20%2B%20reativa%C3%A7%C3%A3o" target="_blank">
+        <a class="btn btn-primary" href="https://wa.me/5541996185919?text=Ol%C3%A1%21+Vim+pelo+site+da+Lumbra+e+gostaria+de+saber+mais.?text=Quero%20o%20combo%20de%20R$697%20-%20p%C3%A1gina%20%2B%20reativa%C3%A7%C3%A3o" target="_blank">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg>
           Quero garantir minha vaga
         </a>
@@ -383,7 +397,7 @@
     <h2>Seus próximos clientes já estão<br><span class="grad-text">no seu WhatsApp.</span></h2>
     <p>Página no ar em 48h. Reativação funcionando em 5 minutos. Seus próximos clientes já estão esperando uma mensagem sua.</p>
     <div class="cta-row">
-      <a class="btn btn-primary" href="https://wa.me/55SEUNUMERO?text=Quero%20come%C3%A7ar%20agora" target="_blank">
+      <a class="btn btn-primary" href="https://wa.me/5541996185919?text=Ol%C3%A1%21+Vim+pelo+site+da+Lumbra+e+gostaria+de+saber+mais.?text=Quero%20come%C3%A7ar%20agora" target="_blank">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg>
         Quero falar agora
       </a>
@@ -410,6 +424,16 @@
       el.style.animation='';
     });
   },11000);
+
+  function toggleSound(btn){
+    const v=document.getElementById('bg-video');
+    v.muted=!v.muted;
+    if(v.muted){
+      btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg> Som desativado';
+    } else {
+      btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> Som ativo';
+    }
+  }
 </script>
 </body>
 </html>
