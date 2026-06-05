@@ -152,6 +152,15 @@
   @keyframes wfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   @keyframes wtyping{0%{opacity:0;transform:translateY(8px)}12%{opacity:1;transform:none}82%{opacity:1;transform:none}100%{opacity:0}}
   .wd1{animation-delay:.8s}.wd2{animation-delay:2s}.wd3{animation-delay:3.8s}.wd4{animation-delay:5.2s}.wd5{animation-delay:6.5s}.wd6{animation-delay:8.2s}
+
+  .demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+  @media(max-width:900px){.demo-grid{grid-template-columns:1fr;gap:40px}}
+  .demo-text h2{font-size:clamp(24px,3.2vw,38px);line-height:1.2;margin:12px 0 0}
+  .demo-text .lead-c{margin-top:18px;font-size:15.5px}
+  .demo-list{list-style:none;display:flex;flex-direction:column;gap:13px;margin-top:28px}
+  .demo-list li{display:flex;align-items:flex-start;gap:11px;font-size:15px;color:var(--muted-2);line-height:1.5}
+  .demo-list li::before{content:"✓";color:var(--accent);font-weight:700;flex-shrink:0;margin-top:2px}
+  .demo-chat{position:relative;display:flex;flex-direction:column;gap:12px}
 </style>
 </head>
 <body>
@@ -193,30 +202,44 @@
         <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>Atendimento simplificado</span>
       </div>
     </div>
-    <div class="hero-visual">
-      <div class="glow-ring"></div>
-      <div style="position:relative;z-index:2;width:100%;max-width:460px">
-        <div class="wa-live"><span class="wa-live-dot"></span><span>Sistema ao vivo</span></div>
-        <div class="wa-chat-mock" id="waChat">
-          <div class="wa-chat-hd">
-            <div class="wa-chat-av">M</div>
-            <div><div class="wa-chat-nm">Maria Fernanda</div><div class="wa-chat-st">● online</div></div>
-            <svg style="margin-left:auto;opacity:.35" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dde4ef" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-          </div>
-          <div class="wa-chat-bd">
-            <div class="wlabel">Sistema Lumbra · reativação automática</div>
-            <div class="wm out wd1">Oi, Juliana! Saudades 😊<br>Tenho uma oferta reservada só pra você — válida até amanhã!</div>
-            <div class="wt wd2"><span></span><span></span><span></span></div>
-            <div class="wm in wd3">Que surpresa boa!! Qual é a oferta? 👀</div>
-            <div class="wm out wd4">25% off na sua próxima compra + frete grátis. Só pra quem já é cliente ❤️<br><span class="wm-tick">✓✓</span></div>
-            <div class="wt wd5"><span></span><span></span><span></span></div>
-            <div class="wm in wd6">Acabei de comprar!! Obrigada pela lembrança 🙌</div>
-          </div>
+  </div>
+</div>
+
+<section id="demo-reativacao">
+  <div class="wrap demo-grid">
+    <div class="demo-text reveal">
+      <span class="eyebrow grad-text">Sistema de reativação</span>
+      <h2>Clientes que sumiram voltando a comprar — <span class="grad-text">no seu WhatsApp</span></h2>
+      <p class="lead-c">O sistema conecta no WhatsApp do seu negócio, identifica quem não compra há um tempo e manda uma mensagem personalizada — de forma natural, sem parecer robô ou spam.</p>
+      <ul class="demo-list">
+        <li>Conecte via QR Code em menos de 1 minuto</li>
+        <li>3 cliques para ativar e começar a reativar</li>
+        <li>Mensagens que parecem escritas por você</li>
+        <li>Sistema evita bloqueios do WhatsApp</li>
+        <li>Primeiro mês 100% grátis, sem precisar de cartão</li>
+      </ul>
+    </div>
+    <div class="demo-chat reveal">
+      <div class="wa-live"><span class="wa-live-dot"></span><span>Sistema ao vivo</span></div>
+      <div class="wa-chat-mock" id="waChat">
+        <div class="wa-chat-hd">
+          <div class="wa-chat-av">M</div>
+          <div><div class="wa-chat-nm">Maria Fernanda</div><div class="wa-chat-st">● online</div></div>
+          <svg style="margin-left:auto;opacity:.35" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dde4ef" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        </div>
+        <div class="wa-chat-bd">
+          <div class="wlabel">Sistema Lumbra · reativação automática</div>
+          <div class="wm out wd1">Oi, Juliana! Saudades 😊<br>Tenho uma oferta reservada só pra você — válida até amanhã!</div>
+          <div class="wt wd2"><span></span><span></span><span></span></div>
+          <div class="wm in wd3">Que surpresa boa!! Qual é a oferta? 👀</div>
+          <div class="wm out wd4">25% off na sua próxima compra + frete grátis. Só pra quem já é cliente ❤️<br><span class="wm-tick">✓✓</span></div>
+          <div class="wt wd5"><span></span><span></span><span></span></div>
+          <div class="wm in wd6">Acabei de comprar!! Obrigada pela lembrança 🙌</div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
 <section id="pain">
   <div class="wrap">
