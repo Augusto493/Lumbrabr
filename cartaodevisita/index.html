@@ -2,34 +2,28 @@
 <html lang="pt-BR">
 <head>
   <!-- ============================================================
-       LUMBRA · Cartões de Visita
+       LUMBRA · Cartões de Visita — v2
        URL: https://lumbrabr.online/cartaodevisita
-       Arquivo: index.html  (dentro da pasta /cartaodevisita)
   ============================================================ -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- ── SEO ─────────────────────────────────────────────────── -->
   <title>1000 Cartões de Visita por R$180 · Lumbra</title>
-  <meta name="description" content="1000 cartões de visita com impressão profissional por R$180. Arte inclusa, entrega para todo o Brasil. Atendimento pelo WhatsApp!">
+  <meta name="description" content="1000 cartões de visita profissionais por R$180. Arte inclusa, entrega para todo o Brasil. Veja os modelos e peça pelo WhatsApp!">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://lumbrabr.online/cartaodevisita">
 
-  <!-- ── Open Graph (aparece bonito no WhatsApp e redes sociais) -->
   <meta property="og:type"        content="website">
   <meta property="og:url"         content="https://lumbrabr.online/cartaodevisita">
   <meta property="og:title"       content="1000 Cartões de Visita por R$180 · Lumbra">
-  <meta property="og:description" content="Arte inclusa · Entrega para todo o Brasil · Atendimento no WhatsApp. Peça agora!">
-  <!-- Crie uma imagem 1200×630px e suba no servidor com esse nome: -->
+  <meta property="og:description" content="Arte inclusa · Entrega para todo o Brasil · Atendimento no WhatsApp. Veja os modelos!">
   <meta property="og:image"       content="https://lumbrabr.online/cartaodevisita/og-preview.jpg">
   <meta property="og:locale"      content="pt_BR">
   <meta name="twitter:card"       content="summary_large_image">
 
   <!-- ── Google Ads ─────────────────────────────────────────────
-       PASSO 1 DE 2 — Cole aqui a tag global do site (gtag.js).
-       Substitua AW-XXXXXXX pelo seu ID de conversão do Google Ads.
-       Exemplo: AW-123456789
-  ──────────────────────────────────────────────────────────────
+       PASSO 1 DE 2 — Cole aqui a tag global do site.
+       Substitua AW-XXXXXXX pelo seu ID de conversão.
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXX"></script>
   <script>
@@ -38,34 +32,31 @@
     gtag('js', new Date());
     gtag('config', 'AW-XXXXXXX');
   </script>
-
   ─────────────────────────────────────────────────────────────── -->
 
-  <!-- ── Google Fonts (Inter — sem dependências de JS) ───────── -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
     /* ============================================================
-       VARIÁVEIS DE COR — edite aqui para mudar a paleta toda
+       VARIÁVEIS — edite aqui para trocar a paleta
     ============================================================ */
     :root {
-      --laranja:      #FF7A18;   /* cor primária Lumbra */
-      --laranja-dk:   #e06510;   /* hover / sombra */
-      --verde-wa:     #25D366;   /* verde WhatsApp */
-      --verde-wa-dk:  #1da855;   /* hover WhatsApp */
-      --bg:           #ffffff;   /* fundo branco */
-      --bg-alt:       #f8f7f5;   /* fundo levemente acinzentado */
-      --escuro:       #0f0d0b;   /* hero e trust band */
-      --texto:        #1c1814;   /* texto principal */
-      --muted:        #6b6258;   /* texto secundário */
-      --borda:        #e8e3de;   /* bordas suaves */
-      --raio:         14px;
-      --fonte: 'Inter', system-ui, sans-serif;
+      --laranja:     #FF7A18;
+      --laranja-dk:  #e06510;
+      --verde-wa:    #25D366;
+      --verde-wa-dk: #1da855;
+      --bg:          #ffffff;
+      --bg-alt:      #f9f8f6;
+      --escuro:      #0f0d0b;
+      --texto:       #1c1814;
+      --muted:       #6b6258;
+      --borda:       #e8e3de;
+      --raio:        14px;
+      --fonte:       'Inter', system-ui, sans-serif;
     }
 
-    /* ── Reset mínimo ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
@@ -74,21 +65,38 @@
       color: var(--texto);
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
     a { text-decoration: none; color: inherit; }
-    img { max-width: 100%; display: block; }
 
-    /* ── Wrapper de largura máxima ── */
-    .wrap {
-      width: 100%;
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 0 20px;
+    .wrap { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Rótulo de seção ── */
+    .eyebrow {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 10px;
+    }
+    .sec-h2 {
+      font-size: clamp(1.5rem, 3.8vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -.025em;
+      color: var(--texto);
+      margin-bottom: 8px;
+    }
+    .sec-sub {
+      font-size: .95rem;
+      color: var(--muted);
+      max-width: 480px;
     }
 
-    /* ============================================================
-       BOTÃO WHATSAPP  (reutilizado em toda a página)
-    ============================================================ */
+    /* ════════════════════════════════════════════════════════
+       BOTÃO WHATSAPP
+    ════════════════════════════════════════════════════════ */
     .btn-wa {
       display: inline-flex;
       align-items: center;
@@ -104,483 +112,764 @@
       border: none;
       cursor: pointer;
       transition: background .2s, transform .15s, box-shadow .2s;
-      box-shadow: 0 4px 22px rgba(37,211,102,.32);
+      box-shadow: 0 4px 22px rgba(37,211,102,.30);
       white-space: nowrap;
     }
-    .btn-wa:hover {
-      background: var(--verde-wa-dk);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(37,211,102,.44);
-    }
+    .btn-wa:hover  { background: var(--verde-wa-dk); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(37,211,102,.44); }
     .btn-wa:active { transform: translateY(0); }
+    .btn-wa-lg     { font-size: 1.15rem; padding: 20px 44px; }
 
-    /* Tamanho grande — usado no hero e CTA final */
-    .btn-wa-lg {
-      font-size: 1.15rem;
-      padding: 20px 44px;
-    }
-
-    /* ============================================================
+    /* ════════════════════════════════════════════════════════
        (1) HERO
-    ============================================================ */
+    ════════════════════════════════════════════════════════ */
     .hero {
       background: var(--escuro);
       color: #fff;
-      padding: 80px 20px 88px;
+      padding: 80px 24px 90px;
       text-align: center;
       position: relative;
       overflow: hidden;
     }
-
-    /* Halo laranja atrás do título */
     .hero::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse 80% 60% at 50% 30%,
-                    rgba(255,122,24,.14) 0%,
-                    transparent 70%);
+      background: radial-gradient(ellipse 75% 55% at 50% 0%,
+        rgba(255,122,24,.18) 0%, transparent 70%);
       pointer-events: none;
     }
 
-    /* Rótulo pequeno acima do título */
-    .hero-tag {
-      display: inline-block;
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
       background: rgba(255,122,24,.12);
-      border: 1px solid rgba(255,122,24,.30);
+      border: 1px solid rgba(255,122,24,.28);
       color: var(--laranja);
-      font-size: .72rem;
+      font-size: .73rem;
       font-weight: 700;
-      letter-spacing: .13em;
+      letter-spacing: .12em;
       text-transform: uppercase;
-      padding: 5px 15px;
+      padding: 6px 16px;
       border-radius: 50px;
-      margin-bottom: 32px;
+      margin-bottom: 30px;
     }
+    .hero-badge::before { content: '●'; font-size: .5rem; }
 
     .hero h1 {
-      font-size: clamp(1.9rem, 6.5vw, 3.4rem);
+      font-size: clamp(2rem, 6.5vw, 3.6rem);
       font-weight: 900;
       line-height: 1.1;
-      letter-spacing: -.025em;
-      margin-bottom: 8px;
+      letter-spacing: -.03em;
+      margin-bottom: 6px;
     }
-
-    /* Preço em destaque */
     .hero-preco {
-      font-size: clamp(3rem, 11vw, 6rem);
+      font-size: clamp(3.5rem, 12vw, 7rem);
       font-weight: 900;
       color: var(--laranja);
       line-height: 1;
       letter-spacing: -.04em;
-      margin: 10px 0 24px;
+      margin: 8px 0 6px;
     }
-
-    .hero-sub {
-      font-size: clamp(.88rem, 2.2vw, 1.05rem);
-      color: rgba(255,255,255,.62);
-      max-width: 460px;
-      margin: 0 auto 40px;
+    .hero-desc {
+      font-size: clamp(.85rem, 2vw, 1rem);
+      color: rgba(255,255,255,.45);
+      margin-bottom: 36px;
     }
-    .hero-sub strong { color: rgba(255,255,255,.90); font-weight: 600; }
-
-    /* Micro-texto abaixo do botão */
-    .hero-trust {
-      margin-top: 18px;
-      font-size: .78rem;
-      color: rgba(255,255,255,.38);
+    .hero-bullets {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px 20px;
+      margin-bottom: 38px;
+    }
+    .hero-bullets span {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 5px;
+      gap: 6px;
+      font-size: .85rem;
+      color: rgba(255,255,255,.75);
+      font-weight: 500;
+    }
+    .hero-bullets span::before { content: '✓'; color: var(--laranja); font-weight: 900; }
+    .hero-trust {
+      margin-top: 16px;
+      font-size: .75rem;
+      color: rgba(255,255,255,.30);
     }
 
-    /* Animação de entrada do hero */
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(22px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from { opacity:0; transform: translateY(20px); }
+      to   { opacity:1; transform: translateY(0); }
     }
-    .hero-tag   { animation: fadeUp .5s .05s ease both; }
-    .hero h1    { animation: fadeUp .5s .12s ease both; }
-    .hero-preco { animation: fadeUp .5s .19s ease both; }
-    .hero-sub   { animation: fadeUp .5s .26s ease both; }
-    .hero .btn-wa     { animation: fadeUp .5s .33s ease both; }
-    .hero .hero-trust { animation: fadeUp .5s .40s ease both; }
+    .hero-badge  { animation: fadeUp .5s .04s ease both; }
+    .hero h1     { animation: fadeUp .5s .10s ease both; }
+    .hero-preco  { animation: fadeUp .5s .16s ease both; }
+    .hero-desc   { animation: fadeUp .5s .21s ease both; }
+    .hero-bullets{ animation: fadeUp .5s .26s ease both; }
+    .hero .btn-wa     { animation: fadeUp .5s .32s ease both; }
+    .hero .hero-trust { animation: fadeUp .5s .38s ease both; }
 
-    /* ============================================================
-       (2) BENEFÍCIOS
-    ============================================================ */
-    .beneficios {
-      padding: 72px 20px 64px;
-      background: var(--bg);
+    /* ════════════════════════════════════════════════════════
+       (2) MODELOS — galeria de cartões CSS 3D
+    ════════════════════════════════════════════════════════ */
+    .modelos {
+      background: var(--bg-alt);
+      padding: 80px 24px;
+      border-top: 1px solid var(--borda);
     }
+    .modelos-header { text-align: center; margin-bottom: 56px; }
 
-    /* Rótulo de seção */
-    .sec-eyebrow {
-      text-align: center;
-      font-size: .73rem;
-      font-weight: 700;
-      letter-spacing: .13em;
-      text-transform: uppercase;
-      color: var(--laranja);
-      margin-bottom: 10px;
-    }
-
-    .sec-titulo {
-      text-align: center;
-      font-size: clamp(1.35rem, 3.5vw, 2rem);
-      font-weight: 800;
-      letter-spacing: -.02em;
-      color: var(--texto);
-      margin-bottom: 48px;
-    }
-
-    /* Grid de cards — 2 colunas no mobile, 4 no desktop */
-    .cards-grid {
+    /* Grade de cards */
+    .modelos-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
+      gap: 56px;
+    }
+    @media (min-width: 740px)  { .modelos-grid { grid-template-columns: 1fr 1fr; gap: 40px; } }
+    @media (min-width: 1060px) { .modelos-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .modelo-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    /* ── Cartão de visita (mockup CSS) ── */
+    .biz-card {
+      width: 100%;
+      max-width: 340px;
+      aspect-ratio: 9/5;
+      border-radius: 12px;
+      position: relative;
+      padding: 26px 28px;
+      cursor: default;
+      transition: transform .4s cubic-bezier(.22,.68,0,1.2), box-shadow .4s;
+      will-change: transform;
+    }
+    .biz-card:hover {
+      transform: scale(1.04) translateY(-4px);
+    }
+
+    /* frente e verso */
+    .biz-card-front { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+
+    /* Modelo 1 — Clássico Escuro */
+    .card-classico {
+      background: linear-gradient(135deg, #0f0d0b 0%, #1c1814 60%, #251e17 100%);
+      box-shadow: 0 20px 60px rgba(0,0,0,.50), 0 6px 20px rgba(0,0,0,.30);
+      border: 1px solid rgba(255,122,24,.15);
+    }
+    .card-classico::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--laranja), #ffb347);
+      border-radius: 0 0 12px 12px;
+    }
+    .card-classico .c-logo {
+      width: 36px; height: 36px;
+      background: var(--laranja);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .7rem; font-weight: 900; color: #fff; letter-spacing: -.02em;
+    }
+    .card-classico .c-name { font-size: .95rem; font-weight: 800; color: #fff; letter-spacing: -.01em; }
+    .card-classico .c-title { font-size: .65rem; color: rgba(255,255,255,.45); margin-top: 2px; letter-spacing: .04em; text-transform: uppercase; }
+    .card-classico .c-contact { font-size: .62rem; color: rgba(255,255,255,.38); line-height: 1.7; }
+    .card-classico .c-line {
+      position: absolute;
+      top: 50%; right: 28px;
+      width: 1px; height: 48px;
+      background: rgba(255,122,24,.25);
+      transform: translateY(-50%);
+    }
+
+    /* Modelo 2 — Branco Minimalista */
+    .card-branco {
+      background: #fff;
+      box-shadow: 0 20px 60px rgba(0,0,0,.12), 0 4px 16px rgba(0,0,0,.07);
+      border: 1px solid #e8e3de;
+    }
+    .card-branco::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 5px; height: 100%;
+      background: var(--laranja);
+      border-radius: 12px 0 0 12px;
+    }
+    .card-branco .c-logo {
+      width: 34px; height: 34px;
+      border: 2px solid var(--laranja);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .65rem; font-weight: 900; color: var(--laranja); letter-spacing: -.02em;
+    }
+    .card-branco .c-name  { font-size: .95rem; font-weight: 800; color: #1c1814; }
+    .card-branco .c-title { font-size: .65rem; color: #9a8f85; margin-top: 2px; letter-spacing: .04em; text-transform: uppercase; }
+    .card-branco .c-contact { font-size: .62rem; color: #9a8f85; line-height: 1.7; }
+    .card-branco .c-divider {
+      width: 32px; height: 2px;
+      background: var(--laranja);
+      border-radius: 2px;
+      margin: 8px 0;
+    }
+
+    /* Modelo 3 — Degradê Premium */
+    .card-premium {
+      background: linear-gradient(135deg, #1a1063 0%, #2d1b8e 45%, #3d1f6e 100%);
+      box-shadow: 0 20px 60px rgba(45,27,142,.45), 0 6px 20px rgba(0,0,0,.25);
+    }
+    .card-premium::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 90% 10%, rgba(255,200,80,.12) 0%, transparent 55%);
+      border-radius: 12px;
+      pointer-events: none;
+    }
+    .card-premium .c-logo {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .65rem; font-weight: 900; color: #fff; letter-spacing: -.02em;
+    }
+    .card-premium .c-name  { font-size: .95rem; font-weight: 800; color: #fff; }
+    .card-premium .c-title { font-size: .65rem; color: rgba(255,255,255,.55); margin-top: 2px; letter-spacing: .04em; text-transform: uppercase; }
+    .card-premium .c-contact { font-size: .62rem; color: rgba(255,255,255,.45); line-height: 1.7; }
+    .card-premium .c-gold {
+      position: absolute;
+      bottom: 18px; right: 28px;
+      font-size: .55rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      color: rgba(255,200,80,.7);
+      text-transform: uppercase;
+    }
+
+    /* Legenda do modelo */
+    .modelo-info { text-align: center; }
+    .modelo-nome {
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--texto);
+      margin-bottom: 4px;
+    }
+    .modelo-desc { font-size: .82rem; color: var(--muted); }
+    .modelo-tag {
+      display: inline-block;
+      margin-top: 8px;
+      background: rgba(255,122,24,.10);
+      color: var(--laranja);
+      font-size: .7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 50px;
+    }
+
+    /* Banner CTA dentro da seção de modelos */
+    .modelos-cta {
+      margin-top: 56px;
+      background: var(--escuro);
+      border-radius: 20px;
+      padding: 40px 32px;
+      text-align: center;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .modelos-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 80% at 50% 50%, rgba(255,122,24,.10), transparent);
+      pointer-events: none;
+    }
+    .modelos-cta h3 { font-size: clamp(1.1rem, 3vw, 1.5rem); font-weight: 800; margin-bottom: 8px; }
+    .modelos-cta p  { font-size: .9rem; color: rgba(255,255,255,.5); margin-bottom: 24px; }
+
+    /* ════════════════════════════════════════════════════════
+       (3) BENEFÍCIOS
+    ════════════════════════════════════════════════════════ */
+    .beneficios {
+      background: var(--bg);
+      padding: 80px 24px;
+    }
+    .beneficios-inner {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    @media (min-width: 860px) { .beneficios-inner { grid-template-columns: 1fr 1fr; } }
+
+    .beneficios-texto .sec-sub { margin-top: 14px; line-height: 1.7; }
+
+    .ben-lista {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .ben-item {
+      display: flex;
+      align-items: flex-start;
       gap: 14px;
     }
-    @media (min-width: 700px) {
-      .cards-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
-    }
-
-    .card {
-      background: var(--bg-alt);
-      border: 1px solid var(--borda);
-      border-radius: var(--raio);
-      padding: 28px 18px 24px;
-      text-align: center;
-    }
-
-    /* Ícone do card */
-    .card-icon {
-      width: 50px; height: 50px;
+    .ben-icon {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
       background: rgba(255,122,24,.10);
-      border-radius: 13px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
       color: var(--laranja);
     }
+    .ben-item-txt h4 { font-size: .95rem; font-weight: 700; color: var(--texto); margin-bottom: 3px; }
+    .ben-item-txt p  { font-size: .83rem; color: var(--muted); line-height: 1.55; }
 
-    .card h3 {
-      font-size: .92rem;
-      font-weight: 700;
-      color: var(--texto);
-      margin-bottom: 8px;
+    /* Tabela de preço no lado direito */
+    .preco-box {
+      background: var(--escuro);
+      border-radius: 20px;
+      padding: 36px 32px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
     }
-    .card p {
-      font-size: .82rem;
-      color: var(--muted);
-      line-height: 1.55;
+    .preco-box::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(255,122,24,.18), transparent 70%);
+      pointer-events: none;
     }
+    .preco-label { font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--laranja); margin-bottom: 6px; }
+    .preco-valor { font-size: 3.8rem; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -.04em; }
+    .preco-qnt   { font-size: .85rem; color: rgba(255,255,255,.45); margin-top: 4px; }
+    .preco-divider { height: 1px; background: rgba(255,255,255,.08); margin: 24px 0; }
+    .preco-itens { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .preco-itens li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .88rem;
+      color: rgba(255,255,255,.70);
+    }
+    .preco-itens li::before { content: '✓'; color: var(--laranja); font-weight: 900; flex-shrink: 0; }
+    .preco-box .btn-wa { width: 100%; margin-top: 28px; justify-content: center; }
 
-    /* ============================================================
-       (3) COMO FUNCIONA
-    ============================================================ */
+    /* ════════════════════════════════════════════════════════
+       (4) COMO FUNCIONA
+    ════════════════════════════════════════════════════════ */
     .como-funciona {
       background: var(--bg-alt);
-      padding: 72px 20px;
+      padding: 80px 24px;
       border-top: 1px solid var(--borda);
-      border-bottom: 1px solid var(--borda);
     }
-
+    .como-header { text-align: center; margin-bottom: 56px; }
     .passos {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 28px;
+      gap: 24px;
     }
     @media (min-width: 700px) {
       .passos {
         grid-template-columns: repeat(3, 1fr);
-        gap: 40px;
+        gap: 32px;
         position: relative;
       }
-      /* Linha tracejada conectando os passos */
       .passos::after {
         content: '';
         position: absolute;
-        top: 23px;
-        left: calc(33.33% - 8px);
-        right: calc(33.33% - 8px);
+        top: 28px;
+        left: calc(33.33% - 4px);
+        right: calc(33.33% - 4px);
         height: 2px;
-        background: repeating-linear-gradient(
-          90deg, var(--laranja) 0, var(--laranja) 6px,
-          transparent 6px, transparent 12px
-        );
-        opacity: .30;
-        pointer-events: none;
+        background: repeating-linear-gradient(90deg, rgba(255,122,24,.35) 0, rgba(255,122,24,.35) 7px, transparent 7px, transparent 14px);
       }
     }
 
     .passo {
+      background: var(--bg);
+      border: 1px solid var(--borda);
+      border-radius: var(--raio);
+      padding: 28px 24px;
       display: flex;
       gap: 18px;
       align-items: flex-start;
+      position: relative;
     }
     @media (min-width: 700px) {
       .passo { flex-direction: column; align-items: center; text-align: center; }
     }
-
     .passo-num {
       flex-shrink: 0;
-      width: 46px; height: 46px;
+      width: 48px; height: 48px;
       background: var(--laranja);
       color: #fff;
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       font-weight: 900;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       box-shadow: 0 4px 16px rgba(255,122,24,.35);
+      position: relative; z-index: 1;
     }
+    .passo h3 { font-size: .98rem; font-weight: 700; color: var(--texto); margin-bottom: 6px; }
+    .passo p  { font-size: .83rem; color: var(--muted); line-height: 1.6; }
 
-    .passo-body h3 {
-      font-size: .98rem;
-      font-weight: 700;
-      color: var(--texto);
-      margin-bottom: 6px;
-    }
-    .passo-body p {
-      font-size: .85rem;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    /* ============================================================
-       (4) FAIXA DE PROVA / CONFIANÇA
-    ============================================================ */
+    /* ════════════════════════════════════════════════════════
+       (5) FAIXA DE CONFIANÇA
+    ════════════════════════════════════════════════════════ */
     .trust-band {
       background: var(--escuro);
       color: #fff;
-      padding: 64px 20px;
-      text-align: center;
+      padding: 72px 24px;
     }
-
-    .trust-band h2 {
-      font-size: clamp(1.3rem, 3.5vw, 1.9rem);
-      font-weight: 800;
-      letter-spacing: -.02em;
-      margin-bottom: 10px;
-    }
-
-    .trust-band > .wrap > p {
-      font-size: .95rem;
-      color: rgba(255,255,255,.48);
-      max-width: 430px;
-      margin: 0 auto 44px;
-    }
-
-    .numeros {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 32px 56px;
-    }
-
-    .numero-item {
+    .trust-inner {
       display: flex;
       flex-direction: column;
+      gap: 48px;
       align-items: center;
-      gap: 6px;
     }
-    .numero-item strong {
-      font-size: clamp(2rem, 6vw, 3rem);
-      font-weight: 900;
-      color: var(--laranja);
-      line-height: 1;
+    @media (min-width: 860px) {
+      .trust-inner { flex-direction: row; justify-content: space-between; align-items: center; }
     }
-    .numero-item span {
-      font-size: .78rem;
-      color: rgba(255,255,255,.42);
-      letter-spacing: .05em;
-      text-transform: uppercase;
+    .trust-texto h2 { font-size: clamp(1.4rem, 3.5vw, 2rem); font-weight: 800; margin-bottom: 10px; letter-spacing: -.02em; }
+    .trust-texto p  { font-size: .9rem; color: rgba(255,255,255,.45); max-width: 380px; line-height: 1.7; }
+    .trust-numeros {
+      display: flex;
+      gap: 40px;
+      flex-shrink: 0;
     }
+    .trust-num { text-align: center; }
+    .trust-num strong { display: block; font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; color: var(--laranja); line-height: 1; }
+    .trust-num span   { font-size: .75rem; color: rgba(255,255,255,.40); text-transform: uppercase; letter-spacing: .06em; margin-top: 5px; display: block; }
 
-    /* ============================================================
-       (5) CTA FINAL
-    ============================================================ */
+    /* Depoimento rápido */
+    .depoimento {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--raio);
+      padding: 20px 24px;
+      margin-top: 40px;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .depoimento p { font-size: .88rem; color: rgba(255,255,255,.65); line-height: 1.65; font-style: italic; }
+    .depoimento-autor { margin-top: 12px; font-size: .78rem; color: rgba(255,255,255,.35); }
+    .depoimento-autor strong { color: rgba(255,255,255,.65); }
+
+    /* ════════════════════════════════════════════════════════
+       (6) CTA FINAL
+    ════════════════════════════════════════════════════════ */
     .cta-final {
       background: var(--bg);
-      padding: 88px 20px 80px;
+      padding: 90px 24px 80px;
       text-align: center;
     }
-
-    .cta-final h2 {
-      font-size: clamp(1.6rem, 5vw, 2.6rem);
-      font-weight: 900;
-      letter-spacing: -.025em;
-      margin-bottom: 14px;
-      color: var(--texto);
-    }
+    .cta-final h2 { font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 900; letter-spacing: -.03em; margin-bottom: 12px; }
     .cta-final h2 span { color: var(--laranja); }
+    .cta-final > .wrap > p { font-size: .95rem; color: var(--muted); margin: 0 auto 36px; max-width: 380px; }
+    .cta-notas { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 24px; margin-top: 20px; }
+    .cta-nota  { font-size: .78rem; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+    .cta-nota::before { content: '✓'; color: var(--laranja); }
 
-    .cta-final > .wrap > p {
-      font-size: 1rem;
-      color: var(--muted);
-      max-width: 380px;
-      margin: 0 auto 38px;
-    }
-
-    .cta-nota {
-      margin-top: 20px;
-      font-size: .78rem;
-      color: var(--borda);
-      color: var(--muted);
-    }
-
-    /* ============================================================
+    /* ════════════════════════════════════════════════════════
        FOOTER
-    ============================================================ */
+    ════════════════════════════════════════════════════════ */
     footer {
       background: var(--bg-alt);
       border-top: 1px solid var(--borda);
       text-align: center;
-      padding: 22px 20px;
+      padding: 22px 24px;
       font-size: .78rem;
       color: var(--muted);
     }
     footer a { color: var(--laranja); }
 
-    /* ============================================================
-       BOTÃO FLUTUANTE WhatsApp (canto inferior direito)
-    ============================================================ */
+    /* ════════════════════════════════════════════════════════
+       BOTÃO FLUTUANTE
+    ════════════════════════════════════════════════════════ */
     .wa-float {
       position: fixed;
-      bottom: 22px;
-      right: 18px;
+      bottom: 22px; right: 18px;
       z-index: 999;
-      width: 56px; height: 56px;
+      width: 58px; height: 58px;
       background: var(--verde-wa);
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       box-shadow: 0 4px 20px rgba(37,211,102,.42);
       transition: transform .2s, box-shadow .2s;
     }
-    .wa-float:hover {
-      transform: scale(1.08);
-      box-shadow: 0 8px 28px rgba(37,211,102,.55);
-    }
-
-    /* Pulsar suave para chamar atenção */
+    .wa-float:hover { transform: scale(1.09); box-shadow: 0 8px 28px rgba(37,211,102,.55); }
     @keyframes pulso {
-      0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,.42); }
-      50%       { box-shadow: 0 4px 32px rgba(37,211,102,.70); }
+      0%,100% { box-shadow: 0 4px 20px rgba(37,211,102,.42); }
+      50%      { box-shadow: 0 4px 32px rgba(37,211,102,.72); }
     }
-    .wa-float { animation: pulso 2.4s ease-in-out infinite; }
+    .wa-float { animation: pulso 2.5s ease-in-out infinite; }
+
+    /* ── Reveal ao scroll ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .44s ease, transform .44s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
 
-<!-- ════════════════════════════════════════════════════════
+<!-- ════════════════════════════════════════════════════
      (1) HERO
-════════════════════════════════════════════════════════ -->
+════════════════════════════════════════════════════ -->
 <section class="hero">
   <div class="wrap">
-
-    <span class="hero-tag">Lumbra · Gráfica Digital</span>
+    <div class="hero-badge">Lumbra · Gráfica Digital</div>
 
     <h1>1000 Cartões de Visita<br>por apenas</h1>
-
     <p class="hero-preco">R$180</p>
+    <p class="hero-desc">Arte profissional inclusa · Impressão premium · Entrega para todo o Brasil</p>
 
-    <p class="hero-sub">
-      <strong>Arte profissional inclusa</strong> · Entrega para todo o Brasil ·
-      Atendimento rápido pelo WhatsApp
-    </p>
+    <div class="hero-bullets">
+      <span>Papel couchê 300g</span>
+      <span>Impressão 4x4 cores</span>
+      <span>Arte inclusa grátis</span>
+      <span>Entrega nacional</span>
+    </div>
 
-    <!-- ── BOTÃO 1 — altere SEUNUMERO pelo número com DDD (ex: 41999999999) ── -->
-    <a
-      class="btn-wa btn-wa-lg"
-      href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
-      target="_blank"
-      rel="noopener"
-      onclick="trackWA('hero')"
-    >
-      <!-- Ícone WhatsApp -->
-      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <!-- Botão 1 — Hero -->
+    <a class="btn-wa btn-wa-lg"
+       href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
+       target="_blank" rel="noopener" onclick="trackWA('hero')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
         <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/>
       </svg>
       Pedir pelo WhatsApp
     </a>
 
-    <p class="hero-trust">🔒 Sem compromisso · Resposta em minutos</p>
+    <p class="hero-trust">Sem compromisso · Resposta em minutos</p>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════
+     (2) MODELOS — Mockups de cartão CSS 3D
+════════════════════════════════════════════════════ -->
+<section class="modelos">
+  <div class="wrap">
+    <div class="modelos-header reveal">
+      <span class="eyebrow">Modelos disponíveis</span>
+      <h2 class="sec-h2">Escolha o estilo do seu cartão</h2>
+      <p class="sec-sub" style="margin:0 auto">Trabalhamos com diferentes estilos de layout. Nos mande seus dados e escolhemos juntos o melhor visual para o seu negócio.</p>
+    </div>
+
+    <div class="modelos-grid">
+
+      <!-- ── Modelo 1: Clássico Escuro ── -->
+      <div class="modelo-item reveal">
+        <div class="biz-card card-classico" style="transform: perspective(900px) rotateY(-6deg) rotateX(3deg)">
+          <div class="biz-card-front">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div class="c-logo">LB</div>
+              <div style="text-align:right">
+                <div style="font-size:.55rem;color:rgba(255,255,255,.25);letter-spacing:.1em;text-transform:uppercase">GRÁFICA</div>
+                <div style="font-size:.65rem;font-weight:700;color:rgba(255,122,24,.8);letter-spacing:.06em">LUMBRA</div>
+              </div>
+            </div>
+            <div>
+              <div class="c-name">Maria Fernanda Silva</div>
+              <div class="c-title">Gerente Comercial</div>
+              <div style="height:1px;background:rgba(255,122,24,.20);margin:10px 0"></div>
+              <div class="c-contact">
+                (41) 99999-9999<br>
+                maria@empresa.com.br<br>
+                www.empresa.com.br
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modelo-info">
+          <div class="modelo-nome">Modelo Clássico</div>
+          <div class="modelo-desc">Fundo escuro, detalhe laranja. Elegante e sofisticado.</div>
+          <span class="modelo-tag">Mais pedido</span>
+        </div>
+      </div>
+
+      <!-- ── Modelo 2: Branco Minimalista ── -->
+      <div class="modelo-item reveal">
+        <div class="biz-card card-branco" style="transform: perspective(900px) rotateY(0deg) rotateX(2deg)">
+          <div class="biz-card-front" style="padding-left: 16px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div class="c-logo">LB</div>
+              <div style="text-align:right">
+                <div style="font-size:.65rem;font-weight:800;color:#1c1814;letter-spacing:.04em">LUMBRA</div>
+                <div style="font-size:.55rem;color:#b0a59e;letter-spacing:.08em;text-transform:uppercase">Design & Print</div>
+              </div>
+            </div>
+            <div>
+              <div class="c-name" style="color:#1c1814">Carlos Eduardo Rocha</div>
+              <div class="c-title" style="color:#9a8f85">Fundador & CEO</div>
+              <div class="c-divider"></div>
+              <div class="c-contact" style="color:#9a8f85">
+                (11) 98888-7777<br>
+                carlos@minhaempresa.com<br>
+                minhaempresa.com.br
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modelo-info">
+          <div class="modelo-nome">Modelo Minimalista</div>
+          <div class="modelo-desc">Fundo branco, traço laranja. Limpo e profissional.</div>
+          <span class="modelo-tag">Versátil</span>
+        </div>
+      </div>
+
+      <!-- ── Modelo 3: Premium Degradê ── -->
+      <div class="modelo-item reveal">
+        <div class="biz-card card-premium" style="transform: perspective(900px) rotateY(6deg) rotateX(3deg)">
+          <div class="biz-card-front">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div class="c-logo">LB</div>
+              <div style="text-align:right;position:relative;z-index:1">
+                <div style="font-size:.55rem;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase">Premium</div>
+                <div style="font-size:.65rem;font-weight:700;color:rgba(255,200,80,.75);letter-spacing:.06em">LUMBRA</div>
+              </div>
+            </div>
+            <div style="position:relative;z-index:1">
+              <div class="c-name">Ana Paula Martins</div>
+              <div class="c-title">Diretora de Marketing</div>
+              <div style="height:1px;background:rgba(255,255,255,.10);margin:10px 0"></div>
+              <div class="c-contact">
+                (21) 97777-6666<br>
+                ana@negocio.com.br<br>
+                negocio.com.br
+              </div>
+            </div>
+            <div class="c-gold">PREMIUM PRINT</div>
+          </div>
+        </div>
+        <div class="modelo-info">
+          <div class="modelo-nome">Modelo Premium</div>
+          <div class="modelo-desc">Degradê azul escuro com detalhes dourados. Impacto total.</div>
+          <span class="modelo-tag">Destaque</span>
+        </div>
+      </div>
+
+    </div><!-- /modelos-grid -->
+
+    <!-- Banner CTA dentro da seção -->
+    <div class="modelos-cta reveal">
+      <h3>Tem sua própria arte? Também imprimimos.</h3>
+      <p>Aceituamos arquivos em PDF, AI, CDR ou PSD. Ou criamos do zero para você — incluso no valor.</p>
+      <a class="btn-wa"
+         href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
+         target="_blank" rel="noopener" onclick="trackWA('modelos')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/>
+        </svg>
+        Quero pedir agora
+      </a>
+    </div>
 
   </div>
 </section>
 
 
-<!-- ════════════════════════════════════════════════════════
-     (2) BENEFÍCIOS
-════════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════
+     (3) BENEFÍCIOS + CAIXA DE PREÇO
+════════════════════════════════════════════════════ -->
 <section class="beneficios">
   <div class="wrap">
+    <div class="beneficios-inner">
 
-    <p class="sec-eyebrow">Por que a Lumbra?</p>
-    <h2 class="sec-titulo">Tudo que você precisa, no preço certo</h2>
+      <!-- Texto + lista -->
+      <div class="beneficios-texto reveal">
+        <span class="eyebrow">Por que a Lumbra?</span>
+        <h2 class="sec-h2">Qualidade gráfica<br>sem complicação</h2>
+        <p class="sec-sub">Atendemos desde MEIs até grandes empresas. Nosso processo é simples, rápido e o resultado é profissional.</p>
 
-    <div class="cards-grid">
-
-      <!-- Card 1 -->
-      <div class="card">
-        <div class="card-icon">
-          <!-- Ícone: estrela / qualidade -->
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-          </svg>
-        </div>
-        <h3>Qualidade Gráfica</h3>
-        <p>Impressão 4×4 cores, papel couchê 300g, acabamento fosco ou verniz UV.</p>
+        <ul class="ben-lista">
+          <li class="ben-item">
+            <div class="ben-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </div>
+            <div class="ben-item-txt">
+              <h4>Impressão 4×4 cores</h4>
+              <p>Couchê 300g fosco ou brilhante. Cores vivas, texto nítido, acabamento impecável.</p>
+            </div>
+          </li>
+          <li class="ben-item">
+            <div class="ben-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
+                <rect width="13" height="8" x="9" y="11" rx="1"/>
+                <circle cx="11" cy="19" r="2"/><circle cx="19" cy="19" r="2"/>
+              </svg>
+            </div>
+            <div class="ben-item-txt">
+              <h4>Entrega para todo o Brasil</h4>
+              <p>Postamos via Correios com rastreamento. Você acompanha o pacote até a porta.</p>
+            </div>
+          </li>
+          <li class="ben-item">
+            <div class="ben-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <div class="ben-item-txt">
+              <h4>Arte inclusa sem custo extra</h4>
+              <p>Você manda nome, cargo e telefone. A gente cria e manda a prova para aprovar.</p>
+            </div>
+          </li>
+          <li class="ben-item">
+            <div class="ben-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.77 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </div>
+            <div class="ben-item-txt">
+              <h4>Atendimento pelo WhatsApp</h4>
+              <p>Respondemos em minutos, de segunda a sábado. Tire dúvidas e acompanhe seu pedido.</p>
+            </div>
+          </li>
+        </ul>
       </div>
 
-      <!-- Card 2 -->
-      <div class="card">
-        <div class="card-icon">
-          <!-- Ícone: caminhão / entrega -->
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
-            <rect width="13" height="8" x="9" y="11" rx="1"/>
-            <circle cx="11" cy="19" r="2"/><circle cx="19" cy="19" r="2"/>
+      <!-- Caixa de preço -->
+      <div class="preco-box reveal">
+        <div class="preco-label">Oferta especial</div>
+        <div class="preco-valor">R$180</div>
+        <div class="preco-qnt">1000 cartões de visita</div>
+        <div class="preco-divider"></div>
+        <ul class="preco-itens">
+          <li>Arte criada pela equipe Lumbra</li>
+          <li>Papel couchê 300g</li>
+          <li>Impressão frente e verso (4×4)</li>
+          <li>Acabamento fosco ou brilhante</li>
+          <li>Frete com rastreamento incluso</li>
+          <li>Aprovação da arte antes de imprimir</li>
+        </ul>
+        <!-- Botão 2 — Caixa de preço -->
+        <a class="btn-wa"
+           href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
+           target="_blank" rel="noopener" onclick="trackWA('preco')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/>
           </svg>
-        </div>
-        <h3>Entrega Nacional</h3>
-        <p>Enviamos para qualquer cidade do Brasil, com rastreamento pelo Correios.</p>
-      </div>
-
-      <!-- Card 3 -->
-      <div class="card">
-        <div class="card-icon">
-          <!-- Ícone: pincel / arte -->
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7-7H4a2 2 0 0 0-2 2v17z"/>
-            <polyline points="14 2 14 9 21 9"/>
-            <line x1="12" y1="13" x2="8" y2="17"/>
-            <line x1="16" y1="13" x2="12" y2="17"/>
-          </svg>
-        </div>
-        <h3>Arte Inclusa</h3>
-        <p>Manda os dados, a gente cria. Ou envie sua arte pronta e imprimimos.</p>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="card">
-        <div class="card-icon">
-          <!-- Ícone: telefone / atendimento -->
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.77 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-          </svg>
-        </div>
-        <h3>Atendimento Rápido</h3>
-        <p>Respondemos no WhatsApp em minutos, de segunda a sábado.</p>
+          Quero esse preço
+        </a>
       </div>
 
     </div>
@@ -588,183 +877,163 @@
 </section>
 
 
-<!-- ════════════════════════════════════════════════════════
-     (3) COMO FUNCIONA
-════════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════
+     (4) COMO FUNCIONA
+════════════════════════════════════════════════════ -->
 <section class="como-funciona">
   <div class="wrap">
-
-    <p class="sec-eyebrow">Simples assim</p>
-    <h2 class="sec-titulo">3 passos para ter seu cartão na mão</h2>
+    <div class="como-header reveal">
+      <span class="eyebrow">Processo simples</span>
+      <h2 class="sec-h2">Pronto em 3 passos</h2>
+    </div>
 
     <div class="passos">
-
-      <div class="passo">
+      <div class="passo reveal">
         <div class="passo-num">1</div>
-        <div class="passo-body">
-          <h3>Escolha e peça</h3>
-          <p>Clique em "Pedir pelo WhatsApp" e nos diga quantos cartões você quer. Respondemos na hora.</p>
+        <div>
+          <h3>Fale com a gente</h3>
+          <p>Clique no botão do WhatsApp e nos mande seus dados. Respondemos rapidinho com todas as opções.</p>
         </div>
       </div>
-
-      <div class="passo">
+      <div class="passo reveal">
         <div class="passo-num">2</div>
-        <div class="passo-body">
-          <h3>Mande a arte (ou a gente cria)</h3>
-          <p>Envie o arquivo pronto, ou passe nome, cargo e telefone — criamos o layout sem custo extra.</p>
+        <div>
+          <h3>Aprove a arte</h3>
+          <p>Nossa equipe cria o layout e envia uma prova para você. Ajuste o que quiser antes de confirmar.</p>
         </div>
       </div>
-
-      <div class="passo">
+      <div class="passo reveal">
         <div class="passo-num">3</div>
-        <div class="passo-body">
+        <div>
           <h3>Receba em casa</h3>
-          <p>Aprovada a arte, imprimimos e postamos. Você acompanha pelo código de rastreio.</p>
+          <p>Aprovado, imprimimos e postamos. Você recebe o código de rastreio e acompanha tudo pelo celular.</p>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
 
-<!-- ════════════════════════════════════════════════════════
-     (4) FAIXA DE PROVA / CONFIANÇA
-════════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════
+     (5) CONFIANÇA
+════════════════════════════════════════════════════ -->
 <section class="trust-band">
   <div class="wrap">
-
-    <h2>Centenas de empresas já confiam na Lumbra</h2>
-    <p>De MEIs a empresas consolidadas, ajudamos negócios de todo o Brasil a se apresentar com profissionalismo.</p>
-
-    <div class="numeros">
-      <div class="numero-item">
-        <strong>+500</strong>
-        <span>pedidos entregues</span>
+    <div class="trust-inner">
+      <div class="trust-texto reveal">
+        <h2>Centenas de negócios<br>confiam na Lumbra</h2>
+        <p>De MEIs a empresas consolidadas, ajudamos negócios de todo o Brasil a se apresentar com profissionalismo e qualidade.</p>
       </div>
-      <div class="numero-item">
-        <strong>100%</strong>
-        <span>Brasil atendido</span>
-      </div>
-      <div class="numero-item">
-        <strong>4.9★</strong>
-        <span>avaliação média</span>
+      <div class="trust-numeros reveal">
+        <div class="trust-num">
+          <strong>+500</strong>
+          <span>pedidos entregues</span>
+        </div>
+        <div class="trust-num">
+          <strong>100%</strong>
+          <span>Brasil atendido</span>
+        </div>
+        <div class="trust-num">
+          <strong>4.9★</strong>
+          <span>avaliação</span>
+        </div>
       </div>
     </div>
 
+    <div class="depoimento reveal">
+      <p>"Fiz o pedido pelo WhatsApp, em dois dias aprovei a arte e em menos de uma semana os cartões chegaram. Qualidade excelente, superou minha expectativa."</p>
+      <div class="depoimento-autor">— <strong>Rodrigo M.</strong>, empresário · São Paulo/SP</div>
+    </div>
   </div>
 </section>
 
 
-<!-- ════════════════════════════════════════════════════════
-     (5) CTA FINAL
-════════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════
+     (6) CTA FINAL
+════════════════════════════════════════════════════ -->
 <section class="cta-final">
   <div class="wrap">
-
     <h2>Pronto para <span>impressionar</span>?</h2>
-    <p>1000 cartões de visita profissionais por R$180. Peça agora sem compromisso.</p>
+    <p>1000 cartões profissionais por R$180. Peça agora e receba em casa.</p>
 
-    <!-- ── BOTÃO 2 — mesmo número e texto que o botão do hero ── -->
-    <a
-      class="btn-wa btn-wa-lg"
-      href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
-      target="_blank"
-      rel="noopener"
-      onclick="trackWA('cta-final')"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <!-- Botão 3 — CTA final -->
+    <a class="btn-wa btn-wa-lg"
+       href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
+       target="_blank" rel="noopener" onclick="trackWA('cta-final')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
         <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/>
       </svg>
       Pedir pelo WhatsApp
     </a>
 
-    <p class="cta-nota">Sem compromisso · Sem taxas escondidas · Arte grátis</p>
-
+    <div class="cta-notas">
+      <span class="cta-nota">Sem compromisso</span>
+      <span class="cta-nota">Arte grátis</span>
+      <span class="cta-nota">Entrega rastreada</span>
+      <span class="cta-nota">Resposta em minutos</span>
+    </div>
   </div>
 </section>
 
 
-<!-- ════════════════════════════════════════════════════════
-     FOOTER
-════════════════════════════════════════════════════════ -->
+<!-- FOOTER -->
 <footer>
   <p>© 2026 <a href="https://lumbrabr.online" rel="noopener">Lumbra</a> · Todos os direitos reservados</p>
 </footer>
 
 
-<!-- ════════════════════════════════════════════════════════
-     BOTÃO FLUTUANTE WhatsApp (fica fixo no canto da tela)
-════════════════════════════════════════════════════════ -->
-<!-- ── BOTÃO 3 — altere SEUNUMERO aqui também ── -->
-<a
-  class="wa-float"
-  href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
-  target="_blank"
-  rel="noopener"
-  onclick="trackWA('flutuante')"
-  aria-label="Abrir WhatsApp"
-  title="Falar pelo WhatsApp"
->
-  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+<!-- BOTÃO FLUTUANTE -->
+<a class="wa-float"
+   href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
+   target="_blank" rel="noopener" onclick="trackWA('flutuante')"
+   aria-label="WhatsApp" title="Falar pelo WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
     <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/>
   </svg>
 </a>
 
 
-<!-- ════════════════════════════════════════════════════════
-     JAVASCRIPT
-════════════════════════════════════════════════════════ -->
 <script>
-  /* ── Google Ads: rastreamento de conversão ─────────────────────
-     PASSO 2 DE 2 — Substitua os valores abaixo:
-       CONVERSION_ID    → ID da conta (ex: AW-123456789)
-       CONVERSION_LABEL → Rótulo da ação de conversão (ex: AbCdEfGhIj)
-     Depois descomente as linhas marcadas com "//**".
+  /* ── Google Ads — PASSO 2 DE 2 ─────────────────────────────────
+     Substitua CONVERSION_ID e CONVERSION_LABEL e descomente:
 
-     O parâmetro `origem` indica de qual botão veio o clique:
-       'hero'      — botão grande no início da página
-       'cta-final' — botão grande no final da página
-       'flutuante' — botão verde fixo no canto
-  ────────────────────────────────────────────────────────────── */
+     const CONVERSION_ID    = 'AW-XXXXXXX';
+     const CONVERSION_LABEL = 'XXXXXXXXXX';
+  ─────────────────────────────────────────────────────────────── */
   function trackWA(origem) {
-    // const CONVERSION_ID    = 'AW-XXXXXXX';    //** substitua
-    // const CONVERSION_LABEL = 'XXXXXXXXXX';    //** substitua
-
-    //** Dispara evento de conversão no Google Ads:
     // if (typeof gtag !== 'undefined') {
     //   gtag('event', 'conversion', {
     //     'send_to': CONVERSION_ID + '/' + CONVERSION_LABEL,
-    //     'event_label': origem   // registra de qual botão veio
-    //   });
-    // }
-
-    //** Evento adicional GA4 (opcional, funciona com GTM também):
-    // if (typeof gtag !== 'undefined') {
-    //   gtag('event', 'click_whatsapp', {
-    //     event_category: 'CTA',
-    //     event_label: 'cartao_visita_' + origem
+    //     'event_label': origem
     //   });
     // }
   }
 
-  /* ── Reveal suave ao rolar a página ── */
-  const observer = new IntersectionObserver(function(entries) {
+  /* ── Hover 3D nos cartões: segue o mouse ── */
+  document.querySelectorAll('.biz-card').forEach(function(card) {
+    card.addEventListener('mousemove', function(e) {
+      var rect = card.getBoundingClientRect();
+      var x = (e.clientX - rect.left) / rect.width  - 0.5;
+      var y = (e.clientY - rect.top)  / rect.height - 0.5;
+      card.style.transform = 'perspective(900px) rotateY('+(x*16)+'deg) rotateX('+(-y*10)+'deg) scale(1.03)';
+    });
+    card.addEventListener('mouseleave', function() {
+      card.style.transform = '';
+      card.style.transition = 'transform .5s cubic-bezier(.22,.68,0,1.2)';
+      setTimeout(function(){ card.style.transition = ''; }, 500);
+    });
+  });
+
+  /* ── Reveal ao scroll ── */
+  var obs = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) {
-        e.target.style.opacity = '1';
-        e.target.style.transform = 'translateY(0)';
-        observer.unobserve(e.target);
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
       }
     });
   }, { threshold: 0.10 });
-
-  document.querySelectorAll('.card, .passo, .numero-item').forEach(function(el) {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(18px)';
-    el.style.transition = 'opacity .42s ease, transform .42s ease';
-    observer.observe(el);
-  });
+  document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
 </script>
 
 </body>
