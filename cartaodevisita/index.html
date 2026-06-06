@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <!-- ============================================================
+       LUMBRA · Cartões de Visita
+       URL: https://lumbrabr.online/cartaodevisita
+       Arquivo: index.html  (dentro da pasta /cartaodevisita)
+  ============================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ── SEO ─────────────────────────────────────────────────── -->
+  <title>1000 Cartões de Visita por R$180 · Lumbra</title>
+  <meta name="description" content="1000 cartões de visita com impressão profissional por R$180. Arte inclusa, entrega para todo o Brasil. Atendimento pelo WhatsApp!">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://lumbrabr.online/cartaodevisita">
+
+  <!-- ── Open Graph (aparece bonito no WhatsApp e redes sociais) -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://lumbrabr.online/cartaodevisita">
+  <meta property="og:title"       content="1000 Cartões de Visita por R$180 · Lumbra">
+  <meta property="og:description" content="Arte inclusa · Entrega para todo o Brasil · Atendimento no WhatsApp. Peça agora!">
+  <!-- Crie uma imagem 1200×630px e suba no servidor com esse nome: -->
+  <meta property="og:image"       content="https://lumbrabr.online/cartaodevisita/og-preview.jpg">
+  <meta property="og:locale"      content="pt_BR">
+  <meta name="twitter:card"       content="summary_large_image">
+
+  <!-- ── Google Ads ─────────────────────────────────────────────
+       PASSO 1 DE 2 — Cole aqui a tag global do site (gtag.js).
+       Substitua AW-XXXXXXX pelo seu ID de conversão do Google Ads.
+       Exemplo: AW-123456789
+  ──────────────────────────────────────────────────────────────
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'AW-XXXXXXX');
+  </script>
+
+  ─────────────────────────────────────────────────────────────── -->
+
+  <!-- ── Google Fonts (Inter — sem dependências de JS) ───────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       VARIÁVEIS DE COR — edite aqui para mudar a paleta toda
+    ============================================================ */
+    :root {
+      --laranja:      #FF7A18;   /* cor primária Lumbra */
+      --laranja-dk:   #e06510;   /* hover / sombra */
+      --verde-wa:     #25D366;   /* verde WhatsApp */
+      --verde-wa-dk:  #1da855;   /* hover WhatsApp */
+      --bg:           #ffffff;   /* fundo branco */
+      --bg-alt:       #f8f7f5;   /* fundo levemente acinzentado */
+      --escuro:       #0f0d0b;   /* hero e trust band */
+      --texto:        #1c1814;   /* texto principal */
+      --muted:        #6b6258;   /* texto secundário */
+      --borda:        #e8e3de;   /* bordas suaves */
+      --raio:         14px;
+      --fonte: 'Inter', system-ui, sans-serif;
+    }
+
+    /* ── Reset mínimo ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--fonte);
+      background: var(--bg);
+      color: var(--texto);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ── Wrapper de largura máxima ── */
+    .wrap {
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ============================================================
+       BOTÃO WHATSAPP  (reutilizado em toda a página)
+    ============================================================ */
+    .btn-wa {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--verde-wa);
+      color: #fff;
+      font-family: var(--fonte);
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 15px 30px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      transition: background .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 22px rgba(37,211,102,.32);
+      white-space: nowrap;
+    }
+    .btn-wa:hover {
+      background: var(--verde-wa-dk);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(37,211,102,.44);
+    }
+    .btn-wa:active { transform: translateY(0); }
+
+    /* Tamanho grande — usado no hero e CTA final */
+    .btn-wa-lg {
+      font-size: 1.15rem;
+      padding: 20px 44px;
+    }
+
+    /* ============================================================
+       (1) HERO
+    ============================================================ */
+    .hero {
+      background: var(--escuro);
+      color: #fff;
+      padding: 80px 20px 88px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Halo laranja atrás do título */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 30%,
+                    rgba(255,122,24,.14) 0%,
+                    transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Rótulo pequeno acima do título */
+    .hero-tag {
+      display: inline-block;
+      background: rgba(255,122,24,.12);
+      border: 1px solid rgba(255,122,24,.30);
+      color: var(--laranja);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      padding: 5px 15px;
+      border-radius: 50px;
+      margin-bottom: 32px;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.9rem, 6.5vw, 3.4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -.025em;
+      margin-bottom: 8px;
+    }
+
+    /* Preço em destaque */
+    .hero-preco {
+      font-size: clamp(3rem, 11vw, 6rem);
+      font-weight: 900;
+      color: var(--laranja);
+      line-height: 1;
+      letter-spacing: -.04em;
+      margin: 10px 0 24px;
+    }
+
+    .hero-sub {
+      font-size: clamp(.88rem, 2.2vw, 1.05rem);
+      color: rgba(255,255,255,.62);
+      max-width: 460px;
+      margin: 0 auto 40px;
+    }
+    .hero-sub strong { color: rgba(255,255,255,.90); font-weight: 600; }
+
+    /* Micro-texto abaixo do botão */
+    .hero-trust {
+      margin-top: 18px;
+      font-size: .78rem;
+      color: rgba(255,255,255,.38);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    /* Animação de entrada do hero */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-tag   { animation: fadeUp .5s .05s ease both; }
+    .hero h1    { animation: fadeUp .5s .12s ease both; }
+    .hero-preco { animation: fadeUp .5s .19s ease both; }
+    .hero-sub   { animation: fadeUp .5s .26s ease both; }
+    .hero .btn-wa     { animation: fadeUp .5s .33s ease both; }
+    .hero .hero-trust { animation: fadeUp .5s .40s ease both; }
+
+    /* ============================================================
+       (2) BENEFÍCIOS
+    ============================================================ */
+    .beneficios {
+      padding: 72px 20px 64px;
+      background: var(--bg);
+    }
+
+    /* Rótulo de seção */
+    .sec-eyebrow {
+      text-align: center;
+      font-size: .73rem;
+      font-weight: 700;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 10px;
+    }
+
+    .sec-titulo {
+      text-align: center;
+      font-size: clamp(1.35rem, 3.5vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--texto);
+      margin-bottom: 48px;
+    }
+
+    /* Grid de cards — 2 colunas no mobile, 4 no desktop */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (min-width: 700px) {
+      .cards-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    }
+
+    .card {
+      background: var(--bg-alt);
+      border: 1px solid var(--borda);
+      border-radius: var(--raio);
+      padding: 28px 18px 24px;
+      text-align: center;
+    }
+
+    /* Ícone do card */
+    .card-icon {
+      width: 50px; height: 50px;
+      background: rgba(255,122,24,.10);
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      color: var(--laranja);
+    }
+
+    .card h3 {
+      font-size: .92rem;
+      font-weight: 700;
+      color: var(--texto);
+      margin-bottom: 8px;
+    }
+    .card p {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* ============================================================
+       (3) COMO FUNCIONA
+    ============================================================ */
+    .como-funciona {
+      background: var(--bg-alt);
+      padding: 72px 20px;
+      border-top: 1px solid var(--borda);
+      border-bottom: 1px solid var(--borda);
+    }
+
+    .passos {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    @media (min-width: 700px) {
+      .passos {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 40px;
+        position: relative;
+      }
+      /* Linha tracejada conectando os passos */
+      .passos::after {
+        content: '';
+        position: absolute;
+        top: 23px;
+        left: calc(33.33% - 8px);
+        right: calc(33.33% - 8px);
+        height: 2px;
+        background: repeating-linear-gradient(
+          90deg, var(--laranja) 0, var(--laranja) 6px,
+          transparent 6px, transparent 12px
+        );
+        opacity: .30;
+        pointer-events: none;
+      }
+    }
+
+    .passo {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+    @media (min-width: 700px) {
+      .passo { flex-direction: column; align-items: center; text-align: center; }
+    }
+
+    .passo-num {
+      flex-shrink: 0;
+      width: 46px; height: 46px;
+      background: var(--laranja);
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: 900;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(255,122,24,.35);
+    }
+
+    .passo-body h3 {
+      font-size: .98rem;
+      font-weight: 700;
+      color: var(--texto);
+      margin-bottom: 6px;
+    }
+    .passo-body p {
+      font-size: .85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       (4) FAIXA DE PROVA / CONFIANÇA
+    ============================================================ */
+    .trust-band {
+      background: var(--escuro);
+      color: #fff;
+      padding: 64px 20px;
+      text-align: center;
+    }
+
+    .trust-band h2 {
+      font-size: clamp(1.3rem, 3.5vw, 1.9rem);
+      font-weight: 800;
+      letter-spacing: -.02em;
+      margin-bottom: 10px;
+    }
+
+    .trust-band > .wrap > p {
+      font-size: .95rem;
+      color: rgba(255,255,255,.48);
+      max-width: 430px;
+      margin: 0 auto 44px;
+    }
+
+    .numeros {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 32px 56px;
+    }
+
+    .numero-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .numero-item strong {
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 900;
+      color: var(--laranja);
+      line-height: 1;
+    }
+    .numero-item span {
+      font-size: .78rem;
+      color: rgba(255,255,255,.42);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+       (5) CTA FINAL
+    ============================================================ */
+    .cta-final {
+      background: var(--bg);
+      padding: 88px 20px 80px;
+      text-align: center;
+    }
+
+    .cta-final h2 {
+      font-size: clamp(1.6rem, 5vw, 2.6rem);
+      font-weight: 900;
+      letter-spacing: -.025em;
+      margin-bottom: 14px;
+      color: var(--texto);
+    }
+    .cta-final h2 span { color: var(--laranja); }
+
+    .cta-final > .wrap > p {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 380px;
+      margin: 0 auto 38px;
+    }
+
+    .cta-nota {
+      margin-top: 20px;
+      font-size: .78rem;
+      color: var(--borda);
+      color: var(--muted);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--bg-alt);
+      border-top: 1px solid var(--borda);
+      text-align: center;
+      padding: 22px 20px;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--laranja); }
+
+    /* ============================================================
+       BOTÃO FLUTUANTE WhatsApp (canto inferior direito)
+    ============================================================ */
+    .wa-float {
+      position: fixed;
+      bottom: 22px;
+      right: 18px;
+      z-index: 999;
+      width: 56px; height: 56px;
+      background: var(--verde-wa);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(37,211,102,.42);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .wa-float:hover {
+      transform: scale(1.08);
+      box-shadow: 0 8px 28px rgba(37,211,102,.55);
+    }
+
+    /* Pulsar suave para chamar atenção */
+    @keyframes pulso {
+      0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,.42); }
+      50%       { box-shadow: 0 4px 32px rgba(37,211,102,.70); }
+    }
+    .wa-float { animation: pulso 2.4s ease-in-out infinite; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════
+     (1) HERO
+════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="wrap">
+
+    <span class="hero-tag">Lumbra · Gráfica Digital</span>
+
+    <h1>1000 Cartões de Visita<br>por apenas</h1>
+
+    <p class="hero-preco">R$180</p>
+
+    <p class="hero-sub">
+      <strong>Arte profissional inclusa</strong> · Entrega para todo o Brasil ·
+      Atendimento rápido pelo WhatsApp
+    </p>
+
+    <!-- ── BOTÃO 1 — altere SEUNUMERO pelo número com DDD (ex: 41999999999) ── -->
+    <a
+      class="btn-wa btn-wa-lg"
+      href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
+      target="_blank"
+      rel="noopener"
+      onclick="trackWA('hero')"
+    >
+      <!-- Ícone WhatsApp -->
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/>
+      </svg>
+      Pedir pelo WhatsApp
+    </a>
+
+    <p class="hero-trust">🔒 Sem compromisso · Resposta em minutos</p>
+
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     (2) BENEFÍCIOS
+════════════════════════════════════════════════════════ -->
+<section class="beneficios">
+  <div class="wrap">
+
+    <p class="sec-eyebrow">Por que a Lumbra?</p>
+    <h2 class="sec-titulo">Tudo que você precisa, no preço certo</h2>
+
+    <div class="cards-grid">
+
+      <!-- Card 1 -->
+      <div class="card">
+        <div class="card-icon">
+          <!-- Ícone: estrela / qualidade -->
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <h3>Qualidade Gráfica</h3>
+        <p>Impressão 4×4 cores, papel couchê 300g, acabamento fosco ou verniz UV.</p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card">
+        <div class="card-icon">
+          <!-- Ícone: caminhão / entrega -->
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
+            <rect width="13" height="8" x="9" y="11" rx="1"/>
+            <circle cx="11" cy="19" r="2"/><circle cx="19" cy="19" r="2"/>
+          </svg>
+        </div>
+        <h3>Entrega Nacional</h3>
+        <p>Enviamos para qualquer cidade do Brasil, com rastreamento pelo Correios.</p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="card">
+        <div class="card-icon">
+          <!-- Ícone: pincel / arte -->
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7-7H4a2 2 0 0 0-2 2v17z"/>
+            <polyline points="14 2 14 9 21 9"/>
+            <line x1="12" y1="13" x2="8" y2="17"/>
+            <line x1="16" y1="13" x2="12" y2="17"/>
+          </svg>
+        </div>
+        <h3>Arte Inclusa</h3>
+        <p>Manda os dados, a gente cria. Ou envie sua arte pronta e imprimimos.</p>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="card">
+        <div class="card-icon">
+          <!-- Ícone: telefone / atendimento -->
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.77 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+        </div>
+        <h3>Atendimento Rápido</h3>
+        <p>Respondemos no WhatsApp em minutos, de segunda a sábado.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     (3) COMO FUNCIONA
+════════════════════════════════════════════════════════ -->
+<section class="como-funciona">
+  <div class="wrap">
+
+    <p class="sec-eyebrow">Simples assim</p>
+    <h2 class="sec-titulo">3 passos para ter seu cartão na mão</h2>
+
+    <div class="passos">
+
+      <div class="passo">
+        <div class="passo-num">1</div>
+        <div class="passo-body">
+          <h3>Escolha e peça</h3>
+          <p>Clique em "Pedir pelo WhatsApp" e nos diga quantos cartões você quer. Respondemos na hora.</p>
+        </div>
+      </div>
+
+      <div class="passo">
+        <div class="passo-num">2</div>
+        <div class="passo-body">
+          <h3>Mande a arte (ou a gente cria)</h3>
+          <p>Envie o arquivo pronto, ou passe nome, cargo e telefone — criamos o layout sem custo extra.</p>
+        </div>
+      </div>
+
+      <div class="passo">
+        <div class="passo-num">3</div>
+        <div class="passo-body">
+          <h3>Receba em casa</h3>
+          <p>Aprovada a arte, imprimimos e postamos. Você acompanha pelo código de rastreio.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     (4) FAIXA DE PROVA / CONFIANÇA
+════════════════════════════════════════════════════════ -->
+<section class="trust-band">
+  <div class="wrap">
+
+    <h2>Centenas de empresas já confiam na Lumbra</h2>
+    <p>De MEIs a empresas consolidadas, ajudamos negócios de todo o Brasil a se apresentar com profissionalismo.</p>
+
+    <div class="numeros">
+      <div class="numero-item">
+        <strong>+500</strong>
+        <span>pedidos entregues</span>
+      </div>
+      <div class="numero-item">
+        <strong>100%</strong>
+        <span>Brasil atendido</span>
+      </div>
+      <div class="numero-item">
+        <strong>4.9★</strong>
+        <span>avaliação média</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     (5) CTA FINAL
+════════════════════════════════════════════════════════ -->
+<section class="cta-final">
+  <div class="wrap">
+
+    <h2>Pronto para <span>impressionar</span>?</h2>
+    <p>1000 cartões de visita profissionais por R$180. Peça agora sem compromisso.</p>
+
+    <!-- ── BOTÃO 2 — mesmo número e texto que o botão do hero ── -->
+    <a
+      class="btn-wa btn-wa-lg"
+      href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
+      target="_blank"
+      rel="noopener"
+      onclick="trackWA('cta-final')"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/>
+      </svg>
+      Pedir pelo WhatsApp
+    </a>
+
+    <p class="cta-nota">Sem compromisso · Sem taxas escondidas · Arte grátis</p>
+
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════ -->
+<footer>
+  <p>© 2026 <a href="https://lumbrabr.online" rel="noopener">Lumbra</a> · Todos os direitos reservados</p>
+</footer>
+
+
+<!-- ════════════════════════════════════════════════════════
+     BOTÃO FLUTUANTE WhatsApp (fica fixo no canto da tela)
+════════════════════════════════════════════════════════ -->
+<!-- ── BOTÃO 3 — altere SEUNUMERO aqui também ── -->
+<a
+  class="wa-float"
+  href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
+  target="_blank"
+  rel="noopener"
+  onclick="trackWA('flutuante')"
+  aria-label="Abrir WhatsApp"
+  title="Falar pelo WhatsApp"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+    <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/>
+  </svg>
+</a>
+
+
+<!-- ════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════ -->
+<script>
+  /* ── Google Ads: rastreamento de conversão ─────────────────────
+     PASSO 2 DE 2 — Substitua os valores abaixo:
+       CONVERSION_ID    → ID da conta (ex: AW-123456789)
+       CONVERSION_LABEL → Rótulo da ação de conversão (ex: AbCdEfGhIj)
+     Depois descomente as linhas marcadas com "//**".
+
+     O parâmetro `origem` indica de qual botão veio o clique:
+       'hero'      — botão grande no início da página
+       'cta-final' — botão grande no final da página
+       'flutuante' — botão verde fixo no canto
+  ────────────────────────────────────────────────────────────── */
+  function trackWA(origem) {
+    // const CONVERSION_ID    = 'AW-XXXXXXX';    //** substitua
+    // const CONVERSION_LABEL = 'XXXXXXXXXX';    //** substitua
+
+    //** Dispara evento de conversão no Google Ads:
+    // if (typeof gtag !== 'undefined') {
+    //   gtag('event', 'conversion', {
+    //     'send_to': CONVERSION_ID + '/' + CONVERSION_LABEL,
+    //     'event_label': origem   // registra de qual botão veio
+    //   });
+    // }
+
+    //** Evento adicional GA4 (opcional, funciona com GTM também):
+    // if (typeof gtag !== 'undefined') {
+    //   gtag('event', 'click_whatsapp', {
+    //     event_category: 'CTA',
+    //     event_label: 'cartao_visita_' + origem
+    //   });
+    // }
+  }
+
+  /* ── Reveal suave ao rolar a página ── */
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.10 });
+
+  document.querySelectorAll('.card, .passo, .numero-item').forEach(function(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(18px)';
+    el.style.transition = 'opacity .42s ease, transform .42s ease';
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
