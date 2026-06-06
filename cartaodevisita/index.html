@@ -8,14 +8,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>1000 Cartões de Visita por R$180 · Lumbra</title>
-  <meta name="description" content="1000 cartões de visita profissionais por R$180. Arte inclusa, entrega para todo o Brasil. Veja os modelos e peça pelo WhatsApp!">
+  <title>1000 Cartões de Visita a partir de R$180 · Lumbra</title>
+  <meta name="description" content="1000 cartões de visita a partir de R$180: 4x0, 4x1 ou 4x4. Papel couchê 250g, arte inclusa, entrega para todo o Brasil. Peça pelo WhatsApp!">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://lumbrabr.online/cartaodevisita">
 
   <meta property="og:type"        content="website">
   <meta property="og:url"         content="https://lumbrabr.online/cartaodevisita">
-  <meta property="og:title"       content="1000 Cartões de Visita por R$180 · Lumbra">
+  <meta property="og:title"       content="1000 Cartões de Visita a partir de R$180 · Lumbra">
   <meta property="og:description" content="Arte inclusa · Entrega para todo o Brasil · Atendimento no WhatsApp. Veja os modelos!">
   <meta property="og:image"       content="https://lumbrabr.online/cartaodevisita/og-preview.jpg">
   <meta property="og:locale"      content="pt_BR">
@@ -616,6 +616,50 @@
     }
     .wa-float { animation: pulso 2.5s ease-in-out infinite; }
 
+    /* ── Cards de preço (3 opções) ── */
+    .preco-opcoes { display: flex; flex-direction: column; gap: 10px; }
+    .preco-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+    .preco-card:hover { border-color: rgba(255,122,24,.40); background: rgba(255,122,24,.05); }
+    .preco-card.destaque {
+      background: rgba(255,122,24,.08);
+      border-color: rgba(255,122,24,.35);
+      position: relative;
+    }
+    .preco-card-badge {
+      position: absolute;
+      top: -10px; left: 50%; transform: translateX(-50%);
+      background: var(--laranja);
+      color: #fff;
+      font-size: .62rem;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 50px;
+      white-space: nowrap;
+    }
+    .preco-card-info { flex: 1; }
+    .preco-card-tipo { font-size: .78rem; font-weight: 700; color: rgba(255,255,255,.55); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 3px; }
+    .preco-card-desc { font-size: .83rem; color: rgba(255,255,255,.80); font-weight: 500; }
+    .preco-card-num  { font-size: 1.55rem; font-weight: 900; color: #fff; letter-spacing: -.03em; white-space: nowrap; }
+    .preco-card.destaque .preco-card-num { color: var(--laranja); }
+    .preco-card-itens { list-style:none; display:flex; flex-direction:column; gap:8px; margin: 18px 0 0; }
+    .preco-card-itens li { font-size:.82rem; color:rgba(255,255,255,.58); display:flex; gap:8px; align-items:center; }
+    .preco-card-itens li::before { content:'✓'; color:var(--laranja); font-weight:900; flex-shrink:0; }
+    .preco-nota { margin-top:16px; font-size:.75rem; color:rgba(255,255,255,.30); text-align:center; }
+    .preco-divider { height:1px; background:rgba(255,255,255,.08); margin:18px 0; }
+
     /* ── Reveal ao scroll ── */
     .reveal {
       opacity: 0;
@@ -634,20 +678,20 @@
   <div class="wrap">
     <div class="hero-badge">Lumbra · Gráfica Digital</div>
 
-    <h1>1000 Cartões de Visita<br>por apenas</h1>
-    <p class="hero-preco">R$180</p>
-    <p class="hero-desc">Arte profissional inclusa · Impressão premium · Entrega para todo o Brasil</p>
+    <h1>1000 Cartões de Visita</h1>
+    <p class="hero-preco"><span style="font-size:clamp(1rem,2.5vw,1.4rem);font-weight:600;color:rgba(255,255,255,.55);display:block;margin-bottom:4px;letter-spacing:0">a partir de</span>R$180</p>
+    <p class="hero-desc">Arte profissional inclusa · Papel couchê 250g · Entrega para todo o Brasil</p>
 
     <div class="hero-bullets">
-      <span>Papel couchê 300g</span>
-      <span>Impressão 4x4 cores</span>
+      <span>4x0 por R$180</span>
+      <span>4x1 por R$250</span>
+      <span>4x4 por R$350</span>
       <span>Arte inclusa grátis</span>
-      <span>Entrega nacional</span>
     </div>
 
     <!-- Botão 1 — Hero -->
     <a class="btn-wa btn-wa-lg"
-       href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
+       href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita.%20Pode%20me%20passar%20os%20detalhes%3F"
        target="_blank" rel="noopener" onclick="trackWA('hero')">
       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
         <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/>
@@ -771,7 +815,7 @@
       <h3>Tem sua própria arte? Também imprimimos.</h3>
       <p>Aceituamos arquivos em PDF, AI, CDR ou PSD. Ou criamos do zero para você — incluso no valor.</p>
       <a class="btn-wa"
-         href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
+         href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita.%20Pode%20me%20passar%20os%20detalhes%3F"
          target="_blank" rel="noopener" onclick="trackWA('modelos')">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
           <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/>
@@ -805,8 +849,8 @@
               </svg>
             </div>
             <div class="ben-item-txt">
-              <h4>Impressão 4×4 cores</h4>
-              <p>Couchê 300g fosco ou brilhante. Cores vivas, texto nítido, acabamento impecável.</p>
+              <h4>Impressão 4x0, 4x1 ou 4x4</h4>
+              <p>Papel couchê 250g fosco ou brilhante. Cores vivas, texto nítido, acabamento impecável.</p>
             </div>
           </li>
           <li class="ben-item">
@@ -847,28 +891,61 @@
         </ul>
       </div>
 
-      <!-- Caixa de preço -->
+      <!-- 3 opções de acabamento -->
       <div class="preco-box reveal">
-        <div class="preco-label">Oferta especial</div>
-        <div class="preco-valor">R$180</div>
-        <div class="preco-qnt">1000 cartões de visita</div>
+        <div class="preco-label">1000 unidades · Papel couchê 250g</div>
+
+        <div class="preco-opcoes" style="margin-top:16px">
+
+          <!-- 4x0 -->
+          <div class="preco-card">
+            <div class="preco-card-info">
+              <div class="preco-card-tipo">4x0</div>
+              <div class="preco-card-desc">Só frente colorida</div>
+            </div>
+            <div class="preco-card-num">R$180</div>
+          </div>
+
+          <!-- 4x1 — destaque -->
+          <div class="preco-card destaque" style="position:relative;margin-top:8px">
+            <span class="preco-card-badge">Mais escolhido</span>
+            <div class="preco-card-info">
+              <div class="preco-card-tipo">4x1</div>
+              <div class="preco-card-desc">Frente color + verso preto</div>
+            </div>
+            <div class="preco-card-num">R$250</div>
+          </div>
+
+          <!-- 4x4 -->
+          <div class="preco-card">
+            <div class="preco-card-info">
+              <div class="preco-card-tipo">4x4</div>
+              <div class="preco-card-desc">Frente e verso coloridos</div>
+            </div>
+            <div class="preco-card-num">R$350</div>
+          </div>
+
+        </div>
+
         <div class="preco-divider"></div>
-        <ul class="preco-itens">
+
+        <ul class="preco-card-itens">
           <li>Arte criada pela equipe Lumbra</li>
-          <li>Papel couchê 300g</li>
-          <li>Impressão frente e verso (4×4)</li>
           <li>Acabamento fosco ou brilhante</li>
-          <li>Frete com rastreamento incluso</li>
           <li>Aprovação da arte antes de imprimir</li>
+          <li>Frete com rastreamento incluso</li>
         </ul>
-        <!-- Botão 2 — Caixa de preço -->
-        <a class="btn-wa"
-           href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
+
+        <p class="preco-nota">Dúvida sobre qual escolher? A gente te orienta.</p>
+
+        <!-- Botão 2 — Tabela de preços -->
+        <a class="btn-wa" style="width:100%;margin-top:20px;justify-content:center"
+           href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita.%20Pode%20me%20ajudar%20a%20escolher%20o%20acabamento%3F"
            target="_blank" rel="noopener" onclick="trackWA('preco')">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
             <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/>
           </svg>
-          Quero esse preço
+          Quero pedir agora
         </a>
       </div>
 
@@ -954,11 +1031,11 @@
 <section class="cta-final">
   <div class="wrap">
     <h2>Pronto para <span>impressionar</span>?</h2>
-    <p>1000 cartões profissionais por R$180. Peça agora e receba em casa.</p>
+    <p>1000 cartões profissionais a partir de R$180. Peça agora e receba em casa.</p>
 
     <!-- Botão 3 — CTA final -->
     <a class="btn-wa btn-wa-lg"
-       href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
+       href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita.%20Pode%20me%20passar%20os%20detalhes%3F"
        target="_blank" rel="noopener" onclick="trackWA('cta-final')">
       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
         <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/>
@@ -984,7 +1061,7 @@
 
 <!-- BOTÃO FLUTUANTE -->
 <a class="wa-float"
-   href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita%20por%20R%24180"
+   href="https://wa.me/5541996185919?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita.%20Pode%20me%20passar%20os%20detalhes%3F"
    target="_blank" rel="noopener" onclick="trackWA('flutuante')"
    aria-label="WhatsApp" title="Falar pelo WhatsApp">
   <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
