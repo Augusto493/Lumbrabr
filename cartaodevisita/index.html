@@ -1067,20 +1067,7 @@
 
 
 <script>
-  /* ── Google Ads — PASSO 2 DE 2 ─────────────────────────────────
-     Substitua CONVERSION_ID e CONVERSION_LABEL e descomente:
-
-     const CONVERSION_ID    = 'AW-XXXXXXX';
-     const CONVERSION_LABEL = 'XXXXXXXXXX';
-  ─────────────────────────────────────────────────────────────── */
-  function trackWA(origem) {
-    // if (typeof gtag !== 'undefined') {
-    //   gtag('event', 'conversion', {
-    //     'send_to': CONVERSION_ID + '/' + CONVERSION_LABEL,
-    //     'event_label': origem
-    //   });
-    // }
-  }
+  function trackWA(origem) {}
 
   /* ── Hover 3D nos cartões: segue o mouse ── */
   document.querySelectorAll('.biz-card').forEach(function(card) {
@@ -1109,5 +1096,26 @@
   document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
 </script>
 
+<script>
+(function () {
+  var SEND_TO = 'AW-18216933914/nWDRCMWl3rkcEJq0we5D';
+  function isWhats(a){ return a && a.href && /(?:wa\.me|api\.whatsapp\.com|web\.whatsapp\.com)/i.test(a.href); }
+  function fire(cb){
+    if (typeof gtag !== 'function'){ cb(); return; }
+    var done=false, go=function(){ if(!done){done=true; cb();} };
+    gtag('event','conversion',{ 'send_to': SEND_TO, 'event_callback': go });
+    setTimeout(go, 800);
+  }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a');
+    if (!isWhats(a)) return;
+    var newTab = a.target === '_blank' || e.metaKey || e.ctrlKey;
+    if (newTab) { fire(function(){}); return; }
+    e.preventDefault();
+    var href = a.href;
+    fire(function(){ window.location.href = href; });
+  }, true);
+})();
+</script>
 </body>
 </html>
