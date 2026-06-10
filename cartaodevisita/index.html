@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <!-- ============================================================
@@ -114,6 +114,7 @@
     .btn-wa:hover  { background: var(--verde-wa-dk); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(37,211,102,.44); }
     .btn-wa:active { transform: translateY(0); }
     .btn-wa-lg     { font-size: 1.15rem; padding: 20px 44px; }
+    .hero .btn-wa, .cta-final .btn-wa { display: flex; width: fit-content; margin-left: auto; margin-right: auto; }
 
     /* ════════════════════════════════════════════════════════
        (1) HERO
@@ -696,130 +697,6 @@
     </a>
 
     <p class="hero-trust">Sem compromisso · Resposta em minutos</p>
-  </div>
-</section>
-
-
-<!-- ════════════════════════════════════════════════════
-     (2) MODELOS — Mockups de cartão CSS 3D
-════════════════════════════════════════════════════ -->
-<section class="modelos">
-  <div class="wrap">
-    <div class="modelos-header reveal">
-      <span class="eyebrow">Modelos disponíveis</span>
-      <h2 class="sec-h2">Escolha o estilo do seu cartão</h2>
-      <p class="sec-sub" style="margin:0 auto">Trabalhamos com diferentes estilos de layout. Nos mande seus dados e escolhemos juntos o melhor visual para o seu negócio.</p>
-    </div>
-
-    <div class="modelos-grid">
-
-      <!-- ── Modelo 1: Clássico Escuro ── -->
-      <div class="modelo-item reveal">
-        <div class="biz-card card-classico" style="transform: perspective(900px) rotateY(-6deg) rotateX(3deg)">
-          <div class="biz-card-front">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start">
-              <div class="c-logo">LB</div>
-              <div style="text-align:right">
-                <div style="font-size:.55rem;color:rgba(255,255,255,.25);letter-spacing:.1em;text-transform:uppercase">GRÁFICA</div>
-                <div style="font-size:.65rem;font-weight:700;color:rgba(255,122,24,.8);letter-spacing:.06em">LUMBRA</div>
-              </div>
-            </div>
-            <div>
-              <div class="c-name">Maria Fernanda Silva</div>
-              <div class="c-title">Gerente Comercial</div>
-              <div style="height:1px;background:rgba(255,122,24,.20);margin:10px 0"></div>
-              <div class="c-contact">
-                (41) 99999-9999<br>
-                maria@empresa.com.br<br>
-                www.empresa.com.br
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modelo-info">
-          <div class="modelo-nome">Modelo Clássico</div>
-          <div class="modelo-desc">Fundo escuro, detalhe laranja. Elegante e sofisticado.</div>
-          <span class="modelo-tag">Mais pedido</span>
-        </div>
-      </div>
-
-      <!-- ── Modelo 2: Branco Minimalista ── -->
-      <div class="modelo-item reveal">
-        <div class="biz-card card-branco" style="transform: perspective(900px) rotateY(0deg) rotateX(2deg)">
-          <div class="biz-card-front" style="padding-left: 16px;">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start">
-              <div class="c-logo">LB</div>
-              <div style="text-align:right">
-                <div style="font-size:.65rem;font-weight:800;color:#1c1814;letter-spacing:.04em">LUMBRA</div>
-                <div style="font-size:.55rem;color:#b0a59e;letter-spacing:.08em;text-transform:uppercase">Design & Print</div>
-              </div>
-            </div>
-            <div>
-              <div class="c-name" style="color:#1c1814">Carlos Eduardo Rocha</div>
-              <div class="c-title" style="color:#9a8f85">Fundador & CEO</div>
-              <div class="c-divider"></div>
-              <div class="c-contact" style="color:#9a8f85">
-                (11) 98888-7777<br>
-                carlos@minhaempresa.com<br>
-                minhaempresa.com.br
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modelo-info">
-          <div class="modelo-nome">Modelo Minimalista</div>
-          <div class="modelo-desc">Fundo branco, traço laranja. Limpo e profissional.</div>
-          <span class="modelo-tag">Versátil</span>
-        </div>
-      </div>
-
-      <!-- ── Modelo 3: Premium Degradê ── -->
-      <div class="modelo-item reveal">
-        <div class="biz-card card-premium" style="transform: perspective(900px) rotateY(6deg) rotateX(3deg)">
-          <div class="biz-card-front">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start">
-              <div class="c-logo">LB</div>
-              <div style="text-align:right;position:relative;z-index:1">
-                <div style="font-size:.55rem;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase">Premium</div>
-                <div style="font-size:.65rem;font-weight:700;color:rgba(255,200,80,.75);letter-spacing:.06em">LUMBRA</div>
-              </div>
-            </div>
-            <div style="position:relative;z-index:1">
-              <div class="c-name">Ana Paula Martins</div>
-              <div class="c-title">Diretora de Marketing</div>
-              <div style="height:1px;background:rgba(255,255,255,.10);margin:10px 0"></div>
-              <div class="c-contact">
-                (21) 97777-6666<br>
-                ana@negocio.com.br<br>
-                negocio.com.br
-              </div>
-            </div>
-            <div class="c-gold">PREMIUM PRINT</div>
-          </div>
-        </div>
-        <div class="modelo-info">
-          <div class="modelo-nome">Modelo Premium</div>
-          <div class="modelo-desc">Degradê azul escuro com detalhes dourados. Impacto total.</div>
-          <span class="modelo-tag">Destaque</span>
-        </div>
-      </div>
-
-    </div><!-- /modelos-grid -->
-
-    <!-- Banner CTA dentro da seção -->
-    <div class="modelos-cta reveal">
-      <h3>Tem sua própria arte? Também imprimimos.</h3>
-      <p>Aceituamos arquivos em PDF, AI, CDR ou PSD. Ou criamos do zero para você — incluso no valor.</p>
-      <a class="btn-wa"
-         href="https://wa.me/554591013970?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20de%201000%20cart%C3%B5es%20de%20visita.%20Pode%20me%20passar%20os%20detalhes%3F"
-         target="_blank" rel="noopener" onclick="trackWA('modelos')">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/>
-        </svg>
-        Quero pedir agora
-      </a>
-    </div>
-
   </div>
 </section>
 
