@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bistrô Oliva — Cozinha de raiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14201A;--bg2:#1B2A22;--cream:#F4EEE0;--gold:#C9A24B;--muted:#B9C2B2}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--cream);line-height:1.6;-webkit-font-smoothing:antialiased}
+.serif{font-family:'Cormorant Garamond',serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 36px}
+nav{display:flex;align-items:center;justify-content:space-between;padding:26px 0}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;letter-spacing:.06em}
+.logo b{color:var(--gold);font-weight:600}
+.nav-l{display:flex;gap:34px;align-items:center}
+.nav-l a{color:var(--cream);text-decoration:none;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.btn{display:inline-block;background:var(--gold);color:#16201A;padding:13px 26px;border-radius:4px;text-decoration:none;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500;transition:.25s}
+.btn:hover{background:#dab863}
+.hero{position:relative;padding:70px 0 90px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
+.eyebrow{font-size:.74rem;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:22px}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:4.6rem;line-height:1.04;font-weight:600;margin-bottom:24px}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero p.lead{color:var(--muted);font-size:1.12rem;font-weight:300;max-width:44ch;margin-bottom:34px}
+.hero-cta{display:flex;gap:22px;align-items:center}
+.hero-cta .ghost{color:var(--cream);text-decoration:none;font-size:.9rem;border-bottom:1px solid rgba(255,255,255,.25);padding-bottom:3px}
+.plate{position:relative;border-radius:300px 300px 12px 12px;overflow:hidden;aspect-ratio:.82;background:
+  radial-gradient(circle at 50% 36%, #3a4d3a 0%, #2a3a2c 40%, #1a261d 100%)}
+.plate .dish{position:absolute;inset:0}
+.tag{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);background:rgba(20,32,26,.72);backdrop-filter:blur(6px);border:1px solid rgba(201,162,75,.4);border-radius:40px;padding:10px 22px;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.strip{border-top:1px solid rgba(201,162,75,.2);border-bottom:1px solid rgba(201,162,75,.2);padding:26px 0}
+.strip .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.strip div{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.3rem;color:var(--muted)}
+.strip b{color:var(--gold);font-style:normal;font-weight:600}
+section{padding:96px 0}
+.sec-h{text-align:center;margin-bottom:54px}
+.sec-h .eyebrow{margin-bottom:14px}
+.sec-h h2{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:600}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:14px 60px;max-width:880px;margin:0 auto}
+.mi{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:18px 0;border-bottom:1px dashed rgba(201,162,75,.25)}
+.mi .l h4{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600}
+.mi .l p{font-size:.86rem;color:var(--muted);font-weight:300}
+.mi .pr{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold)}
+.cta{background:var(--bg2);text-align:center}
+.cta h2{font-family:'Cormorant Garamond',serif;font-size:3rem;margin-bottom:16px}
+.cta p{color:var(--muted);max-width:48ch;margin:0 auto 30px;font-weight:300}
+footer{padding:40px 0;border-top:1px solid rgba(201,162,75,.18);text-align:center;color:var(--muted);font-size:.84rem}
+@media(max-width:860px){.hero-grid,.menu{grid-template-columns:1fr}.nav-l a:not(.btn){display:none}.hero h1{font-size:3.2rem}}
+</style></head>
+<body>
+<div class="wrap"><nav>
+  <div class="logo">Bistrô <b>Oliva</b></div>
+  <div class="nav-l"><a href="#">Menu</a><a href="#">Sobre</a><a href="#">Reservas</a><a class="btn" href="#">Reservar mesa</a></div>
+</nav></div>
+
+<header class="hero"><div class="wrap hero-grid">
+  <div>
+    <div class="eyebrow">Cozinha de raiz · Itajaí</div>
+    <h1>Sabores que<br>contam uma<br><em>história.</em></h1>
+    <p class="lead">Ingredientes locais, técnica e tempo. Um menu autoral que muda com as estações, servido num ambiente feito pra ficar.</p>
+    <div class="hero-cta"><a class="btn" href="#">Reservar uma mesa</a><a class="ghost" href="#">Ver o menu →</a></div>
+  </div>
+  <div class="plate">
+    <svg class="dish" viewBox="0 0 400 480" preserveAspectRatio="xMidYMid slice">
+      <defs><radialGradient id="p" cx=".5" cy=".42" r=".5"><stop offset="0" stop-color="#F4EEE0"/><stop offset=".75" stop-color="#E6DcC6"/><stop offset="1" stop-color="#CdBf9e"/></radialGradient></defs>
+      <circle cx="200" cy="230" r="150" fill="url(#p)"/>
+      <circle cx="200" cy="230" r="150" fill="none" stroke="#C9A24B" stroke-width="2" opacity=".5"/>
+      <circle cx="200" cy="230" r="112" fill="none" stroke="#C9A24B" stroke-width="1" opacity=".4"/>
+      <ellipse cx="200" cy="238" rx="64" ry="50" fill="#7a5b3a"/>
+      <ellipse cx="186" cy="226" rx="30" ry="22" fill="#9c7647"/>
+      <path d="M150 250 q50 30 100 0" stroke="#5a4226" stroke-width="3" fill="none"/>
+      <g fill="#7E8B5A"><ellipse cx="160" cy="206" rx="13" ry="6" transform="rotate(-30 160 206)"/><ellipse cx="244" cy="212" rx="13" ry="6" transform="rotate(28 244 212)"/><ellipse cx="206" cy="190" rx="11" ry="5"/></g>
+      <g fill="#B23A2E"><circle cx="176" cy="252" r="7"/><circle cx="228" cy="244" r="6"/></g>
+      <g fill="#C9A24B"><circle cx="204" cy="262" r="4"/><circle cx="188" cy="248" r="3"/></g>
+    </svg>
+    <div class="tag">Menu de outono disponível</div>
+  </div>
+</div></header>
+
+<div class="strip"><div class="wrap">
+  <div><b>15</b> anos de cozinha</div>
+  <div><b>★ 4,9</b> no Google</div>
+  <div><b>Sazonal</b> · ingredientes locais</div>
+  <div><b>Ter–Dom</b> · 19h às 23h</div>
+</div></div>
+
+<section><div class="wrap">
+  <div class="sec-h"><div class="eyebrow">O Menu</div><h2>Pratos da estação</h2></div>
+  <div class="menu">
+    <div class="mi"><div class="l"><h4>Risoto de funghi</h4><p>Arroz arbóreo, cogumelos frescos, parmesão</p></div><div class="pr">68</div></div>
+    <div class="mi"><div class="l"><h4>Ragu de cordeiro</h4><p>Cozido lento, pappardelle artesanal</p></div><div class="pr">82</div></div>
+    <div class="mi"><div class="l"><h4>Peixe do dia</h4><p>Grelhado, legumes de raiz, manteiga de ervas</p></div><div class="pr">74</div></div>
+    <div class="mi"><div class="l"><h4>Gnocchi de mandioquinha</h4><p>Molho de tomate confit e manjericão</p></div><div class="pr">58</div></div>
+    <div class="mi"><div class="l"><h4>Tábua Oliva</h4><p>Queijos, embutidos e pães da casa</p></div><div class="pr">64</div></div>
+    <div class="mi"><div class="l"><h4>Petit gâteau</h4><p>Sorvete de baunilha de Madagascar</p></div><div class="pr">34</div></div>
+  </div>
+</div></section>
+
+<section class="cta"><div class="wrap">
+  <h2>Sua mesa está esperando</h2>
+  <p>Reserve em segundos pelo WhatsApp e garanta seu lugar para uma noite memorável.</p>
+  <a class="btn" href="#">Reservar pelo WhatsApp</a>
+</div></section>
+
+<footer><div class="wrap">Bistrô Oliva · Rua das Oliveiras, 120 · Itajaí, SC · (47) 9999-0000</div></footer>
+</body></html>

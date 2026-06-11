@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lumière Estética — Sua melhor versão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FBF5F1;--ink:#2C2622;--rose:#C98B7A;--rose-2:#B5705E;--nude:#EAD9CF;--muted:#8A7E76}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.serif{font-family:'Fraunces',serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 36px}
+nav{display:flex;align-items:center;justify-content:space-between;padding:26px 0}
+.logo{font-family:'Fraunces',serif;font-size:1.5rem;letter-spacing:.04em;color:var(--ink)}
+.logo span{color:var(--rose)}
+.nav-l{display:flex;gap:32px;align-items:center}
+.nav-l a{color:var(--ink);text-decoration:none;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;opacity:.8}
+.btn{display:inline-block;background:var(--rose);color:#fff;padding:13px 26px;border-radius:40px;text-decoration:none;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;font-weight:500;transition:.25s}
+.btn:hover{background:var(--rose-2)}
+.hero{padding:64px 0 86px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
+.eyebrow{font-size:.74rem;letter-spacing:.3em;text-transform:uppercase;color:var(--rose);margin-bottom:22px}
+.hero h1{font-family:'Fraunces',serif;font-size:4.4rem;line-height:1.05;font-weight:400;margin-bottom:24px}
+.hero h1 em{font-style:italic;color:var(--rose)}
+.hero p.lead{color:var(--muted);font-size:1.12rem;font-weight:300;max-width:42ch;margin-bottom:34px}
+.hero-cta{display:flex;gap:22px;align-items:center}
+.hero-cta .ghost{color:var(--ink);text-decoration:none;font-size:.9rem;border-bottom:1px solid rgba(44,38,34,.2);padding-bottom:3px}
+.portrait{position:relative;border-radius:200px 200px 18px 18px;overflow:hidden;aspect-ratio:.84;background:linear-gradient(160deg,#F0DfD6,#E3C7Bb)}
+.portrait svg{position:absolute;inset:0;width:100%;height:100%}
+.flo{position:absolute;right:18px;bottom:22px;background:#fff;border-radius:16px;padding:14px 20px;box-shadow:0 18px 40px -18px rgba(120,80,70,.4);text-align:center}
+.flo .n{font-family:'Fraunces',serif;font-size:1.8rem;color:var(--rose)}
+.flo .l{font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+section{padding:92px 0}
+.sec-h{text-align:center;margin-bottom:50px}
+.sec-h .eyebrow{margin-bottom:14px}
+.sec-h h2{font-family:'Fraunces',serif;font-size:2.9rem;font-weight:400}
+.serv{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.card{background:#fff;border-radius:18px;padding:34px 30px;box-shadow:0 20px 50px -34px rgba(120,80,70,.4)}
+.card .ic{width:50px;height:50px;border-radius:50%;background:var(--nude);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.card .ic svg{width:24px;height:24px;stroke:var(--rose-2);fill:none;stroke-width:1.4}
+.card h3{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:500;margin-bottom:8px}
+.card p{color:var(--muted);font-size:.92rem;font-weight:300}
+.cta{background:var(--nude);text-align:center}
+.cta h2{font-family:'Fraunces',serif;font-size:2.9rem;margin-bottom:14px}
+.cta p{color:var(--muted);max-width:46ch;margin:0 auto 28px;font-weight:300}
+footer{padding:40px 0;text-align:center;color:var(--muted);font-size:.84rem}
+@media(max-width:860px){.hero-grid,.serv{grid-template-columns:1fr}.nav-l a:not(.btn){display:none}.hero h1{font-size:3.1rem}}
+</style></head>
+<body>
+<div class="wrap"><nav>
+  <div class="logo">Lumière<span>.</span></div>
+  <div class="nav-l"><a href="#">Tratamentos</a><a href="#">Sobre</a><a href="#">Resultados</a><a class="btn" href="#">Agendar</a></div>
+</nav></div>
+
+<header class="hero"><div class="wrap hero-grid">
+  <div>
+    <div class="eyebrow">Estética avançada</div>
+    <h1>Realce a sua<br><em>melhor versão.</em></h1>
+    <p class="lead">Protocolos faciais e corporais com tecnologia de ponta e cuidado de verdade. Resultados naturais, autoestima renovada.</p>
+    <div class="hero-cta"><a class="btn" href="#">Agendar avaliação</a><a class="ghost" href="#">Ver tratamentos →</a></div>
+  </div>
+  <div class="portrait">
+    <svg viewBox="0 0 400 480" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2E2D9"/><stop offset="1" stop-color="#E0C3B6"/></linearGradient>
+        <radialGradient id="halo" cx=".5" cy=".42" r=".5"><stop offset="0" stop-color="#FBF1EB" stop-opacity=".95"/><stop offset="1" stop-color="#FBF1EB" stop-opacity="0"/></radialGradient>
+        <linearGradient id="stone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F6E9E1"/><stop offset="1" stop-color="#E6CDC0"/></linearGradient>
+      </defs>
+      <rect width="400" height="480" fill="url(#g)"/>
+      <ellipse cx="200" cy="210" rx="180" ry="180" fill="url(#halo)"/>
+      <!-- soft layered arcs -->
+      <path d="M40 360 a160 160 0 0 1 320 0" fill="none" stroke="#E7C9BC" stroke-width="2" opacity=".7"/>
+      <path d="M80 360 a120 120 0 0 1 240 0" fill="none" stroke="#D9AE9E" stroke-width="2" opacity=".5"/>
+      <!-- stone / pebble stack -->
+      <ellipse cx="200" cy="372" rx="92" ry="16" fill="#CDA897" opacity=".5"/>
+      <ellipse cx="200" cy="356" rx="60" ry="22" fill="url(#stone)"/>
+      <ellipse cx="200" cy="328" rx="46" ry="18" fill="url(#stone)"/>
+      <ellipse cx="200" cy="306" rx="32" ry="13" fill="url(#stone)"/>
+      <!-- eucalyptus sprig -->
+      <g stroke="#A9897C" stroke-width="2" fill="none" stroke-linecap="round"><path d="M200 300 C198 240 196 196 196 150"/></g>
+      <g fill="#C9A79A">
+        <ellipse cx="178" cy="250" rx="16" ry="9" transform="rotate(-32 178 250)"/>
+        <ellipse cx="216" cy="232" rx="16" ry="9" transform="rotate(32 216 232)"/>
+        <ellipse cx="182" cy="214" rx="15" ry="8" transform="rotate(-30 182 214)"/>
+        <ellipse cx="212" cy="198" rx="15" ry="8" transform="rotate(30 212 198)"/>
+        <ellipse cx="190" cy="180" rx="13" ry="7" transform="rotate(-26 190 180)"/>
+        <ellipse cx="206" cy="166" rx="13" ry="7" transform="rotate(26 206 166)"/>
+        <ellipse cx="197" cy="150" rx="11" ry="6"/>
+      </g>
+      <!-- droplet accent -->
+      <path d="M286 150 c0 12 -9 18 -9 18 c0 0 -9 -6 -9 -18 a9 9 0 0 1 18 0Z" fill="#C98B7A" opacity=".85"/>
+      <circle cx="120" cy="160" r="6" fill="#D9AE9E" opacity=".7"/>
+    </svg>
+    <div class="flo"><div class="n">+2 mil</div><div class="l">tratamentos realizados</div></div>
+  </div>
+</div></header>
+
+<section><div class="wrap">
+  <div class="sec-h"><div class="eyebrow">Tratamentos</div><h2>Cuidados sob medida</h2></div>
+  <div class="serv">
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg></div><h3>Limpeza de pele</h3><p>Pele renovada, poros limpos e viço imediato com protocolo profissional.</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 2l2.5 7h7l-5.5 4 2 7-6-4.5L6 22l2-7-5.5-4h7z"/></svg></div><h3>Harmonização</h3><p>Realce natural dos seus traços, com avaliação e plano personalizado.</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 14a8 8 0 0 1 16 0M8 14a4 4 0 0 1 8 0"/></svg></div><h3>Corporal</h3><p>Redução de medidas e firmeza com tecnologia e acompanhamento contínuo.</p></div>
+  </div>
+</div></section>
+
+<section class="cta"><div class="wrap">
+  <h2>Sua avaliação é gratuita</h2>
+  <p>Agende uma conversa sem compromisso e descubra o tratamento ideal pra você.</p>
+  <a class="btn" href="#">Agendar pelo WhatsApp</a>
+</div></section>
+
+<footer><div class="wrap">Lumière Estética · Av. Beira-Rio, 480 · Itajaí, SC · (47) 9999-0000</div></footer>
+</body></html>

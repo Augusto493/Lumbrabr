@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Barbearia Nobre — Tradição & estilo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#16140F;--bg2:#1F1C15;--paper:#EDE7DA;--gold:#C7A24A;--muted:#9A9286}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased}
+.cond{font-family:'Oswald',sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 36px}
+nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0;border-bottom:1px solid rgba(199,162,74,.16)}
+.logo{font-family:'Oswald',sans-serif;font-weight:600;font-size:1.4rem;letter-spacing:.22em;text-transform:uppercase}
+.logo span{color:var(--gold)}
+.nav-l{display:flex;gap:32px;align-items:center}
+.nav-l a{color:var(--paper);text-decoration:none;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;opacity:.8;font-weight:500}
+.btn{display:inline-block;background:var(--gold);color:#16140F;padding:13px 26px;text-decoration:none;font-family:'Oswald',sans-serif;font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;font-weight:500;transition:.25s}
+.btn:hover{background:#dab85f}
+.hero{position:relative;padding:80px 0 96px}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center}
+.eyebrow{font-family:'Oswald',sans-serif;font-size:.82rem;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+.hero h1{font-family:'Oswald',sans-serif;font-weight:600;font-size:5rem;line-height:.98;text-transform:uppercase;letter-spacing:.01em;margin-bottom:22px}
+.hero h1 span{color:var(--gold)}
+.hero p.lead{color:var(--muted);font-size:1.1rem;font-weight:300;max-width:42ch;margin-bottom:32px}
+.hero-cta{display:flex;gap:22px;align-items:center}
+.hero-cta .ghost{color:var(--paper);text-decoration:none;font-size:.86rem;letter-spacing:.06em;border-bottom:1px solid rgba(237,231,218,.25);padding-bottom:3px}
+.frame{position:relative;border:1px solid rgba(199,162,74,.4);padding:14px}
+.frame .inner{aspect-ratio:.86;background:radial-gradient(circle at 50% 40%,#2a2620,#16140F);position:relative;overflow:hidden}
+.frame svg{position:absolute;inset:0;width:100%;height:100%}
+.stamp{position:absolute;right:-16px;bottom:-16px;width:92px;height:92px;border-radius:50%;background:var(--gold);color:#16140F;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;text-transform:uppercase;line-height:1}
+.stamp b{font-size:1.5rem;font-weight:600}.stamp small{font-size:.5rem;letter-spacing:.1em;margin-top:2px}
+.strip{background:var(--gold);color:#16140F}
+.strip .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px;padding:18px 36px;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:.86rem}
+section{padding:92px 0}
+.sec-h{margin-bottom:46px}
+.sec-h .eyebrow{margin-bottom:12px}
+.sec-h h2{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:2.8rem;font-weight:600}
+.price-list{display:grid;grid-template-columns:1fr 1fr;gap:6px 56px;max-width:880px}
+.pi{display:flex;justify-content:space-between;align-items:baseline;padding:18px 0;border-bottom:1px solid rgba(199,162,74,.18)}
+.pi h4{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:1.2rem;letter-spacing:.04em;font-weight:500}
+.pi .d{flex:1;border-bottom:1px dotted rgba(154,146,134,.4);margin:0 12px 6px}
+.pi .pr{font-family:'Oswald',sans-serif;font-size:1.3rem;color:var(--gold)}
+.cta{background:var(--bg2);text-align:center}
+.cta h2{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:2.8rem;margin-bottom:14px}
+.cta p{color:var(--muted);max-width:46ch;margin:0 auto 28px;font-weight:300}
+footer{padding:38px 0;border-top:1px solid rgba(199,162,74,.16);text-align:center;color:var(--muted);font-size:.84rem}
+@media(max-width:860px){.hero-grid,.price-list{grid-template-columns:1fr}.nav-l a:not(.btn){display:none}.hero h1{font-size:3.4rem}}
+</style></head>
+<body>
+<div class="wrap"><nav>
+  <div class="logo">Nobre<span>.</span></div>
+  <div class="nav-l"><a href="#">Serviços</a><a href="#">Galeria</a><a href="#">Contato</a><a class="btn" href="#">Agendar</a></div>
+</nav></div>
+
+<header class="hero"><div class="wrap hero-grid">
+  <div>
+    <div class="eyebrow">Barbearia · desde 2012</div>
+    <h1>Corte de<br><span>respeito.</span></h1>
+    <p class="lead">Cortes clássicos e modernos, barba na navalha e aquele atendimento que vira hábito. Aqui o seu estilo é levado a sério.</p>
+    <div class="hero-cta"><a class="btn" href="#">Agendar horário</a><a class="ghost" href="#">Ver serviços →</a></div>
+  </div>
+  <div class="frame"><div class="inner">
+    <svg viewBox="0 0 400 470" preserveAspectRatio="xMidYMid slice">
+      <rect width="400" height="470" fill="none"/>
+      <circle cx="200" cy="180" r="66" fill="#3a342a"/>
+      <path d="M138 176 q62 -58 124 0 q4 64 -62 84 q-66 -20 -62 -84Z" fill="#46402f"/>
+      <path d="M150 150 q50 -44 100 0 q4 -40 -50 -40 q-54 0 -50 40Z" fill="#1d1a13"/>
+      <rect x="158" y="240" width="84" height="120" rx="10" fill="#2a261d"/>
+      <path d="M158 250 q42 30 84 0 v-12 h-84Z" fill="#C7A24A" opacity=".25"/>
+      <path d="M170 230 q30 26 60 0 l-4 40 q-26 18 -52 0Z" fill="#5a513c"/>
+      <g stroke="#C7A24A" stroke-width="2" opacity=".6"><line x1="120" y1="120" x2="120" y2="350"/><line x1="280" y1="120" x2="280" y2="350"/></g>
+    </svg>
+    <div class="stamp"><b>Est.</b><small>2012</small></div>
+  </div></div>
+</div></header>
+
+<div class="strip"><div class="wrap">
+  <div>★ 4,9 no Google</div><div>+8 mil cortes</div><div>Seg–Sáb · 9h às 20h</div><div>Agende em 30s</div>
+</div></div>
+
+<section><div class="wrap">
+  <div class="sec-h"><div class="eyebrow">Tabela</div><h2>Serviços & valores</h2></div>
+  <div class="price-list">
+    <div class="pi"><h4>Corte masculino</h4><span class="d"></span><span class="pr">R$45</span></div>
+    <div class="pi"><h4>Barba na navalha</h4><span class="d"></span><span class="pr">R$40</span></div>
+    <div class="pi"><h4>Corte + barba</h4><span class="d"></span><span class="pr">R$75</span></div>
+    <div class="pi"><h4>Pezinho / acabamento</h4><span class="d"></span><span class="pr">R$25</span></div>
+    <div class="pi"><h4>Sobrancelha</h4><span class="d"></span><span class="pr">R$20</span></div>
+    <div class="pi"><h4>Combo do mês</h4><span class="d"></span><span class="pr">R$89</span></div>
+  </div>
+</div></section>
+
+<section class="cta"><div class="wrap">
+  <h2>Bora marcar?</h2>
+  <p>Escolha seu horário pelo WhatsApp e chegue sem fila. Rápido, fácil e do seu jeito.</p>
+  <a class="btn" href="#">Agendar pelo WhatsApp</a>
+</div></section>
+
+<footer><div class="wrap">Barbearia Nobre · Rua XV, 230 · Itajaí, SC · (47) 9999-0000</div></footer>
+</body></html>
