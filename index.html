@@ -78,7 +78,8 @@ nav.sc{background:rgba(7,11,9,.82);backdrop-filter:blur(14px);padding:14px 0;bor
 .hero-in{position:relative;text-align:center;width:100%}
 .hero .tag{margin-bottom:34px;justify-content:center}
 .hero h1{font-family:'Bodoni Moda',serif;font-weight:600;font-size:clamp(3rem,8.4vw,7.6rem);line-height:.98;letter-spacing:-.02em;color:var(--champ);margin-bottom:10px}
-.hero h1 .it{font-style:italic;font-weight:400;background:linear-gradient(110deg,var(--gold-hi),var(--gold) 55%,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h1 .it{font-style:italic;font-weight:400;background:linear-gradient(110deg,var(--gold2),var(--gold-hi) 35%,#FFF3D6 50%,var(--gold-hi) 65%,var(--gold2));background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shineTxt 4.5s ease-in-out infinite}
+@keyframes shineTxt{0%,100%{background-position:0% 0}50%{background-position:100% 0}}
 .hero h1 .row{display:block}
 .hero .sub{max-width:54ch;margin:26px auto 0;color:var(--mut);font-size:1.08rem;font-weight:300;line-height:1.75}
 .hero .sub b{color:var(--champ);font-weight:600}
