@@ -1,0 +1,24 @@
+{
+  "id": "01-present-perfect",
+  "title": "Falando de experiencias com Present Perfect",
+  "level": "iniciante-intermediario",
+  "focus": "Usar 'have/has' + participio para falar de experiencias e coisas que comecaram no passado e continuam",
+  "warmup": {
+    "instruction": "Cumprimente o aluno em ingles, se apresente rapidamente como parceiro de conversacao, e pergunte ha quanto tempo ele estuda ingles. Incentive ele a responder usando 'I've been studying English for...'. De um exemplo se ele nao souber responder.",
+    "examples": [
+      { "en": "How long have you been studying English?", "pt": "Ha quanto tempo voce estuda ingles?" },
+      { "en": "I've been studying English for two years.", "pt": "Eu estudo ingles ha dois anos." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Experiencias de vida",
+    "instruction": "Converse livremente perguntando sobre lugares que o aluno ja visitou, comidas que ja provou ou filmes que ja viu, sempre incentivando respostas com present perfect ('I have been to...', 'I have never tried...'). Corrija erros com gentileza, repetindo a frase certa antes de continuar a conversa."
+  },
+  "review": {
+    "checklist": [
+      "O aluno conseguiu usar 'have/has' + participio corretamente?",
+      "O aluno entendeu a diferenca entre 'I have been' e 'I went'?"
+    ],
+    "closing": "Encerre elogiando um ponto especifico que o aluno acertou e mencione rapidamente o que vao praticar na proxima licao."
+  }
+}

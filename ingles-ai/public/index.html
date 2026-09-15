@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ingles AI — pratique conversando</title>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <h1>🗣️ Ingles AI</h1>
+      <div id="userBadge" class="hidden">
+        <span id="userName"></span>
+        <button id="logoutBtn">sair</button>
+      </div>
+    </header>
+
+    <section id="authView" class="card">
+      <div class="tabs">
+        <button id="tabLogin" class="tab active">Entrar</button>
+        <button id="tabRegister" class="tab">Criar conta</button>
+      </div>
+
+      <form id="loginForm" class="form">
+        <input type="email" name="email" placeholder="seu email" required />
+        <input type="password" name="password" placeholder="senha" required />
+        <button type="submit">Entrar</button>
+        <p class="error" id="loginError"></p>
+      </form>
+
+      <form id="registerForm" class="form hidden">
+        <input type="text" name="name" placeholder="seu nome" />
+        <input type="email" name="email" placeholder="seu email" required />
+        <input type="password" name="password" placeholder="senha (min. 6 caracteres)" required />
+        <button type="submit">Criar conta</button>
+        <p class="error" id="registerError"></p>
+      </form>
+    </section>
+
+    <section id="lessonsView" class="hidden">
+      <h2>Escolha uma licao</h2>
+      <div id="lessonList" class="lesson-list"></div>
+    </section>
+
+    <section id="conversationView" class="hidden card">
+      <button id="backBtn">← voltar</button>
+      <h2 id="lessonTitle"></h2>
+      <div id="status" class="status">desconectado</div>
+
+      <div id="transcript" class="transcript"></div>
+
+      <div class="controls">
+        <button id="micBtn" class="mic-btn">🎙️ Falar</button>
+        <button id="endLessonBtn">Encerrar licao</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
