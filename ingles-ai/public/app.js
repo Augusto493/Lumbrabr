@@ -194,6 +194,7 @@ async function startRecording() {
   state.recording = true;
   el("micBtn").textContent = "🔴 Gravando (toque para parar)";
   el("micBtn").classList.add("active");
+  el("mascot")?.classList.add("listening");
 }
 
 function stopRecording() {
@@ -205,6 +206,7 @@ function stopRecording() {
   state.recording = false;
   el("micBtn").textContent = "🎙️ Falar";
   el("micBtn").classList.remove("active");
+  el("mascot")?.classList.remove("listening");
 }
 
 function downsampleTo16kHz(float32Input, inputSampleRate) {

@@ -26,7 +26,27 @@ body {
   margin-bottom: 16px;
 }
 
-.topbar h1 { font-size: 1.2rem; margin: 0; }
+.topbar h1 { font-size: 1.2rem; margin: 0; display: flex; align-items: center; gap: 8px; }
+
+.mascot {
+  display: inline-block;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--accent), #c9603f 70%);
+  box-shadow: 0 0 18px 2px rgba(255, 146, 112, 0.45);
+  animation: mascot-breathe 3.2s ease-in-out infinite;
+}
+.mascot-sm { width: 22px; height: 22px; }
+.mascot-lg { width: 72px; height: 72px; }
+.mascot-row { display: flex; justify-content: center; margin-bottom: 12px; }
+
+.mascot.listening {
+  animation-duration: 0.8s;
+}
+
+@keyframes mascot-breathe {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 14px 1px rgba(255, 146, 112, 0.35); }
+  50% { transform: scale(1.12); box-shadow: 0 0 26px 4px rgba(255, 146, 112, 0.6); }
+}
 
 #userBadge { display: flex; gap: 8px; align-items: center; color: var(--muted); }
 
