@@ -2,64 +2,18 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mel — pratique inglês conversando</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0A0A0A" />
+<title>Mel — aprenda inglês conversando</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <div id="app">
-    <header class="topbar">
-      <h1><span class="mascot mascot-sm"></span> Mel</h1>
-      <div id="userBadge" class="hidden">
-        <span id="userName"></span>
-        <button id="logoutBtn">sair</button>
-      </div>
-    </header>
-
-    <section id="authView" class="card">
-      <div class="tabs">
-        <button id="tabLogin" class="tab active">Entrar</button>
-        <button id="tabRegister" class="tab">Criar conta</button>
-      </div>
-
-      <form id="loginForm" class="form">
-        <input type="email" name="email" placeholder="seu email" required />
-        <input type="password" name="password" placeholder="senha" required />
-        <button type="submit">Entrar</button>
-        <p class="error" id="loginError"></p>
-      </form>
-
-      <form id="registerForm" class="form hidden">
-        <input type="text" name="name" placeholder="seu nome" />
-        <input type="email" name="email" placeholder="seu email" required />
-        <input type="password" name="password" placeholder="senha (min. 6 caracteres)" required />
-        <button type="submit">Criar conta</button>
-        <p class="error" id="registerError"></p>
-      </form>
-    </section>
-
-    <section id="lessonsView" class="hidden">
-      <h2>Escolha uma licao</h2>
-      <div id="lessonList" class="lesson-list"></div>
-    </section>
-
-    <section id="conversationView" class="hidden card">
-      <button id="backBtn">← voltar</button>
-      <div class="mascot-row">
-        <span id="mascot" class="mascot mascot-lg"></span>
-      </div>
-      <h2 id="lessonTitle"></h2>
-      <div id="status" class="status">desconectado</div>
-
-      <div id="transcript" class="transcript"></div>
-
-      <div class="controls">
-        <button id="micBtn" class="mic-btn">🎙️ Falar</button>
-        <button id="endLessonBtn">Encerrar licao</button>
-      </div>
-    </section>
-  </div>
-
+  <div id="app"></div>
+  <script src="/icons.js"></script>
+  <script src="/mascot.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

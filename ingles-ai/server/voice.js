@@ -2,7 +2,7 @@ import { WebSocketServer } from "ws";
 import { GoogleGenAI, Modality } from "@google/genai";
 import { verifyToken } from "./auth.js";
 import { getLesson, buildSystemInstruction } from "./lessons.js";
-import { markLessonDone } from "./store.js";
+import { markLessonDone, findUserByEmail } from "./store.js";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const MODEL = process.env.GEMINI_LIVE_MODEL ?? "gemini-2.5-flash-native-audio-preview-12-2025";
@@ -35,6 +35,8 @@ export function attachVoiceServer(httpServer) {
       return ws.close();
     }
 
+    const account = findUserByEmail(user.email);
+    const profile = account?.profile ?? {};
     let geminiSession = null;
     let closedByClient = false;
 
@@ -43,7 +45,7 @@ export function attachVoiceServer(httpServer) {
         model: MODEL,
         config: {
           responseModalities: [Modality.AUDIO],
-          systemInstruction: buildSystemInstruction(lesson),
+          systemInstruction: buildSystemInstruction(lesson, profile),
           inputAudioTranscription: {},
           outputAudioTranscription: {},
         },
@@ -76,6 +78,13 @@ export function attachVoiceServer(httpServer) {
       safeSend(ws, { type: "error", message: `falha ao conectar com a IA: ${err.message}` });
       return ws.close();
     }
+
+    // a Mel abre a aula sozinha, sem esperar o aluno falar primeiro
+    const firstName = (account?.name ?? "").trim().split(" ")[0];
+    geminiSession.sendClientContent({
+      turns: [{ role: "user", parts: [{ text: `(${firstName ? `O aluno ${firstName}` : "O aluno"} acabou de entrar na aula. Comece voce, em portugues, do seu jeito.)` }] }],
+      turnComplete: true,
+    });
 
     ws.on("message", (raw) => {
       let msg;
