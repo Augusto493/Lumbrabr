@@ -1,8 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { listLessons } from "./lessons.js";
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-const TEXT_MODEL = process.env.GEMINI_TEXT_MODEL ?? "gemini-3.6-flash";
+import * as settings from "./settings.js";
 
 const LEVEL_GUIDE = {
   A0: "quem nunca falou ingles: frases de 3-5 palavras, tudo traduzido, roteiro guiado onde a Mel dita cada fala",
@@ -33,12 +31,12 @@ const SCHEMA = {
   required: ["title", "level", "focus", "warmup", "freeConversation", "review"],
 };
 
-const FALLBACK_MODELS = (process.env.GEMINI_TEXT_FALLBACKS ?? "gemini-3.5-flash,gemini-3.6-flash-lite").split(",").map((s) => s.trim()).filter(Boolean);
-
 // o modelo principal as vezes responde 503 (pico de demanda): tenta de novo e,
 // se insistir, cai pros modelos reserva
 async function withRetry(run) {
-  const attempts = [TEXT_MODEL, TEXT_MODEL, ...FALLBACK_MODELS];
+  const textModel = settings.get("GEMINI_TEXT_MODEL");
+  const fallbacks = (settings.get("GEMINI_TEXT_FALLBACKS") ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+  const attempts = [textModel, textModel, ...fallbacks];
   let lastError;
   for (let i = 0; i < attempts.length; i++) {
     try {
@@ -74,6 +72,7 @@ export async function generateLesson({ level = "A2", theme = "" } = {}) {
     "Responda somente com o JSON.",
   ].join("\n");
 
+  const ai = new GoogleGenAI({ apiKey: settings.get("GEMINI_API_KEY") });
   const res = await withRetry((model) => ai.models.generateContent({
     model,
     contents: prompt,

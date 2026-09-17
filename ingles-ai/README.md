@@ -52,11 +52,32 @@ conversa por lição, últimas sessões e o custo estimado de IA (R$ 0,07/min
 no tier pago). Os dados vêm de `data/users.json`, `data/progress.json` e
 `data/sessions.json` (cada conversa de voz é registrada ao terminar).
 
-O painel tem cinco abas: **visão geral** (KPIs, receita, custo de IA),
+O painel tem seis abas, numa barra lateral com ícones (empilha no topo em
+telas estreitas): **visão geral** (KPIs, receita, custo de IA),
 **usuários** (editar nome, papel, nível/tom/trava, plano manual com data,
 nova senha, bloquear, excluir), **lições** (gerar com IA, publicar,
-esconder, excluir), **planos** (criar/editar/desativar) e **pagamentos**
-(status do Pix e pedidos).
+esconder, excluir), **planos** (criar/editar/desativar), **pagamentos**
+(status do Pix e pedidos) e **configurações** (ver abaixo).
+
+## Configurações pelo painel (sem editar o `.env`)
+
+A aba **Configurações** expõe e edita, em grupos, tudo que hoje vive no
+`.env` — Gemini (chave, modelo de voz, modelo de texto, modelos reserva),
+acesso ao painel (e-mails admin, senha única), limite de minutos grátis,
+Pix/PagBank (token, ambiente, URL pública) e o segredo de sessão (JWT).
+Campos de segredo (chave do Gemini, senha do painel, token do PagBank,
+JWT) nunca voltam em texto puro pro navegador — só mostram se estão
+configurados e os últimos 4 caracteres; deixar em branco mantém o valor
+atual.
+
+Os valores ficam em `data/settings.json` (nunca versionado) e têm
+prioridade sobre o `.env`, então a maioria das trocas vale **na hora**,
+sem reiniciar o servidor. As duas exceções são `JWT_SECRET` e
+`GEMINI_API_KEY`, que precisam existir no `.env` só na primeira vez que o
+servidor sobe (pra existir algo com que assinar o primeiro login) — depois
+disso também podem ser trocadas pelo painel. Trocar o `JWT_SECRET` desloga
+todo mundo, você incluso; o painel te dá um token novo automaticamente
+pra não te jogar pra fora no meio da troca.
 
 ## Planos, limite diário e Pix
 

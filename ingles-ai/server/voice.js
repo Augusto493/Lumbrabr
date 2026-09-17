@@ -4,9 +4,7 @@ import { verifyToken } from "./auth.js";
 import { getLesson, buildSystemInstruction } from "./lessons.js";
 import { markLessonDone, findUserByEmail, logSession, minutesUsedToday } from "./store.js";
 import { entitlement } from "./pay.js";
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-const MODEL = process.env.GEMINI_LIVE_MODEL ?? "gemini-2.5-flash-native-audio-preview-12-2025";
+import * as settings from "./settings.js";
 
 function safeSend(ws, payload) {
   if (ws.readyState === ws.OPEN) ws.send(JSON.stringify(payload));
@@ -59,8 +57,9 @@ export function attachVoiceServer(httpServer) {
     }, remainingSec * 1000);
 
     try {
+      const ai = new GoogleGenAI({ apiKey: settings.get("GEMINI_API_KEY") });
       geminiSession = await ai.live.connect({
-        model: MODEL,
+        model: settings.get("GEMINI_LIVE_MODEL"),
         config: {
           responseModalities: [Modality.AUDIO],
           systemInstruction: buildSystemInstruction(lesson, profile),

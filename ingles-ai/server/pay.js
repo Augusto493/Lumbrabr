@@ -3,10 +3,17 @@ import express from "express";
 import { requireAuth } from "./auth.js";
 import { findUserByEmail, updateUser, getPlans, saveOrder, findOrder, minutesUsedToday } from "./store.js";
 import * as pagbank from "./pagbank.js";
+import * as settings from "./settings.js";
 
-const FREE_MINUTES_PER_DAY = Number(process.env.FREE_MINUTES_PER_DAY ?? 3);
-const PUBLIC_URL = (process.env.PUBLIC_URL ?? "").replace(/\/$/, "");
 const PIX_EXPIRATION_MIN = 30;
+
+function freeMinutesPerDay() {
+  return settings.getNumber("FREE_MINUTES_PER_DAY", 3);
+}
+
+function publicUrl() {
+  return String(settings.get("PUBLIC_URL") ?? "").replace(/\/$/, "");
+}
 
 export const router = express.Router();
 
@@ -15,7 +22,7 @@ export function entitlement(account) {
   if (plan && new Date(plan.expiresAt) > new Date()) {
     return { free: false, planId: plan.id, planName: plan.name, minutesPerDay: plan.minutesPerDay, expiresAt: plan.expiresAt };
   }
-  return { free: true, planId: null, planName: "grátis", minutesPerDay: FREE_MINUTES_PER_DAY, expiresAt: null };
+  return { free: true, planId: null, planName: "grátis", minutesPerDay: freeMinutesPerDay(), expiresAt: null };
 }
 
 export function activateOrder(order) {
@@ -31,7 +38,7 @@ export function activateOrder(order) {
 }
 
 router.get("/plans", (_req, res) => {
-  res.json({ plans: getPlans().filter((p) => p.active), pixConfigured: pagbank.configured, freeMinutesPerDay: FREE_MINUTES_PER_DAY });
+  res.json({ plans: getPlans().filter((p) => p.active), pixConfigured: pagbank.isConfigured(), freeMinutesPerDay: freeMinutesPerDay() });
 });
 
 router.get("/me", requireAuth, (req, res) => {
@@ -41,7 +48,7 @@ router.get("/me", requireAuth, (req, res) => {
 });
 
 router.post("/pix", requireAuth, async (req, res) => {
-  if (!pagbank.configured) return res.status(503).json({ error: "pagamento por Pix ainda nao configurado (PAGBANK_TOKEN no .env)" });
+  if (!pagbank.isConfigured()) return res.status(503).json({ error: "pagamento por Pix ainda nao configurado (configure em Painel > Configurações > Pagamento)" });
   const { planId, name, cpf, phone } = req.body ?? {};
   const plan = getPlans().find((p) => p.id === planId && p.active);
   if (!plan) return res.status(400).json({ error: "plano invalido" });
@@ -65,7 +72,7 @@ router.post("/pix", requireAuth, async (req, res) => {
       itemName: `Mel — ${plan.name} (${plan.days} dias)`,
       amountCents: plan.priceCents,
       expiresAt,
-      notificationUrl: PUBLIC_URL.startsWith("https://") ? `${PUBLIC_URL}/api/pay/webhook` : undefined,
+      notificationUrl: publicUrl().startsWith("https://") ? `${publicUrl()}/api/pay/webhook` : undefined,
     });
     const pix = pagbank.extractPix(created);
     const order = saveOrder({
@@ -82,7 +89,7 @@ router.post("/pix", requireAuth, async (req, res) => {
 router.get("/status/:orderId", requireAuth, async (req, res) => {
   let order = findOrder(req.params.orderId);
   if (!order || order.email !== req.user.email) return res.status(404).json({ error: "pedido nao encontrado" });
-  if (order.status !== "PAID" && pagbank.configured && Date.now() - (order.lastCheck ?? 0) > 3000) {
+  if (order.status !== "PAID" && pagbank.isConfigured() && Date.now() - (order.lastCheck ?? 0) > 3000) {
     try {
       const remote = await pagbank.getOrder(order.id);
       const pix = pagbank.extractPix(remote);

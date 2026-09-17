@@ -8,9 +8,12 @@ import { router as lessonsRouter } from "./lessons.js";
 import { router as adminRouter } from "./admin.js";
 import { router as payRouter, handleWebhook } from "./pay.js";
 import { attachVoiceServer } from "./voice.js";
+import * as settings from "./settings.js";
 
+// estes dois precisam existir no primeiro boot (vem do .env); depois disso
+// tambem podem ser trocados pelo painel em Configuracoes, sem reiniciar
 for (const key of ["JWT_SECRET", "GEMINI_API_KEY"]) {
-  if (!process.env[key]) {
+  if (!settings.has(key)) {
     console.error(`Faltando variavel de ambiente ${key}. Copie .env.example para .env e preencha.`);
     process.exit(1);
   }

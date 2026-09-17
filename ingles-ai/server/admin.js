@@ -7,11 +7,12 @@ import { listLessons, getLesson, saveLesson, deleteLesson } from "./lessons.js";
 import { generateLesson } from "./generate.js";
 import { entitlement } from "./pay.js";
 import * as pagbank from "./pagbank.js";
+import * as settings from "./settings.js";
+import { jwtSecret } from "./auth.js";
 
-const JWT_SECRET = process.env.JWT_SECRET;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const COST_PER_MINUTE_BRL = 0.07;
 const PROFILE_KEYS = ["voiceMode", "level", "blocker", "tone"];
+const START_TIME = Date.now();
 
 export const router = express.Router();
 
@@ -24,17 +25,20 @@ function samePassword(given, expected) {
 // duas portas de entrada: a conta de um usuario cujo e-mail esta em ADMIN_EMAIL
 // (token normal do app, com role admin) ou a senha unica ADMIN_PASSWORD
 router.post("/login", (req, res) => {
-  if (!ADMIN_PASSWORD) return res.status(503).json({ error: "defina ADMIN_PASSWORD (ou ADMIN_EMAIL) no .env para liberar o painel" });
+  const adminPassword = settings.get("ADMIN_PASSWORD");
+  if (!adminPassword) return res.status(503).json({ error: "defina a senha do painel (ou um e-mail admin) em Configurações" });
   const { password } = req.body ?? {};
-  if (!samePassword(password ?? "", ADMIN_PASSWORD)) return res.status(401).json({ error: "senha invalida" });
-  res.json({ token: jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "12h" }) });
+  if (!samePassword(password ?? "", adminPassword)) return res.status(401).json({ error: "senha invalida" });
+  res.json({ token: jwt.sign({ role: "admin" }, jwtSecret(), { expiresIn: "12h" }) });
 });
 
 function requireAdmin(req, res, next) {
   const header = req.headers.authorization ?? "";
   const token = header.startsWith("Bearer ") ? header.slice(7) : "";
   try {
-    if (jwt.verify(token, JWT_SECRET).role !== "admin") throw new Error();
+    const decoded = jwt.verify(token, jwtSecret());
+    if (decoded.role !== "admin") throw new Error();
+    req.adminPayload = decoded;
     next();
   } catch {
     res.status(401).json({ error: "acesso negado" });
@@ -109,7 +113,7 @@ router.get("/stats", (_req, res) => {
     plans: getPlans(),
     orders: orders.slice(-100).reverse(),
     recentSessions: sessions.slice(-40).reverse(),
-    pix: { configured: pagbank.configured, environment: pagbank.environment, webhook: Boolean((process.env.PUBLIC_URL ?? "").startsWith("https://")) },
+    pix: { configured: pagbank.isConfigured(), environment: pagbank.currentEnv(), webhook: String(settings.get("PUBLIC_URL") ?? "").startsWith("https://") },
   });
 });
 
@@ -241,4 +245,53 @@ router.put("/lessons/:id", (req, res) => {
 
 router.delete("/lessons/:id", (req, res) => {
   try { deleteLesson(req.params.id); res.json({ ok: true }); } catch { res.status(404).json({ error: "licao nao encontrada" }); }
+});
+
+// ---------- configuracoes do sistema ----------
+
+router.get("/settings", (_req, res) => {
+  const groups = {};
+  for (const def of settings.allForAdmin()) {
+    (groups[def.group] ??= []).push(def);
+  }
+  res.json({
+    groups,
+    system: {
+      port: process.env.PORT || 3000,
+      nodeVersion: process.version,
+      uptimeSeconds: Math.round((Date.now() - START_TIME) / 1000),
+      dataDir: "data/",
+    },
+  });
+});
+
+router.put("/settings", (req, res) => {
+  const body = req.body ?? {};
+  const defs = Object.fromEntries(settings.DEFINITIONS.map((d) => [d.key, d]));
+  const changed = [];
+  for (const [key, rawValue] of Object.entries(body)) {
+    const def = defs[key];
+    if (!def) continue;
+    if (def.secret && (rawValue === "" || rawValue == null)) continue; // vazio em campo secreto = manter
+    let value = String(rawValue ?? "").trim();
+    if (def.type === "number") {
+      const n = Number(value);
+      if (!Number.isFinite(n) || (def.min !== undefined && n < def.min)) return res.status(400).json({ error: `${def.label}: numero invalido` });
+      value = String(n);
+    }
+    if (def.type === "select" && value && !def.options.includes(value)) {
+      return res.status(400).json({ error: `${def.label}: opcao invalida` });
+    }
+    settings.set(key, value);
+    changed.push(key);
+  }
+  const result = { ok: true, changed };
+  // trocar o segredo do JWT invalida o token atual -- reemite na hora pra nao deslogar o admin
+  if (changed.includes("JWT_SECRET")) {
+    const payload = { ...req.adminPayload };
+    delete payload.iat;
+    delete payload.exp;
+    result.token = jwt.sign(payload, jwtSecret(), { expiresIn: payload.role === "admin" && !payload.email ? "12h" : "30d" });
+  }
+  res.json(result);
 });

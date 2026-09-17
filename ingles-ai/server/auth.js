@@ -2,17 +2,22 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { findUserByEmail, saveUser } from "./store.js";
+import * as settings from "./settings.js";
 
-const JWT_SECRET = process.env.JWT_SECRET;
 const TOKEN_TTL = "30d";
 
 export const router = express.Router();
 
 const PROFILE_KEYS = ["voiceMode", "level", "blocker", "tone"];
-const ADMIN_EMAILS = (process.env.ADMIN_EMAIL ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
+
+// le sempre o valor atual (nao trava no boot) pra editar pelo painel funcionar sem reiniciar
+export function jwtSecret() {
+  return settings.get("JWT_SECRET");
+}
 
 export function isAdminEmail(email) {
-  return ADMIN_EMAILS.includes(String(email ?? "").toLowerCase());
+  const list = (settings.get("ADMIN_EMAIL") ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
+  return list.includes(String(email ?? "").toLowerCase());
 }
 
 export function roleOf(email, user = null) {
@@ -40,7 +45,7 @@ router.post("/register", async (req, res) => {
   const cleaned = cleanProfile(profile);
   saveUser({ email, name: name ?? "", passwordHash, profile: cleaned, createdAt: new Date().toISOString() });
   const role = roleOf(email);
-  const token = jwt.sign({ email, role }, JWT_SECRET, { expiresIn: TOKEN_TTL });
+  const token = jwt.sign({ email, role }, jwtSecret(), { expiresIn: TOKEN_TTL });
   res.json({ token, email, name: name ?? "", profile: cleaned, role });
 });
 
@@ -52,7 +57,7 @@ router.post("/login", async (req, res) => {
   if (!ok) return res.status(401).json({ error: "email ou senha invalidos" });
   if (user.blocked) return res.status(403).json({ error: "essa conta esta bloqueada" });
   const role = roleOf(user.email, user);
-  const token = jwt.sign({ email: user.email, role }, JWT_SECRET, { expiresIn: TOKEN_TTL });
+  const token = jwt.sign({ email: user.email, role }, jwtSecret(), { expiresIn: TOKEN_TTL });
   res.json({ token, email: user.email, name: user.name ?? "", profile: user.profile ?? {}, role });
 });
 
@@ -61,7 +66,7 @@ export function requireAuth(req, res, next) {
   const token = header.startsWith("Bearer ") ? header.slice(7) : null;
   if (!token) return res.status(401).json({ error: "token ausente" });
   try {
-    req.user = jwt.verify(token, JWT_SECRET);
+    req.user = jwt.verify(token, jwtSecret());
     next();
   } catch {
     res.status(401).json({ error: "token invalido ou expirado" });
@@ -69,5 +74,5 @@ export function requireAuth(req, res, next) {
 }
 
 export function verifyToken(token) {
-  return jwt.verify(token, JWT_SECRET);
+  return jwt.verify(token, jwtSecret());
 }

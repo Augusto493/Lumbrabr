@@ -97,7 +97,14 @@ async function load() {
   renderShell();
 }
 
-const TABS = [["overview", "Visão geral"], ["users", "Usuários"], ["lessons", "Lições"], ["plans", "Planos"], ["payments", "Pagamentos"]];
+const TABS = [
+  ["overview", "Visão geral", "chart-line"],
+  ["users", "Usuários", "users"],
+  ["lessons", "Lições", "book-open"],
+  ["plans", "Planos", "credit-card"],
+  ["payments", "Pagamentos", "receipt"],
+  ["settings", "Configurações", "gear"],
+];
 
 function renderShell() {
   mount(`
@@ -109,12 +116,14 @@ function renderShell() {
         <button class="pill" id="logout">sair</button>
       </div>
     </header>
-    <nav class="tabs-nav">${TABS.map(([id, label]) => `<button class="tab-btn ${tab === id ? "on" : ""}" data-tab="${id}">${label}</button>`).join("")}</nav>
-    <div id="tabBody"></div>`);
+    <div class="admin-shell">
+      <nav class="side-nav">${TABS.map(([id, label, ic]) => `<button class="side-btn ${tab === id ? "on" : ""}" data-tab="${id}">${icon(ic, 18)}<span>${label}</span></button>`).join("")}</nav>
+      <main class="side-main" id="tabBody"></main>
+    </div>`);
   $("#refresh").onclick = load;
   $("#logout").onclick = () => { sessionStorage.removeItem("adminToken"); token = null; showLogin(); };
-  $$(".tab-btn").forEach((b) => (b.onclick = () => { tab = b.dataset.tab; sessionStorage.setItem("adminTab", tab); renderShell(); }));
-  ({ overview: renderOverview, users: renderUsers, lessons: renderLessons, plans: renderPlans, payments: renderPayments })[tab]();
+  $$(".side-btn").forEach((b) => (b.onclick = () => { tab = b.dataset.tab; sessionStorage.setItem("adminTab", tab); renderShell(); }));
+  ({ overview: renderOverview, users: renderUsers, lessons: renderLessons, plans: renderPlans, payments: renderPayments, settings: renderSettings })[tab]();
 }
 
 // ---------- visao geral ----------
@@ -341,7 +350,7 @@ function renderPayments() {
         <div><span class="kpi-label">ambiente</span><b>${esc(pix.environment)}</b></div>
         <div><span class="kpi-label">webhook</span><b class="${pix.webhook ? "ok" : "warn"}">${pix.webhook ? "PUBLIC_URL https ok" : "sem PUBLIC_URL — o app confere o pagamento por consulta"}</b></div>
       </div>
-      ${pix.configured ? "" : `<p class="muted" style="margin-top:10px">Pra ligar: crie o token em <b>PagBank → Vender online → Integrações</b> (sandbox pra testar), coloque em <code>PAGBANK_TOKEN</code> no <code>.env</code>, e <code>PAGBANK_ENV=production</code> quando for pra valer.</p>`}
+      ${pix.configured ? "" : `<p class="muted" style="margin-top:10px">Pra ligar: crie o token em <b>PagBank → Vender online → Integrações</b> (sandbox pra testar) e cole em <button class="link" id="goSettings">Configurações → Pagamento</button>.</p>`}
     </section>
     <section class="panel">
       <h2 class="title">Pedidos <span class="muted">(${data.orders.length})</span></h2>
@@ -352,6 +361,92 @@ function renderPayments() {
           <td class="mono">${fmtDate(o.paidAt)}</td></tr>`).join("") || `<tr><td colspan="6" class="muted">nenhum pedido ainda</td></tr>`}</tbody>
       </table></div>
     </section>`;
+  if ($("#goSettings")) $("#goSettings").onclick = () => { tab = "settings"; sessionStorage.setItem("adminTab", tab); renderShell(); };
+}
+
+// ---------- configuracoes ----------
+
+const GROUP_META = {
+  ia: { title: "Inteligência artificial (Gemini)", icon: "sliders-horizontal", desc: "Chave e modelos usados na conversa por voz e na geração de lições." },
+  acesso: { title: "Acesso ao painel", icon: "key", desc: "Quem consegue entrar em /admin." },
+  limites: { title: "Limites de uso", icon: "chart-line", desc: "Controla o quanto quem não paga pode conversar com a Mel." },
+  pagamento: { title: "Pagamento (Pix / PagBank)", icon: "credit-card", desc: "Credenciais pra gerar e confirmar cobranças por Pix." },
+  seguranca: { title: "Segurança", icon: "shield-check", desc: "Segredo usado para assinar as sessões de login." },
+};
+
+function applyNewToken(newToken) {
+  token = newToken;
+  if (sessionStorage.getItem("adminToken")) sessionStorage.setItem("adminToken", newToken);
+  else localStorage.setItem("token", JSON.stringify(newToken));
+}
+
+function fieldHtml(def) {
+  const id = `f_${def.key}`;
+  if (def.secret) {
+    return `<div class="field">
+      <label for="${id}">${esc(def.label)} ${def.hasValue ? `<span class="badge green">configurada</span>` : `<span class="badge red">não configurada</span>`}</label>
+      <input id="${id}" name="${def.key}" type="password" autocomplete="off" placeholder="${def.hasValue ? `•••• ${esc(def.hint)} — deixe em branco pra manter` : "cole o valor aqui"}" />
+      ${def.help ? `<small class="field-help">${esc(def.help)}</small>` : ""}
+    </div>`;
+  }
+  if (def.type === "select") {
+    return `<div class="field"><label for="${id}">${esc(def.label)}</label>
+      <select id="${id}" name="${def.key}">${def.options.map((o) => `<option value="${esc(o)}" ${def.value === o ? "selected" : ""}>${esc(o)}</option>`).join("")}</select>
+      ${def.help ? `<small class="field-help">${esc(def.help)}</small>` : ""}</div>`;
+  }
+  return `<div class="field"><label for="${id}">${esc(def.label)}</label>
+    <input id="${id}" name="${def.key}" type="${def.type === "number" ? "number" : def.type === "url" ? "url" : "text"}" ${def.min !== undefined ? `min="${def.min}"` : ""} value="${esc(def.value)}" placeholder="${def.default ? esc(def.default) : ""}" />
+    ${def.help ? `<small class="field-help">${esc(def.help)}</small>` : ""}</div>`;
+}
+
+async function renderSettings() {
+  $("#tabBody").innerHTML = `<p class="small">carregando…</p>`;
+  let payload;
+  try { payload = await api("GET", "/settings"); } catch (err) { $("#tabBody").innerHTML = `<p class="error">${esc(err.message)}</p>`; return; }
+
+  const up = payload.system.uptimeSeconds;
+  const uptime = up < 90 ? `${up}s` : up < 3600 ? `${Math.floor(up / 60)} min` : `${(up / 3600).toFixed(1)} h`;
+
+  $("#tabBody").innerHTML = `
+    ${Object.entries(payload.groups).map(([groupId, defs]) => {
+      const meta = GROUP_META[groupId] ?? { title: groupId, icon: "gear", desc: "" };
+      return `<section class="panel settings-panel">
+        <div class="settings-head">${icon(meta.icon, 20)}<div><h2 class="title">${esc(meta.title)}</h2><p class="muted">${esc(meta.desc)}</p></div></div>
+        <form class="settings-group" data-group="${groupId}">
+          ${defs.map(fieldHtml).join("")}
+          <div class="modal-actions"><button class="btn narrow" type="submit">salvar</button><span class="save-note" id="note_${groupId}"></span></div>
+        </form>
+      </section>`;
+    }).join("")}
+    <section class="panel">
+      <div class="settings-head">${icon("chart-line", 20)}<div><h2 class="title">Sistema</h2><p class="muted">Informação, não editável aqui.</p></div></div>
+      <div class="status-grid">
+        <div><span class="kpi-label">porta</span><b>${esc(payload.system.port)}</b></div>
+        <div><span class="kpi-label">node</span><b>${esc(payload.system.nodeVersion)}</b></div>
+        <div><span class="kpi-label">no ar há</span><b>${uptime}</b></div>
+        <div><span class="kpi-label">dados salvos em</span><b class="mono">${esc(payload.system.dataDir)}</b></div>
+      </div>
+    </section>`;
+
+  $$(".settings-group").forEach((form) => {
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const body = Object.fromEntries(new FormData(form).entries());
+      const note = $(`#note_${form.dataset.group}`);
+      note.textContent = "salvando…"; note.className = "save-note";
+      try {
+        const result = await api("PUT", "/settings", body);
+        if (result.token) applyNewToken(result.token);
+        note.textContent = result.changed.includes("JWT_SECRET") ? "salvo — sessão renovada" : "salvo";
+        note.className = "save-note ok";
+        toast("configurações salvas");
+        $$(`.settings-group[data-group="${form.dataset.group}"] input[type=password]`).forEach((i) => (i.value = ""));
+        setTimeout(() => renderSettings(), 400);
+      } catch (err) {
+        note.textContent = err.message; note.className = "save-note err";
+      }
+    };
+  });
 }
 
 token ? load() : showLogin();
