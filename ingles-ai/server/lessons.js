@@ -8,18 +8,40 @@ import { getUserProgress } from "./store.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LESSONS_DIR = path.join(__dirname, "..", "content", "lessons");
 
-export function listLessons() {
+export function listLessons(includeInactive = false) {
   const files = fs.readdirSync(LESSONS_DIR).filter((f) => f.endsWith(".json"));
   return files
     .map((f) => JSON.parse(fs.readFileSync(path.join(LESSONS_DIR, f), "utf-8")))
+    .filter((l) => includeInactive || l.active !== false)
     .sort((a, b) => a.id.localeCompare(b.id));
 }
 
 export function getLesson(id) {
-  const lessons = listLessons();
-  const lesson = lessons.find((l) => l.id === id);
+  const lesson = listLessons(true).find((l) => l.id === id);
   if (!lesson) throw new Error(`licao "${id}" nao encontrada`);
   return lesson;
+}
+
+function lessonFile(id) {
+  if (!/^[a-z0-9-]+$/.test(id)) throw new Error("id de licao invalido");
+  return path.join(LESSONS_DIR, `${id}.json`);
+}
+
+function slugify(text) {
+  return String(text).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
+}
+
+export function saveLesson(lesson) {
+  if (!lesson.id) {
+    const next = listLessons(true).reduce((max, l) => Math.max(max, Number(l.id.slice(0, 2)) || 0), -1) + 1;
+    lesson.id = `${String(next).padStart(2, "0")}-${slugify(lesson.title) || "licao"}`;
+  }
+  fs.writeFileSync(lessonFile(lesson.id), JSON.stringify(lesson, null, 2) + "\n");
+  return lesson;
+}
+
+export function deleteLesson(id) {
+  fs.unlinkSync(lessonFile(id));
 }
 
 const LEVEL_NOTES = {

@@ -15,8 +15,8 @@ export function isAdminEmail(email) {
   return ADMIN_EMAILS.includes(String(email ?? "").toLowerCase());
 }
 
-function roleOf(email) {
-  return isAdminEmail(email) ? "admin" : "user";
+export function roleOf(email, user = null) {
+  return isAdminEmail(email) || user?.role === "admin" ? "admin" : "user";
 }
 
 function cleanProfile(input) {
@@ -50,7 +50,8 @@ router.post("/login", async (req, res) => {
   if (!user) return res.status(401).json({ error: "email ou senha invalidos" });
   const ok = await bcrypt.compare(password ?? "", user.passwordHash);
   if (!ok) return res.status(401).json({ error: "email ou senha invalidos" });
-  const role = roleOf(user.email);
+  if (user.blocked) return res.status(403).json({ error: "essa conta esta bloqueada" });
+  const role = roleOf(user.email, user);
   const token = jwt.sign({ email: user.email, role }, JWT_SECRET, { expiresIn: TOKEN_TTL });
   res.json({ token, email: user.email, name: user.name ?? "", profile: user.profile ?? {}, role });
 });

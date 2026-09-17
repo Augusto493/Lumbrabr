@@ -52,6 +52,40 @@ conversa por lição, últimas sessões e o custo estimado de IA (R$ 0,07/min
 no tier pago). Os dados vêm de `data/users.json`, `data/progress.json` e
 `data/sessions.json` (cada conversa de voz é registrada ao terminar).
 
+O painel tem cinco abas: **visão geral** (KPIs, receita, custo de IA),
+**usuários** (editar nome, papel, nível/tom/trava, plano manual com data,
+nova senha, bloquear, excluir), **lições** (gerar com IA, publicar,
+esconder, excluir), **planos** (criar/editar/desativar) e **pagamentos**
+(status do Pix e pedidos).
+
+## Planos, limite diário e Pix
+
+- Cada plano define **minutos por dia** com a Mel, preço e duração em dias
+  (`data/plans.json`, editável no painel). Quem não assinou tem
+  `FREE_MINUTES_PER_DAY` (padrão 3). O servidor corta a sessão de voz
+  quando a cota do dia acaba e o app mostra os planos.
+- Pagamento por **Pix via PagBank (PagSeguro)**: o app pede nome, CPF e
+  celular (exigência da API), cria o pedido (`POST /orders` com
+  `charges[].payment_method.type = "PIX"`), mostra QR code + copia e cola
+  e consulta o status a cada 4 s. Com `PUBLIC_URL` https configurada, o
+  PagBank também avisa por webhook (`/api/pay/webhook`, assinatura SHA-256
+  conferida no header `x-authenticity-token`); em todo caso o status é
+  reconfirmado em `GET /orders/{id}` antes de liberar o plano.
+- Configuração no `.env`: `PAGBANK_TOKEN` (crie em PagBank → Vender online
+  → Integrações; use o token de **sandbox** pra testar) e `PAGBANK_ENV`
+  (`sandbox` ou `production`). Sem token, o app mostra os planos mas avisa
+  que o Pix ainda não está liberado.
+
+## Gerar lições com IA
+
+Na aba **lições** do painel: escolha o nível (A0–C1), um tema opcional e
+clique em *gerar lição*. O servidor pede ao Gemini (`GEMINI_TEXT_MODEL`,
+padrão `gemini-3.6-flash`) uma lição no formato exato das existentes, com
+um erro típico de brasileiro pra Mel caçar. Você vê a prévia e só
+**publica** se gostar — aí vira um arquivo em `content/lessons/` e
+aparece pros alunos. Lições podem ser escondidas (botão *visível*) ou
+excluídas.
+
 ## Currículo
 
 15 lições em `content/lessons/`, de A0 a C1, agrupadas na home por nível:

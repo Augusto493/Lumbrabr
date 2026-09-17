@@ -2,7 +2,8 @@ import { WebSocketServer } from "ws";
 import { GoogleGenAI, Modality } from "@google/genai";
 import { verifyToken } from "./auth.js";
 import { getLesson, buildSystemInstruction } from "./lessons.js";
-import { markLessonDone, findUserByEmail, logSession } from "./store.js";
+import { markLessonDone, findUserByEmail, logSession, minutesUsedToday } from "./store.js";
+import { entitlement } from "./pay.js";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const MODEL = process.env.GEMINI_LIVE_MODEL ?? "gemini-2.5-flash-native-audio-preview-12-2025";
@@ -37,8 +38,25 @@ export function attachVoiceServer(httpServer) {
 
     const account = findUserByEmail(user.email);
     const profile = account?.profile ?? {};
+    if (account?.blocked) {
+      safeSend(ws, { type: "error", message: "conta bloqueada" });
+      return ws.close();
+    }
+
+    // limite diario de minutos: plano ativo ou cota gratis
+    const ent = entitlement(account);
+    const remainingSec = Math.max(0, Math.round(ent.minutesPerDay * 60 - minutesUsedToday(user.email) * 60));
+    if (remainingSec < 20) {
+      safeSend(ws, { type: "limit", ...ent });
+      return ws.close();
+    }
+
     let geminiSession = null;
     let closedByClient = false;
+    const limiter = setTimeout(() => {
+      safeSend(ws, { type: "limit", ...ent });
+      ws.close();
+    }, remainingSec * 1000);
 
     try {
       geminiSession = await ai.live.connect({
@@ -108,6 +126,7 @@ export function attachVoiceServer(httpServer) {
     const startedAt = Date.now();
     ws.on("close", () => {
       closedByClient = true;
+      clearTimeout(limiter);
       geminiSession?.close();
       logSession({
         email: user.email,
