@@ -45,12 +45,24 @@ simples e a API do Gemini.
 ## Persona da Mel
 
 Definida em `buildSystemInstruction` (`server/lessons.js`): ensina
-principalmente em português, usa inglês só nas frases-alvo, é impaciente e
-debochada, solta palavrão leve quando o aluno erra ou trava — e tem limite
-explícito no prompt: nunca ataca aparência, inteligência, gênero, raça ou
-qualquer característica pessoal, e sempre entrega a frase certa depois da
-piada. Esse limite é o que mantém o app engraçado sem virar caso de
-banimento na loja.
+principalmente em português e usa inglês só nas frases-alvo. O aluno
+escolhe o modo no onboarding (pergunta "como você quer que eu fale com
+você?"), salvo em `profile.tone`:
+
+- **braba** (padrão): quando o aluno erra, ela xinga e debocha (porra,
+  caralho, seu preguiçoso…) e *imediatamente* repete a frase certa em inglês
+  e manda repetir; cobra quando ele foge pro português ou responde uma
+  palavra só; elogia de má vontade quando acerta.
+- **de boa**: mesma cara de poucos amigos, humor seco, sem palavrão.
+
+O prompt tem limite explícito nos dois modos: nunca ataca aparência, corpo,
+inteligência de verdade, gênero, raça, orientação, religião, sotaque ou
+deficiência, e baixa o tom se o aluno mostrar que está mal. Esse limite é o
+que mantém o app engraçado sem virar caso de banimento na loja.
+
+Quando a Mel dita uma frase, ela usa o formato `Diz: <inglês>. Em
+português: <tradução>.` — o app detecta isso na transcrição e mostra o card
+"o que responder" na tela de conversa.
 
 ## Rodando local
 

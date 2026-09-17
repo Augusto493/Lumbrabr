@@ -24,7 +24,10 @@ const state = {
   nextPlaybackTime: 0,
   recording: false,
   moodTimer: null,
-  lastLine: null,
+  timer: null,
+  startedAt: 0,
+  turn: null,
+  studentLine: null,
 };
 
 // ---------- conteudo do onboarding ----------
@@ -68,14 +71,23 @@ const QUESTIONS = [
       { v: "falta_gente", icon: "users", t: "Não tenho com quem praticar" },
     ],
   },
+  {
+    id: "tone",
+    q: "Última: como você quer que eu fale com você?",
+    hint: "Dá pra mudar depois. Mas você não vai.",
+    opts: [
+      { v: "braba", mascot: "grumpy", t: "Braba", d: "Cobra, fica puta e fala palavrão. Pega no seu pé até você falar." },
+      { v: "deboa", mascot: "happy", t: "De boa", d: "Sem xingar. Espera você tentar de novo, quantas vezes precisar." },
+    ],
+  },
 ];
 
 const WEEKS_BY_LEVEL = { zero: 16, basico: 12, simples: 8, variado: 5, fluente: 3 };
 const GOAL_BY_BLOCKER = {
-  vergonha: "falar sem aquele medo de errar",
-  congelo: "responder sem travar",
-  nao_sei: "saber exatamente o que praticar",
-  falta_gente: "ter com quem conversar todo dia",
+  vergonha: "fala sem aquele medo de errar",
+  congelo: "responde sem travar",
+  nao_sei: "sabe exatamente o que praticar",
+  falta_gente: "tem com quem conversar todo dia",
 };
 
 const GREETINGS = [
@@ -98,6 +110,10 @@ function esc(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
+function fmt(raw) {
+  return esc(raw).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\*/g, "");
+}
+
 function authHeaders() {
   return { Authorization: `Bearer ${state.token}` };
 }
@@ -108,6 +124,15 @@ function logout() {
   state.token = null;
   state.name = "";
   goAuth("login");
+}
+
+function projection() {
+  const a = state.onboarding;
+  const weeks = WEEKS_BY_LEVEL[a.level] ?? 8;
+  const date = new Date();
+  date.setDate(date.getDate() + weeks * 7);
+  const dateLabel = date.toLocaleDateString("pt-BR", { day: "numeric", month: "long" }).toUpperCase();
+  return { weeks, dateLabel, goal: GOAL_BY_BLOCKER[a.blocker] ?? "conversa sem travar" };
 }
 
 // ---------- intro (3 slides) ----------
@@ -197,6 +222,7 @@ function goProof() {
 // ---------- perguntas ----------
 
 function optionIcon(opt) {
+  if (opt.mascot) return `<span data-mascot="40" data-mood="${opt.mascot}"></span>`;
   if (opt.icon) return icon(opt.icon, 22);
   const bars = [0, 1, 2, 3].map((i) => `<i class="${i < opt.bars ? "on" : ""}" style="height:${6 + i * 4}px"></i>`).join("");
   return `<span class="levelbars">${bars}</span>`;
@@ -215,7 +241,7 @@ function goQuestion(index) {
           <div class="bubble">${esc(q.q)}</div>
         </div>
         <div id="opts">
-          ${q.opts.map((o) => `<button class="opt ${o.v === selected ? "on" : ""}" data-v="${o.v}"><span class="ic">${optionIcon(o)}</span><span>${esc(o.t)}</span></button>`).join("")}
+          ${q.opts.map((o) => `<button class="opt ${o.v === selected ? "on" : ""}" data-v="${o.v}"><span class="ic ${o.mascot ? "big" : ""}">${optionIcon(o)}</span><span>${esc(o.t)}${o.d ? `<small>${esc(o.d)}</small>` : ""}</span></button>`).join("")}
         </div>
         ${q.hint ? `<p class="hint">${esc(q.hint)}</p>` : ""}
       </div>
@@ -238,13 +264,10 @@ function goQuestion(index) {
   };
 }
 
-// ---------- plano ----------
+// ---------- plano / previsao / compromisso ----------
 
 function goPlan() {
-  const a = state.onboarding;
-  const weeks = WEEKS_BY_LEVEL[a.level] ?? 8;
-  const goal = GOAL_BY_BLOCKER[a.blocker] ?? "conversar sem travar";
-  state.onboarding = { ...a, done: true };
+  state.onboarding = { ...state.onboarding, done: true };
   store.set("onboarding", state.onboarding);
   render(`
     <section class="screen">
@@ -258,15 +281,55 @@ function goPlan() {
           <div class="step"><span class="n">02</span><div><b>Conversa livre</b><span>3 min — você fala, ela corrige (e reclama)</span></div></div>
           <div class="step"><span class="n">03</span><div><b>Revisão</b><span>1 min — o que ficou, o que voltou</span></div></div>
         </div>
-        <p class="arrival">Em <em>${weeks} semanas</em> você vai ${esc(goal)}.</p>
       </div>
       <div class="screen-foot">
-        <button class="btn" id="next">${icon("arrow-right", 18)} criar minha conta</button>
-        <p class="small">já tem conta? <button class="link" id="toLogin">entrar</button></p>
+        <button class="btn" id="next">${icon("arrow-right", 18)} ver minha previsão</button>
       </div>
     </section>`);
-  $("#next").onclick = () => goAuth("register");
+  $("#next").onclick = goProjection;
+}
+
+function goProjection() {
+  const { dateLabel, goal } = projection();
+  render(`
+    <section class="screen">
+      <div class="screen-body">
+        <div data-mascot="110" data-mood="happy" style="margin-bottom:18px"></div>
+        <h2 class="title" style="max-width:320px">Se você mantiver 5 min por dia, em <span class="mono-date">${esc(dateLabel)}</span> você ${esc(goal)}.</h2>
+        <div class="chart">
+          <p class="eyebrow" style="text-align:left;margin:0 0 6px">confiança pra falar</p>
+          <svg viewBox="0 0 300 120" preserveAspectRatio="none" aria-hidden="true">
+            <path class="grid" d="M0 20H300M0 50H300M0 80H300M0 110H300"/>
+            <path class="curve" d="M4 112 C 80 108, 120 48, 190 26 S 270 12, 296 10"/>
+            <circle cx="296" cy="10" r="4.5"/>
+          </svg>
+          <div class="axis"><span>hoje</span><span>${esc(dateLabel)}</span></div>
+        </div>
+      </div>
+      <div class="screen-foot">
+        <button class="btn" id="next">${icon("arrow-right", 18)} continuar</button>
+      </div>
+    </section>`);
+  $("#next").onclick = goCommit;
+}
+
+function goCommit() {
+  render(`
+    <section class="screen">
+      <div class="screen-body">
+        <div class="orbit"><span class="glow-bg"></span><button class="tap" id="commit" aria-label="tocar na Mel"><div data-mascot="215" data-mood="neutral"></div></button></div>
+        <div class="bubble bubble-top">Topa falar comigo 5 minutos por dia, 5 dias por semana?</div>
+        <p class="sub" style="margin-top:16px">Sem meta, sem nota. Só aparecer e falar comigo.</p>
+        <p class="hint" id="commitHint" style="margin-top:22px">toque na Mel pra se comprometer</p>
+      </div>
+      <div class="screen-foot"><p class="small">já tem conta? <button class="link" id="toLogin">entrar</button></p></div>
+    </section>`);
   $("#toLogin").onclick = () => goAuth("login");
+  $("#commit").onclick = () => {
+    Mascot.setMood($("#commit .mascot"), "happy");
+    $("#commitHint").textContent = "fechado. agora não tem volta.";
+    setTimeout(() => goAuth("register"), 1000);
+  };
 }
 
 // ---------- conta ----------
@@ -307,8 +370,8 @@ function goAuth(mode) {
     e.preventDefault();
     const body = Object.fromEntries(new FormData(e.target).entries());
     if (!isLogin) {
-      const { voiceMode, level, blocker } = state.onboarding;
-      body.profile = { voiceMode, level, blocker };
+      const { voiceMode, level, blocker, tone } = state.onboarding;
+      body.profile = { voiceMode, level, blocker, tone };
     }
     $("#err").textContent = "";
     try {
@@ -367,26 +430,46 @@ async function openLesson(lessonId) {
   const res = await fetch(`/api/lessons/${lessonId}`, { headers: authHeaders() });
   if (res.status === 401) return logout();
   state.currentLesson = await res.json();
+  const index = Math.max(0, state.lessons.findIndex((l) => l.id === lessonId));
 
   render(`
-    <section class="screen">
+    <section class="screen talk">
       <div class="talk-head">
         <button class="iconbtn" id="back" aria-label="voltar">${icon("arrow-left", 20)}</button>
-        <span class="t">${esc(state.currentLesson.title)}</span>
+        <span class="t">conversa ${index + 1} — ${esc(state.currentLesson.title)}</span>
+        <span class="timer" id="timer">0:00</span>
       </div>
-      <div class="stage-wrap"><div id="stage" data-mascot="190" data-mood="grumpy"></div></div>
+      <div class="stage-wrap"><div id="stage" data-mascot="150" data-mood="grumpy"></div></div>
       <p class="status" id="status">conectando…</p>
-      <div class="transcript" id="transcript"></div>
-      <div class="btn-row">
-        <button class="btn mic" id="mic">${icon("microphone", 18)} Falar</button>
-        <button class="btn btn-ghost narrow" id="end">Encerrar</button>
+      <div class="say-wrap">
+        <p class="eyebrow left">mel</p>
+        <div class="say" id="say"><span class="muted">…</span></div>
+      </div>
+      <div class="transcript compact" id="transcript"></div>
+      <div class="answer hidden" id="answer">
+        <p class="eyebrow">o que responder</p>
+        <div class="answer-en" id="answerEn"></div>
+        <div class="answer-pt" id="answerPt"></div>
+      </div>
+      <div class="mic-wrap">
+        <button class="micbtn" id="mic" aria-label="falar">${icon("microphone", 26)}</button>
+        <p class="hint" id="micHint">toque para falar</p>
+        <button class="link small" id="end">encerrar lição</button>
       </div>
     </section>`);
 
   $("#back").onclick = () => goHome();
   $("#end").onclick = () => { state.ws?.send(JSON.stringify({ type: "lessonDone" })); goHome(); };
   $("#mic").onclick = () => (state.recording ? stopRecording() : startRecording());
-  state.lastLine = null;
+
+  state.turn = null;
+  state.studentLine = null;
+  state.startedAt = Date.now();
+  state.timer = setInterval(() => {
+    const s = Math.floor((Date.now() - state.startedAt) / 1000);
+    const el = $("#timer");
+    if (el) el.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  }, 1000);
   connectVoiceSession(lessonId);
 }
 
@@ -410,46 +493,95 @@ function connectVoiceSession(lessonId) {
   ws.onmessage = (event) => {
     const msg = JSON.parse(event.data);
     if (msg.type === "ready") {
-      setStatus("ao vivo — aperte falar quando quiser responder", "live");
+      setStatus("ao vivo", "live");
     } else if (msg.type === "audio") {
       playAudioChunk(msg.data);
     } else if (msg.type === "transcript") {
-      addTranscript(msg.role, msg.text);
+      msg.role === "tutora" ? tutorSaid(msg.text) : studentSaid(msg.text);
     } else if (msg.type === "turnComplete") {
-      if (state.lastLine?.role === "tutora") state.lastLine = null;
+      if (state.turn) state.turn.done = true;
     } else if (msg.type === "error") {
       setStatus(msg.message, "err");
-      addTranscript("sys", msg.message);
+      pushHistory("sys", msg.message);
     }
   };
   ws.onclose = () => { if (state.ws === ws) setStatus("desconectado"); };
 }
 
-// a transcricao chega em pedacos; junta na mesma bolha ate a fala terminar
-function addTranscript(role, text) {
+// a transcricao chega em pedacos: a fala atual da Mel fica no card grande,
+// a anterior desce pro historico compacto
+function tutorSaid(text) {
+  if (!state.turn || state.turn.done) {
+    if (state.turn) pushHistory("tutora", state.turn.raw);
+    state.turn = { raw: "", done: false };
+    state.studentLine = null;
+  }
+  state.turn.raw += text;
+  const say = $("#say");
+  if (say) say.innerHTML = fmt(state.turn.raw);
+  updateAnswer(parseDictation(state.turn.raw));
+}
+
+function studentSaid(text) {
   const box = $("#transcript");
   if (!box) return;
-  if (role !== "sys" && state.lastLine?.role === role) {
-    state.lastLine.raw += text;
-    state.lastLine.el.innerHTML = fmt(state.lastLine.raw);
+  if (state.studentLine) {
+    state.studentLine.raw += text;
+    state.studentLine.el.textContent = state.studentLine.raw;
   } else {
-    const div = document.createElement("div");
-    div.className = `line ${role}`;
-    div.innerHTML = fmt(text);
-    box.appendChild(div);
-    state.lastLine = role === "sys" ? null : { role, el: div, raw: text };
+    const el = document.createElement("div");
+    el.className = "line aluno";
+    el.textContent = text;
+    box.appendChild(el);
+    state.studentLine = { el, raw: text };
   }
+  box.classList.add("has");
   box.scrollTop = box.scrollHeight;
 }
 
-function fmt(raw) {
-  return esc(raw).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\*/g, "");
+function pushHistory(role, text) {
+  const box = $("#transcript");
+  if (!box || !text) return;
+  const el = document.createElement("div");
+  el.className = `line ${role}`;
+  el.innerHTML = fmt(text);
+  box.appendChild(el);
+  box.classList.add("has");
+  box.scrollTop = box.scrollHeight;
+}
+
+// "Diz: <frase em ingles>. Em portugues: <traducao>." -> card "o que responder"
+function parseDictation(raw) {
+  const idx = raw.search(/\bdiz\s*:/i);
+  if (idx < 0) return null;
+  let rest = raw.slice(idx).replace(/^diz\s*:\s*/i, "").replace(/\*/g, "");
+  let pt = "";
+  const split = rest.match(/^(.*?)\s*(?:\.\s*)?em\s+portugu[eê]s\s*:\s*(.*)$/i);
+  if (split) {
+    rest = split[1];
+    // a traducao tem o mesmo numero de frases que o ingles; o resto e a Mel continuando a falar
+    const sentences = Math.max(1, (rest.match(/[.!?](?=\s|$)/g) || []).length);
+    pt = split[2].split(/(?<=[.!?])\s/).slice(0, sentences).join(" ");
+  }
+  else { const paren = rest.match(/^(.*?)\s*\((.+?)\)/); if (paren) { rest = paren[1]; pt = paren[2]; } }
+  rest = rest.replace(/^["“«']+|["”»']+$/g, "").trim();
+  return rest ? { en: rest, pt: pt.trim() } : null;
+}
+
+function updateAnswer(d) {
+  const card = $("#answer");
+  if (!card) return;
+  if (!d) { card.classList.add("hidden"); return; }
+  card.classList.remove("hidden");
+  $("#answerEn").textContent = d.en;
+  $("#answerPt").textContent = d.pt;
 }
 
 function stopVoiceSession() {
   stopRecording();
   if (state.ws) { const ws = state.ws; state.ws = null; ws.close(); }
   clearTimeout(state.moodTimer);
+  clearInterval(state.timer);
 }
 
 // captura o microfone, faz downsample para 16kHz mono PCM16 e envia via WebSocket
@@ -473,9 +605,10 @@ async function startRecording() {
   state.processorNode.connect(state.audioCtx.destination);
 
   state.recording = true;
-  state.lastLine = null;
-  const mic = $("#mic");
-  if (mic) { mic.innerHTML = `${icon("microphone", 18)} Parar`; mic.classList.add("on"); }
+  state.studentLine = null;
+  $("#mic")?.classList.add("on");
+  const hint = $("#micHint");
+  if (hint) hint.textContent = "toque quando terminar";
   setMood("listening");
   setStatus("ouvindo — pode falar, ela responde sozinha", "live");
 }
@@ -487,8 +620,9 @@ function stopRecording() {
   state.micStream?.getTracks().forEach((t) => t.stop());
   state.ws?.send(JSON.stringify({ type: "audioStreamEnd" }));
   state.recording = false;
-  const mic = $("#mic");
-  if (mic) { mic.innerHTML = `${icon("microphone", 18)} Falar`; mic.classList.remove("on"); }
+  $("#mic")?.classList.remove("on");
+  const hint = $("#micHint");
+  if (hint) hint.textContent = "toque para falar";
   setMood("grumpy");
   setStatus("a Mel está pensando…", "live");
 }
@@ -552,7 +686,7 @@ function playAudioChunk(base64) {
   clearTimeout(state.moodTimer);
   state.moodTimer = setTimeout(() => {
     setMood(state.recording ? "listening" : "grumpy");
-    if (!state.recording) setStatus("sua vez — aperte falar", "live");
+    if (!state.recording) setStatus("sua vez", "live");
   }, (state.nextPlaybackTime - ctx.currentTime) * 1000 + 150);
 }
 

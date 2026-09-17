@@ -8,7 +8,7 @@ const TOKEN_TTL = "30d";
 
 export const router = express.Router();
 
-const PROFILE_KEYS = ["voiceMode", "level", "blocker"];
+const PROFILE_KEYS = ["voiceMode", "level", "blocker", "tone"];
 
 function cleanProfile(input) {
   const profile = {};

@@ -117,6 +117,7 @@ h2.title { font: 600 24px/1.16 var(--font-disp); letter-spacing: -0.02em; margin
 .opt:hover { border-color: rgba(255, 255, 255, 0.3); }
 .opt.on { border-color: #fff; background: #1c1c1c; }
 .opt .ic { width: 26px; color: var(--ink-2); display: grid; place-items: center; flex: 0 0 auto; }
+.opt small { display: block; font: 400 13px/1.35 var(--font-body); color: var(--ink-2); margin-top: 3px; }
 .opt.on .ic { color: var(--ink); }
 .levelbars { display: inline-flex; gap: 2px; align-items: flex-end; height: 18px; }
 .levelbars i { width: 4px; background: rgba(255, 255, 255, 0.22); border-radius: 1px; }
@@ -276,6 +277,65 @@ h2.title { font: 600 24px/1.16 var(--font-disp); letter-spacing: -0.02em; margin
   position: absolute; inset: -30px; border-radius: 50%; z-index: -1;
   background: radial-gradient(circle, rgba(var(--mascot-rgb), 0.14), rgba(var(--mascot-rgb), 0) 62%);
 }
+
+/* ---------- previsao / compromisso ---------- */
+.mono-date { font: 500 0.82em var(--font-mono); letter-spacing: 0.06em; }
+.chart {
+  width: 100%; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 14px 16px 12px; margin-top: 22px;
+}
+.chart svg { width: 100%; height: 120px; display: block; }
+.chart .grid { stroke: rgba(255, 255, 255, 0.12); stroke-width: 1; stroke-dasharray: 2 5; fill: none; }
+.chart .curve { stroke: #fff; stroke-width: 3; fill: none; stroke-linecap: round; }
+.chart circle { fill: #fff; }
+.chart .axis { display: flex; justify-content: space-between; margin-top: 8px; font: 500 10px var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+.chart .axis span:last-child { color: var(--ink); }
+.tap { background: none; border: 0; padding: 0; cursor: pointer; display: block; }
+.tap:active .mascot { transform: scale(0.96); }
+.bubble-top { margin-top: 0; text-align: left; }
+.bubble-top::before { left: 50%; top: -7px; transform: translateX(-50%) rotate(135deg); }
+.opt .ic.big { width: 44px; }
+
+/* ---------- conversa (layout novo) ---------- */
+.talk .talk-head .t { font: 500 11px var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+.talk .timer { font: 500 11px var(--font-mono); letter-spacing: 0.08em; color: var(--ink-2); flex: 0 0 auto; }
+.talk .stage-wrap { padding: 6px 0 2px; }
+.say-wrap { margin-top: 10px; }
+.eyebrow.left { text-align: left; margin: 0 0 6px 2px; }
+.say {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 12px 14px; font: 400 16px/1.45 var(--font-body); min-height: 48px; position: relative;
+}
+.say::before {
+  content: ""; position: absolute; left: 22px; top: -7px; width: 12px; height: 12px;
+  background: var(--card); border-left: 1px solid var(--line); border-top: 1px solid var(--line); transform: rotate(45deg);
+}
+.say .muted { color: var(--ink-3); }
+.transcript.compact {
+  flex: 0 0 auto; min-height: 0; max-height: 0; padding: 0 10px; margin: 0; border: 0; overflow: hidden;
+  background: transparent; transition: max-height 0.25s, padding 0.25s, margin 0.25s;
+}
+.transcript.compact.has { max-height: 96px; padding: 8px 10px; margin: 8px 0 0; overflow-y: auto; border: 1px solid var(--line); background: var(--card-2); }
+.transcript.compact .line { font-size: 12.5px; padding: 6px 10px; max-width: 92%; }
+.answer {
+  margin-top: auto; padding: 14px 16px 16px; background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); text-align: center;
+}
+.answer .eyebrow { margin: 0 0 6px; }
+.answer-en { font: 700 22px/1.2 var(--font-disp); letter-spacing: -0.01em; }
+.answer-pt { font: 400 13.5px var(--font-body); color: var(--ink-2); margin-top: 4px; min-height: 1em; }
+.answer.hidden + .mic-wrap { margin-top: auto; }
+.mic-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 16px; }
+.micbtn {
+  width: 72px; height: 72px; border-radius: 50%; border: 0; background: #fff; color: var(--bg);
+  display: grid; place-items: center; cursor: pointer; box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.08s ease, box-shadow 0.3s ease;
+}
+.micbtn:active { transform: scale(0.95); }
+.micbtn.on { background: var(--danger); color: #fff; animation: mic-pulse 1.4s ease-out infinite; }
+@keyframes mic-pulse { 0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.5); } 100% { box-shadow: 0 0 0 18px rgba(248, 113, 113, 0); } }
+.mic-wrap .hint { margin: 0; }
+.mic-wrap .link { font: 500 12px var(--font-body); color: var(--ink-3); text-decoration: underline; background: none; border: 0; cursor: pointer; margin-top: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
   .m-drift, .m-sway, .m-bob, .m-ring, .m-halo, .m-orb, .m-eye, .orbit .fl { animation: none !important; }
