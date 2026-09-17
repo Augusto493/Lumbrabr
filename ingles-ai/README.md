@@ -24,6 +24,46 @@ simples e a API do Gemini.
 - **Conteúdo**: lições em JSON em `content/lessons/` (aquecimento → conversa
   livre → revisão). Lição nova = arquivo novo, sem tocar em código.
 
+## Voz da Mel nas telas de entrada
+
+As telas de intro, perguntas, plano e login tocam clipes pré-gerados na voz
+da Mel (`public/audio/*.wav`), com botão de som no topo (a escolha fica
+salva). O navegador bloqueia autoplay antes do primeiro toque, então na
+primeira tela aparece "toque pra me ouvir" sobre a Mel.
+
+Pra regenerar os clipes (ou mudar as falas em `LINES`):
+
+```bash
+node scripts/gerar-audio.mjs            # todos
+node scripts/gerar-audio.mjs intro1 login   # só alguns
+```
+
+Usa a mesma Gemini Live API do app, então gasta o mesmo free tier — o
+script espera 7 s entre clipes por causa do limite por minuto.
+
+## Painel admin
+
+`/admin` — protegido pela senha `ADMIN_PASSWORD` do `.env`. Mostra usuários
+(nível, tom, o que trava, lições, minutos, último acesso), minutos de
+conversa por lição, últimas sessões e o custo estimado de IA (R$ 0,07/min
+no tier pago). Os dados vêm de `data/users.json`, `data/progress.json` e
+`data/sessions.json` (cada conversa de voz é registrada ao terminar).
+
+## Currículo
+
+15 lições em `content/lessons/`, de A0 a C1, agrupadas na home por nível:
+
+- **Iniciante (A0–A1)**: primeira conversa guiada, se apresentar, small
+  talk, pedir comida
+- **Básico (A2)**: there is/have, preposições de tempo, perguntas com do,
+  contar o que aconteceu
+- **Intermediário (B1)**: present perfect, falsos amigos, dar opinião
+- **Avançado (B2–C1)**: entrevista de emprego, hipóteses (e se…), contar
+  uma história, negociar e convencer
+
+Cada lição é um JSON com `focus`, `warmup` (instrução + frases-alvo com
+tradução), `freeConversation` e `review` — a Mel recebe isso como roteiro.
+
 ## Fluxo do app
 
 1. **Intro** (3 slides) → **prova social** → **3 perguntas** (como prefere

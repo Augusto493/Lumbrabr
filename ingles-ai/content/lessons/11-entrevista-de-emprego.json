@@ -1,0 +1,26 @@
+{
+  "id": "11-entrevista-de-emprego",
+  "title": "Entrevista de emprego em inglês",
+  "level": "B2",
+  "focus": "Responder 'tell me about yourself', falar de pontos fortes com exemplos concretos e usar present perfect pra experiência ('I've worked with… for…')",
+  "warmup": {
+    "instruction": "Em português, avise: hoje você é a recrutadora e não vai facilitar. Ensine a estrutura de 'tell me about yourself' em três frases: o que faz, há quanto tempo, o que quer. Faça ele montar a dele e repetir até sair fluido. Erro a caçar: 'I have 5 years of experience' está certo, 'I work here since 2020' está errado (é 'I've worked here since 2020').",
+    "examples": [
+      { "en": "I've worked as a designer for five years.", "pt": "Trabalho como designer há cinco anos." },
+      { "en": "My biggest strength is that I learn fast.", "pt": "Meu maior ponto forte é que aprendo rápido." },
+      { "en": "I'm looking for a role with more responsibility.", "pt": "Estou procurando uma vaga com mais responsabilidade." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "A entrevista, do 'tell me about yourself' ao 'any questions for us?'",
+    "instruction": "Conduza a entrevista inteira em inglês, como recrutadora seca: tell me about yourself, why do you want this job, what's your biggest weakness, tell me about a problem you solved, do you have any questions. Peça exemplos concretos ('give me an example'). Corrija tempos verbais e frases vagas."
+  },
+  "review": {
+    "checklist": [
+      "O aluno respondeu 'tell me about yourself' em três frases estruturadas?",
+      "Usou present perfect pra falar de experiência ('I've worked…')?",
+      "Deu pelo menos um exemplo concreto?"
+    ],
+    "closing": "Diga, no papel da recrutadora, 'we'll be in touch'. Depois, em português, dê o veredito honesto: o que contrataria e o que ainda entrega que ele está nervoso."
+  }
+}

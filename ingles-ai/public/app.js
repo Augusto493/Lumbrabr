@@ -33,14 +33,14 @@ const state = {
 // ---------- conteudo do onboarding ----------
 
 const SLIDES = [
-  { orbit: "icons", mood: "grumpy", h: "Oi. Eu sou a Mel.", p: "A professora de inglês que não tem paciência nenhuma — mas que faz você falar." },
-  { orbit: "flags", mood: "neutral", h: "3 minutos por dia de conversa. Sem enrolação.", p: "" },
-  { orbit: "glow", mood: "happy", tag: "🇧🇷 BRASIL", h: "Sua professora de IA particular.", p: "Disponível a qualquer hora, em qualquer lugar. Mal-humorada em todos eles." },
+  { orbit: "icons", mood: "grumpy", clip: "intro1", h: "Oi. Eu sou a Mel.", p: "A professora de inglês que não tem paciência nenhuma — mas que faz você falar." },
+  { orbit: "flags", mood: "neutral", clip: "intro2", h: "3 minutos por dia de conversa. Sem enrolação.", p: "" },
+  { orbit: "glow", mood: "happy", clip: "intro3", tag: "🇧🇷 BRASIL", h: "Sua professora de IA particular.", p: "Disponível a qualquer hora, em qualquer lugar. Mal-humorada em todos eles." },
 ];
 
 const QUESTIONS = [
   {
-    id: "voiceMode",
+    id: "voiceMode", clip: "q_voice",
     q: "Antes de começar: como você prefere me ouvir?",
     hint: "Você pode mudar isso depois.",
     opts: [
@@ -49,7 +49,7 @@ const QUESTIONS = [
     ],
   },
   {
-    id: "level",
+    id: "level", clip: "q_level",
     eyebrow: (a) => (a.voiceMode === "exercicios" ? "voz só nos exercícios" : "voz em tudo"),
     q: "Quanto você entende de inglês?",
     opts: [
@@ -61,7 +61,7 @@ const QUESTIONS = [
     ],
   },
   {
-    id: "blocker",
+    id: "blocker", clip: "q_blocker",
     q: "E o que mais te trava na hora de falar?",
     hint: "Sem julgamento. Ok, um pouco.",
     opts: [
@@ -72,7 +72,7 @@ const QUESTIONS = [
     ],
   },
   {
-    id: "tone",
+    id: "tone", clip: "q_tone",
     q: "Última: como você quer que eu fale com você?",
     hint: "Dá pra mudar depois. Mas você não vai.",
     opts: [
@@ -97,13 +97,78 @@ const GREETINGS = [
   "Tá esperando o quê? Convite formal? Clica numa lição.",
 ];
 
+const LEVEL_GROUPS = [
+  { label: "Iniciante", tag: "A0 – A1", levels: ["A0", "A1"] },
+  { label: "Básico", tag: "A2", levels: ["A2"] },
+  { label: "Intermediário", tag: "B1", levels: ["B1"] },
+  { label: "Avançado", tag: "B2 – C1", levels: ["B2", "C1"] },
+];
+
+// ---------- voz da Mel nas telas de entrada (clipes pre-gerados) ----------
+
+const voice = {
+  on: store.get("voiceOn", true),
+  el: null,
+  play(name) {
+    if (!this.on || !name) return Promise.resolve();
+    this.stop();
+    const el = (this.el ||= new Audio());
+    el.src = `/audio/${name}.wav`;
+    el.onplay = () => setAllMoods("talking");
+    el.onended = el.onpause = () => setAllMoods(null);
+    return el.play();
+  },
+  stop() {
+    if (this.el) { this.el.onended = this.el.onpause = null; this.el.pause(); }
+    setAllMoods(null);
+  },
+  toggle() {
+    this.on = !this.on;
+    store.set("voiceOn", this.on);
+    if (!this.on) this.stop();
+    $$("#voiceBtn").forEach(renderVoiceBtn);
+  },
+};
+
+function setAllMoods(mood) {
+  $$(".mascot[data-base]").forEach((el) => Mascot.setMood(el, mood ?? el.dataset.base));
+}
+
+function renderVoiceBtn(btn) {
+  btn.innerHTML = icon(voice.on ? "speaker-high" : "speaker-low", 20);
+  btn.classList.toggle("muted", !voice.on);
+  btn.title = voice.on ? "silenciar a Mel" : "ouvir a Mel";
+}
+
+function topMini(kind) {
+  return `<div class="topmini ${kind === "intro" ? "" : "center"}">
+    <button class="iconbtn" id="voiceBtn" aria-label="som"></button>
+    ${kind === "intro" ? `<button class="pill" id="toLoginTop">Entrar</button>` : ""}
+  </div>`;
+}
+
 // ---------- infra de render ----------
 
-function render(html) {
+function render(html, clip) {
   stopVoiceSession();
+  voice.stop();
   app.innerHTML = html;
-  $$("[data-mascot]").forEach((el) => Mascot.build(el, { size: Number(el.dataset.mascot), mood: el.dataset.mood || "grumpy" }));
+  $$("[data-mascot]").forEach((el) => {
+    Mascot.build(el, { size: Number(el.dataset.mascot), mood: el.dataset.mood || "grumpy" });
+    el.dataset.base = el.dataset.mood || "grumpy";
+  });
+  $$("#voiceBtn").forEach((btn) => { renderVoiceBtn(btn); btn.onclick = () => voice.toggle(); });
+  if ($("#toLoginTop")) $("#toLoginTop").onclick = () => goAuth("login");
   window.scrollTo(0, 0);
+  if (clip) {
+    voice.play(clip).catch(() => {
+      // autoplay bloqueado ate o primeiro toque: mostra o convite e deixa a Mel tocavel
+      const hint = $("#tapHint");
+      if (hint) hint.hidden = false;
+    });
+  }
+  const tappable = $("[data-clip]");
+  if (tappable) tappable.onclick = () => { $("#tapHint") && ($("#tapHint").hidden = true); voice.play(tappable.dataset.clip).catch(() => {}); };
 }
 
 function esc(s) {
@@ -147,7 +212,7 @@ const ORBIT_FLAGS = [
   ["🇪🇸", "86%", "50%"], ["🇯🇵", "12%", "82%"], ["🇬🇧", "27%", "94%"], ["🇮🇹", "72%", "82%"],
 ];
 
-function orbitHtml(kind, mood) {
+function orbitHtml(kind, mood, clip) {
   let extras = "";
   if (kind === "icons") {
     extras = ORBIT_ICONS.map(([name, size, left, top]) => `<span class="fl" style="left:${left};top:${top}">${icon(name, size)}</span>`).join("");
@@ -156,15 +221,19 @@ function orbitHtml(kind, mood) {
   } else {
     extras = `<span class="glow-bg"></span>`;
   }
-  return `<div class="orbit">${extras}<div data-mascot="215" data-mood="${mood}"></div></div>`;
+  return `<div class="orbit">${extras}
+    <button class="tap" data-clip="${clip}" aria-label="ouvir a Mel"><div data-mascot="215" data-mood="${mood}"></div></button>
+    <span class="tap-hint" id="tapHint" hidden>toque pra me ouvir</span>
+  </div>`;
 }
 
 function goIntro(index = 0) {
   const s = SLIDES[index];
   render(`
     <section class="screen">
+      ${topMini("intro")}
       <div class="screen-body">
-        ${orbitHtml(s.orbit, s.mood)}
+        ${orbitHtml(s.orbit, s.mood, s.clip)}
         ${s.tag ? `<span class="tag" style="margin-bottom:16px">${s.tag}</span>` : ""}
         <h1 class="hero">${esc(s.h)}</h1>
         ${s.p ? `<p class="sub">${esc(s.p)}</p>` : ""}
@@ -174,7 +243,7 @@ function goIntro(index = 0) {
         <button class="btn" id="next">${icon("arrow-right", 18)} continuar</button>
         <p class="small">já tem conta? <button class="link" id="toLogin">entrar</button></p>
       </div>
-    </section>`);
+    </section>`, s.clip);
   $("#next").onclick = () => (index + 1 < SLIDES.length ? goIntro(index + 1) : goProof());
   $("#toLogin").onclick = () => goAuth("login");
 }
@@ -190,6 +259,7 @@ const TESTIMONIALS = [
 function goProof() {
   render(`
     <section class="screen">
+      ${topMini("onb")}
       <div class="screen-body top">
         <div class="proof-head">
           <div data-mascot="96" data-mood="happy"></div>
@@ -215,7 +285,7 @@ function goProof() {
       <div class="screen-foot">
         <button class="btn" id="next">${icon("arrow-right", 18)} continuar</button>
       </div>
-    </section>`);
+    </section>`, "proof");
   $("#next").onclick = () => goQuestion(0);
 }
 
@@ -234,6 +304,7 @@ function goQuestion(index) {
   let selected = answers[q.id] ?? null;
   render(`
     <section class="screen">
+      ${topMini("onb")}
       <div class="screen-body top">
         ${q.eyebrow ? `<p class="eyebrow">${esc(q.eyebrow(answers))}</p>` : ""}
         <div class="ask">
@@ -248,7 +319,7 @@ function goQuestion(index) {
       <div class="screen-foot">
         <button class="btn" id="next" ${selected ? "" : "disabled"}>Continuar</button>
       </div>
-    </section>`);
+    </section>`, q.clip);
 
   $$("#opts .opt").forEach((btn) => {
     btn.onclick = () => {
@@ -271,6 +342,7 @@ function goPlan() {
   store.set("onboarding", state.onboarding);
   render(`
     <section class="screen">
+      ${topMini("onb")}
       <div class="screen-body">
         <p class="eyebrow">seu plano</p>
         <div data-mascot="120" data-mood="neutral" style="margin-bottom:14px"></div>
@@ -285,7 +357,7 @@ function goPlan() {
       <div class="screen-foot">
         <button class="btn" id="next">${icon("arrow-right", 18)} ver minha previsão</button>
       </div>
-    </section>`);
+    </section>`, "plan");
   $("#next").onclick = goProjection;
 }
 
@@ -293,6 +365,7 @@ function goProjection() {
   const { dateLabel, goal } = projection();
   render(`
     <section class="screen">
+      ${topMini("onb")}
       <div class="screen-body">
         <div data-mascot="110" data-mood="happy" style="margin-bottom:18px"></div>
         <h2 class="title" style="max-width:320px">Se você mantiver 5 min por dia, em <span class="mono-date">${esc(dateLabel)}</span> você ${esc(goal)}.</h2>
@@ -309,13 +382,14 @@ function goProjection() {
       <div class="screen-foot">
         <button class="btn" id="next">${icon("arrow-right", 18)} continuar</button>
       </div>
-    </section>`);
+    </section>`, "projection");
   $("#next").onclick = goCommit;
 }
 
 function goCommit() {
   render(`
     <section class="screen">
+      ${topMini("onb")}
       <div class="screen-body">
         <div class="orbit"><span class="glow-bg"></span><button class="tap" id="commit" aria-label="tocar na Mel"><div data-mascot="215" data-mood="neutral"></div></button></div>
         <div class="bubble bubble-top">Topa falar comigo 5 minutos por dia, 5 dias por semana?</div>
@@ -323,10 +397,13 @@ function goCommit() {
         <p class="hint" id="commitHint" style="margin-top:22px">toque na Mel pra se comprometer</p>
       </div>
       <div class="screen-foot"><p class="small">já tem conta? <button class="link" id="toLogin">entrar</button></p></div>
-    </section>`);
+    </section>`, "commit");
   $("#toLogin").onclick = () => goAuth("login");
   $("#commit").onclick = () => {
-    Mascot.setMood($("#commit .mascot"), "happy");
+    voice.stop();
+    const m = $("#commit .mascot");
+    m.dataset.base = "happy";
+    Mascot.setMood(m, "happy");
     $("#commitHint").textContent = "fechado. agora não tem volta.";
     setTimeout(() => goAuth("register"), 1000);
   };
@@ -338,25 +415,26 @@ function goAuth(mode) {
   const isLogin = mode === "login";
   render(`
     <section class="screen">
+      ${topMini("onb")}
       <div class="screen-body top">
-        <div style="text-align:center;margin:18px 0 22px">
-          <h1 class="hero" style="margin-bottom:6px">Mel</h1>
-          <p class="sub">${isLogin ? "Entre pra continuar praticando com a Mel." : "Crie sua conta pra Mel começar a te cobrar em inglês."}</p>
+        <div class="auth-head">
+          <div data-mascot="64" data-mood="${isLogin ? "neutral" : "grumpy"}"></div>
+          <div class="bubble">${isLogin ? "Ah, voltou. Entra aí que eu não tenho o dia todo." : "Cria sua conta. Prometo que só vou te cobrar em inglês."}</div>
         </div>
         <form id="form" novalidate>
-          ${isLogin ? "" : `<div class="field"><label>Nome</label><input name="name" type="text" placeholder="como a Mel deve te chamar" autocomplete="name" /></div>`}
-          <div class="field"><label>E-mail</label><input name="email" type="email" placeholder="voce@email.com" autocomplete="email" required /></div>
+          ${isLogin ? "" : `<div class="field"><label>Nome</label><input name="name" type="text" placeholder="como a Mel deve te chamar" autocomplete="name" autofocus /></div>`}
+          <div class="field"><label>E-mail</label><input name="email" type="email" placeholder="voce@email.com" autocomplete="email" inputmode="email" required ${isLogin ? "autofocus" : ""} /></div>
           <div class="field"><label>Senha</label>
             <div class="inwrap"><input name="password" type="password" placeholder="${isLogin ? "••••••••" : "mínimo 6 caracteres"}" autocomplete="${isLogin ? "current-password" : "new-password"}" required />
             <button type="button" class="iconbtn" id="eye" aria-label="mostrar senha">${icon("eye", 18)}</button></div>
           </div>
           ${isLogin ? `<a class="form-link" href="#" id="forgot">Esqueci minha senha</a>` : ""}
-          <button class="btn" type="submit">${isLogin ? "Entrar" : "Criar conta"}</button>
+          <button class="btn" type="submit" id="submit">${isLogin ? "Entrar" : "Criar conta"}</button>
           <p class="error" id="err"></p>
         </form>
         <p class="small">${isLogin ? `Ainda não tem conta? <button class="link" id="switch">Criar conta</button>` : `Já tem conta? <button class="link" id="switch">Entrar</button>`}</p>
       </div>
-    </section>`);
+    </section>`, isLogin ? "login" : "register");
 
   $("#switch").onclick = () => goAuth(isLogin ? "register" : "login");
   $("#eye").onclick = () => {
@@ -369,10 +447,14 @@ function goAuth(mode) {
   $("#form").onsubmit = async (e) => {
     e.preventDefault();
     const body = Object.fromEntries(new FormData(e.target).entries());
+    if (!body.email || !body.password) { $("#err").textContent = "Preenche e-mail e senha."; return; }
     if (!isLogin) {
       const { voiceMode, level, blocker, tone } = state.onboarding;
       body.profile = { voiceMode, level, blocker, tone };
     }
+    const submit = $("#submit");
+    submit.classList.add("loading");
+    submit.textContent = isLogin ? "entrando…" : "criando…";
     $("#err").textContent = "";
     try {
       const res = await fetch(isLogin ? "/api/auth/login" : "/api/auth/register", {
@@ -387,6 +469,8 @@ function goAuth(mode) {
       goHome();
     } catch (err) {
       $("#err").textContent = err.message;
+      submit.classList.remove("loading");
+      submit.textContent = isLogin ? "Entrar" : "Criar conta";
     }
   };
 }
@@ -405,8 +489,7 @@ async function goHome() {
           <div data-mascot="64" data-mood="grumpy"></div>
           <div class="bubble">${esc(GREETINGS[Math.floor(Math.random() * GREETINGS.length)])}</div>
         </div>
-        <p class="eyebrow" style="text-align:left;margin:0 0 10px">lições</p>
-        <div class="lesson-list" id="list"><p class="small">carregando…</p></div>
+        <div id="list"><p class="small">carregando…</p></div>
       </div>
     </section>`);
   $("#logout").onclick = logout;
@@ -414,12 +497,19 @@ async function goHome() {
   const res = await fetch("/api/lessons", { headers: authHeaders() });
   if (res.status === 401) return logout();
   state.lessons = await res.json();
-  $("#list").innerHTML = state.lessons.map((l, i) => `
+
+  const card = (l) => `
     <button class="lesson" data-id="${esc(l.id)}">
-      <span class="num">${String(i + 1).padStart(2, "0")}</span>
-      <div><b>${esc(l.title)}</b><span>${esc(l.focus)}</span>${l.completed ? `<span class="done">${icon("check", 12)} concluída</span>` : ""}</div>
+      <span class="num">${esc(l.id.slice(0, 2))}</span>
+      <div><b><span class="lvl">${esc(l.level)}</span>${esc(l.title)}</b><span>${esc(l.focus)}</span>${l.completed ? `<span class="done">${icon("check", 12)} concluída</span>` : ""}</div>
       <span class="go">${icon("arrow-right", 18)}</span>
-    </button>`).join("");
+    </button>`;
+
+  $("#list").innerHTML = LEVEL_GROUPS.map((g) => {
+    const items = state.lessons.filter((l) => g.levels.includes(l.level));
+    if (!items.length) return "";
+    return `<div class="group-title"><b>${g.label}</b><span>${g.tag}</span></div><div class="lesson-list">${items.map(card).join("")}</div>`;
+  }).join("");
   $$("#list .lesson").forEach((btn) => (btn.onclick = () => openLesson(btn.dataset.id)));
 }
 
@@ -430,13 +520,12 @@ async function openLesson(lessonId) {
   const res = await fetch(`/api/lessons/${lessonId}`, { headers: authHeaders() });
   if (res.status === 401) return logout();
   state.currentLesson = await res.json();
-  const index = Math.max(0, state.lessons.findIndex((l) => l.id === lessonId));
 
   render(`
     <section class="screen talk">
       <div class="talk-head">
         <button class="iconbtn" id="back" aria-label="voltar">${icon("arrow-left", 20)}</button>
-        <span class="t">conversa ${index + 1} — ${esc(state.currentLesson.title)}</span>
+        <span class="t">${esc(state.currentLesson.level)} — ${esc(state.currentLesson.title)}</span>
         <span class="timer" id="timer">0:00</span>
       </div>
       <div class="stage-wrap"><div id="stage" data-mascot="150" data-mood="grumpy"></div></div>

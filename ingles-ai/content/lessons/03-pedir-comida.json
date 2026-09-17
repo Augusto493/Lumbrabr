@@ -1,0 +1,25 @@
+{
+  "id": "03-pedir-comida",
+  "title": "Pedir comida sem passar vergonha",
+  "level": "A1",
+  "focus": "Pedir no restaurante com 'Can I have…' e 'I'd like…', entender 'anything to drink?' e reclamar quando vem errado",
+  "warmup": {
+    "instruction": "Em português, monta a cena: restaurante, você é a garçonete apressada. Ensine as duas fórmulas que resolvem 90% dos pedidos: 'Can I have…?' e 'I'd like…'. Mande repetir cada uma com um prato diferente. Erro a caçar: 'I want' seco (soa grosseiro) e 'I'd like' virando 'I like'.",
+    "examples": [
+      { "en": "Can I have the chicken, please?", "pt": "Pode me trazer o frango, por favor?" },
+      { "en": "I'd like a coffee and some water.", "pt": "Eu queria um café e uma água." },
+      { "en": "Could I get the check, please?", "pt": "Pode trazer a conta, por favor?" }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Do 'table for two' até a conta",
+    "instruction": "Faça a cena inteira como garçonete, em inglês: mesa, bebida, prato, sobremesa, conta. No meio, traga o pedido errado ('Here's your fish') pra ele ter que reclamar: 'Sorry, I ordered the chicken.' Se ele travar, dita a frase. Se ele mandar 'I want', corrige pra 'I'd like'."
+  },
+  "review": {
+    "checklist": [
+      "O aluno fez um pedido completo com 'Can I have' ou 'I'd like'?",
+      "Conseguiu reclamar do pedido errado?"
+    ],
+    "closing": "Entregue a conta ('Here's the check') e, em português, diga que ele acabou de sobreviver a um restaurante inteiro sem um garçom de verdade revirar os olhos."
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "10-dar-opiniao",
+  "title": "Dar opinião e discordar sem parecer grosso",
+  "level": "B1",
+  "focus": "Opinar com 'I think / in my opinion', concordar e discordar com jeito ('I see your point, but…'), e ligar ideias com because / however / on the other hand",
+  "warmup": {
+    "instruction": "Em português, explique que dizer só 'yes' e 'no' é conversa de criança. Ensine três ferramentas: abrir opinião ('I think…'), discordar com educação ('I see your point, but…') e justificar ('because…'). Dê um tema bobo (pizza com abacaxi) e faça ele usar as três.",
+    "examples": [
+      { "en": "I think working from home is better.", "pt": "Eu acho que trabalhar de casa é melhor." },
+      { "en": "I see your point, but I disagree.", "pt": "Entendo seu ponto, mas discordo." },
+      { "en": "On the other hand, it can be lonely.", "pt": "Por outro lado, pode ser solitário." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Debate leve: cidade grande ou cidade pequena, trabalho remoto ou presencial",
+    "instruction": "Escolha um tema e defenda o lado oposto ao do aluno, em inglês, de propósito. Ele precisa discordar de você usando as fórmulas, com pelo menos um 'because'. Se ele só disser 'no', devolve: 'no what? give me a reason'. Corrija as frases, não as opiniões."
+  },
+  "review": {
+    "checklist": [
+      "O aluno abriu opinião com 'I think' ou 'in my opinion'?",
+      "Discordou de você usando 'I see your point, but' ou parecido, com uma justificativa?"
+    ],
+    "closing": "Admita, de má vontade, que ele te venceu num argumento (ou quase). Em português, diga que discordar com educação em inglês é o que separa turista de gente que conversa."
+  }
+}

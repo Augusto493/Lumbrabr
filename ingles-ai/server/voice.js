@@ -2,7 +2,7 @@ import { WebSocketServer } from "ws";
 import { GoogleGenAI, Modality } from "@google/genai";
 import { verifyToken } from "./auth.js";
 import { getLesson, buildSystemInstruction } from "./lessons.js";
-import { markLessonDone, findUserByEmail } from "./store.js";
+import { markLessonDone, findUserByEmail, logSession } from "./store.js";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const MODEL = process.env.GEMINI_LIVE_MODEL ?? "gemini-2.5-flash-native-audio-preview-12-2025";
@@ -105,9 +105,16 @@ export function attachVoiceServer(httpServer) {
       }
     });
 
+    const startedAt = Date.now();
     ws.on("close", () => {
       closedByClient = true;
       geminiSession?.close();
+      logSession({
+        email: user.email,
+        lessonId: lesson.id,
+        startedAt: new Date(startedAt).toISOString(),
+        seconds: Math.round((Date.now() - startedAt) / 1000),
+      });
     });
   });
 

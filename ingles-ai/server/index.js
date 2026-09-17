@@ -5,6 +5,7 @@ import http from "node:http";
 import express from "express";
 import { router as authRouter } from "./auth.js";
 import { router as lessonsRouter } from "./lessons.js";
+import { router as adminRouter } from "./admin.js";
 import { attachVoiceServer } from "./voice.js";
 
 for (const key of ["JWT_SECRET", "GEMINI_API_KEY"]) {
@@ -22,6 +23,8 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 
 app.use("/api/auth", authRouter);
 app.use("/api/lessons", lessonsRouter);
+app.use("/api/admin", adminRouter);
+app.get("/admin", (_req, res) => res.sendFile(path.join(__dirname, "..", "public", "admin.html")));
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 

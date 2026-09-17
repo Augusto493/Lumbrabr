@@ -6,6 +6,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, "..", "data");
 const USERS_FILE = path.join(DATA_DIR, "users.json");
 const PROGRESS_FILE = path.join(DATA_DIR, "progress.json");
+const SESSIONS_FILE = path.join(DATA_DIR, "sessions.json");
 
 function readJson(file, fallback) {
   try {
@@ -51,4 +52,14 @@ export function markLessonDone(email, lessonId) {
 
 export function getUserProgress(email) {
   return getProgress()[email] ?? {};
+}
+
+export function logSession(entry) {
+  const sessions = readJson(SESSIONS_FILE, []);
+  sessions.push(entry);
+  writeJson(SESSIONS_FILE, sessions);
+}
+
+export function getSessions() {
+  return readJson(SESSIONS_FILE, []);
 }
