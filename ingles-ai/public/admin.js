@@ -1,6 +1,10 @@
 const app = document.getElementById("app");
 const $ = (sel, root = document) => root.querySelector(sel);
-let token = sessionStorage.getItem("adminToken");
+// usa a sessao do app se o usuario logado for admin; senao cai na senha do painel
+function appToken() {
+  try { return JSON.parse(localStorage.getItem("token")); } catch { return null; }
+}
+let token = sessionStorage.getItem("adminToken") || appToken();
 
 const LEVEL_LABEL = { A0: "iniciante", A1: "iniciante", A2: "básico", B1: "intermediário", B2: "avançado", C1: "avançado" };
 const TONE_LABEL = { braba: "braba", deboa: "de boa" };
@@ -25,7 +29,7 @@ function showLogin(error = "") {
     <div class="admin-login">
       <div data-mascot="90" data-mood="neutral"></div>
       <h1 class="hero" style="margin-top:14px">Painel da Mel</h1>
-      <p class="sub">Só quem manda nela entra aqui.</p>
+      <p class="sub">Só quem manda nela entra aqui. Se sua conta é admin, <a href="/" style="color:var(--ink)">entra no app</a> e volta.</p>
       <form id="form" class="admin-form">
         <div class="field"><label>Senha do painel</label><input name="password" type="password" autofocus required /></div>
         <button class="btn" type="submit">Entrar</button>
@@ -46,7 +50,12 @@ function showLogin(error = "") {
 
 async function loadDashboard() {
   const res = await fetch("/api/admin/stats", { headers: { Authorization: `Bearer ${token}` } });
-  if (res.status === 401) { sessionStorage.removeItem("adminToken"); token = null; return showLogin("sessão expirada"); }
+  if (res.status === 401) {
+    const hadAdminToken = Boolean(sessionStorage.getItem("adminToken"));
+    sessionStorage.removeItem("adminToken");
+    token = null;
+    return showLogin(hadAdminToken ? "sessão expirada" : "");
+  }
   const d = await res.json();
   const t = d.totals;
 

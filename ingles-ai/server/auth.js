@@ -9,6 +9,15 @@ const TOKEN_TTL = "30d";
 export const router = express.Router();
 
 const PROFILE_KEYS = ["voiceMode", "level", "blocker", "tone"];
+const ADMIN_EMAILS = (process.env.ADMIN_EMAIL ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
+
+export function isAdminEmail(email) {
+  return ADMIN_EMAILS.includes(String(email ?? "").toLowerCase());
+}
+
+function roleOf(email) {
+  return isAdminEmail(email) ? "admin" : "user";
+}
 
 function cleanProfile(input) {
   const profile = {};
@@ -30,8 +39,9 @@ router.post("/register", async (req, res) => {
   const passwordHash = await bcrypt.hash(password, 10);
   const cleaned = cleanProfile(profile);
   saveUser({ email, name: name ?? "", passwordHash, profile: cleaned, createdAt: new Date().toISOString() });
-  const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: TOKEN_TTL });
-  res.json({ token, email, name: name ?? "", profile: cleaned });
+  const role = roleOf(email);
+  const token = jwt.sign({ email, role }, JWT_SECRET, { expiresIn: TOKEN_TTL });
+  res.json({ token, email, name: name ?? "", profile: cleaned, role });
 });
 
 router.post("/login", async (req, res) => {
@@ -40,8 +50,9 @@ router.post("/login", async (req, res) => {
   if (!user) return res.status(401).json({ error: "email ou senha invalidos" });
   const ok = await bcrypt.compare(password ?? "", user.passwordHash);
   if (!ok) return res.status(401).json({ error: "email ou senha invalidos" });
-  const token = jwt.sign({ email: user.email }, JWT_SECRET, { expiresIn: TOKEN_TTL });
-  res.json({ token, email: user.email, name: user.name ?? "", profile: user.profile ?? {} });
+  const role = roleOf(user.email);
+  const token = jwt.sign({ email: user.email, role }, JWT_SECRET, { expiresIn: TOKEN_TTL });
+  res.json({ token, email: user.email, name: user.name ?? "", profile: user.profile ?? {}, role });
 });
 
 export function requireAuth(req, res, next) {

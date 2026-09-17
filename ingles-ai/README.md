@@ -43,7 +43,10 @@ script espera 7 s entre clipes por causa do limite por minuto.
 
 ## Painel admin
 
-`/admin` — protegido pela senha `ADMIN_PASSWORD` do `.env`. Mostra usuários
+`/admin` — duas formas de entrar: (1) coloque seu e-mail em `ADMIN_EMAIL`
+no `.env` e crie/entre na conta com esse e-mail no app — aparece um botão
+"painel" na home e o `/admin` abre direto; (2) a senha única
+`ADMIN_PASSWORD`, pra entrar sem conta. Mostra usuários
 (nível, tom, o que trava, lições, minutos, último acesso), minutos de
 conversa por lição, últimas sessões e o custo estimado de IA (R$ 0,07/min
 no tier pago). Os dados vêm de `data/users.json`, `data/progress.json` e

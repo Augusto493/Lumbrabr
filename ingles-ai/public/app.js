@@ -13,6 +13,7 @@ const store = {
 const state = {
   token: store.get("token", null),
   name: store.get("name", ""),
+  role: store.get("role", "user"),
   onboarding: store.get("onboarding", {}),
   lessons: [],
   currentLesson: null,
@@ -140,11 +141,8 @@ function renderVoiceBtn(btn) {
   btn.title = voice.on ? "silenciar a Mel" : "ouvir a Mel";
 }
 
-function topMini(kind) {
-  return `<div class="topmini ${kind === "intro" ? "" : "center"}">
-    <button class="iconbtn" id="voiceBtn" aria-label="som"></button>
-    ${kind === "intro" ? `<button class="pill" id="toLoginTop">Entrar</button>` : ""}
-  </div>`;
+function topMini() {
+  return `<div class="topmini center"><button class="iconbtn" id="voiceBtn" aria-label="som"></button></div>`;
 }
 
 // ---------- infra de render ----------
@@ -158,7 +156,6 @@ function render(html, clip) {
     el.dataset.base = el.dataset.mood || "grumpy";
   });
   $$("#voiceBtn").forEach((btn) => { renderVoiceBtn(btn); btn.onclick = () => voice.toggle(); });
-  if ($("#toLoginTop")) $("#toLoginTop").onclick = () => goAuth("login");
   window.scrollTo(0, 0);
   if (clip) {
     voice.play(clip).catch(() => {
@@ -186,9 +183,11 @@ function authHeaders() {
 function logout() {
   store.del("token");
   store.del("name");
+  store.del("role");
   state.token = null;
   state.name = "";
-  goAuth("login");
+  state.role = "user";
+  goIntro(0);
 }
 
 function projection() {
@@ -229,9 +228,10 @@ function orbitHtml(kind, mood, clip) {
 
 function goIntro(index = 0) {
   const s = SLIDES[index];
+  const first = index === 0;
   render(`
     <section class="screen">
-      ${topMini("intro")}
+      ${topMini()}
       <div class="screen-body">
         ${orbitHtml(s.orbit, s.mood, s.clip)}
         ${s.tag ? `<span class="tag" style="margin-bottom:16px">${s.tag}</span>` : ""}
@@ -240,8 +240,10 @@ function goIntro(index = 0) {
       </div>
       <div class="screen-foot">
         <div class="dots">${SLIDES.map((_, i) => `<span class="dot ${i === index ? "on" : ""}"></span>`).join("")}</div>
-        <button class="btn" id="next">${icon("arrow-right", 18)} continuar</button>
-        <p class="small">já tem conta? <button class="link" id="toLogin">entrar</button></p>
+        <button class="btn" id="next">${icon("arrow-right", 18)} ${first ? "criar minha conta" : "continuar"}</button>
+        ${first
+          ? `<button class="btn btn-ghost" id="toLogin" style="margin-top:10px">já tenho conta — entrar</button>`
+          : `<p class="small">já tem conta? <button class="link" id="toLogin">entrar</button></p>`}
       </div>
     </section>`, s.clip);
   $("#next").onclick = () => (index + 1 < SLIDES.length ? goIntro(index + 1) : goProof());
@@ -464,8 +466,10 @@ function goAuth(mode) {
       if (!res.ok) throw new Error(data.error || "erro desconhecido");
       state.token = data.token;
       state.name = data.name || data.email;
+      state.role = data.role ?? "user";
       store.set("token", state.token);
       store.set("name", state.name);
+      store.set("role", state.role);
       goHome();
     } catch (err) {
       $("#err").textContent = err.message;
@@ -482,7 +486,7 @@ async function goHome() {
     <section class="screen">
       <div class="topbar">
         <div class="brand"><div data-mascot="28" data-mood="grumpy"></div> Mel</div>
-        <div class="who"><span>${esc(state.name)}</span><button class="iconbtn" id="logout" aria-label="sair">${icon("x", 18)}</button></div>
+        <div class="who">${state.role === "admin" ? `<a class="pill" href="/admin">painel</a>` : ""}<span>${esc(state.name)}</span><button class="iconbtn" id="logout" aria-label="sair">${icon("x", 18)}</button></div>
       </div>
       <div class="screen-body top">
         <div class="greet">
@@ -781,6 +785,6 @@ function playAudioChunk(base64) {
 
 // ---------- bootstrap ----------
 
+// deslogado = sempre a Mel na porta, como no app de referencia
 if (state.token) goHome();
-else if (state.onboarding.done) goAuth("login");
 else goIntro(0);

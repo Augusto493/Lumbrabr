@@ -16,8 +16,10 @@ function samePassword(given, expected) {
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
+// duas portas de entrada: a conta de um usuario cujo e-mail esta em ADMIN_EMAIL
+// (token normal do app, com role admin) ou a senha unica ADMIN_PASSWORD
 router.post("/login", (req, res) => {
-  if (!ADMIN_PASSWORD) return res.status(503).json({ error: "defina ADMIN_PASSWORD no .env para liberar o painel" });
+  if (!ADMIN_PASSWORD) return res.status(503).json({ error: "defina ADMIN_PASSWORD (ou ADMIN_EMAIL) no .env para liberar o painel" });
   const { password } = req.body ?? {};
   if (!samePassword(password ?? "", ADMIN_PASSWORD)) return res.status(401).json({ error: "senha invalida" });
   res.json({ token: jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "12h" }) });
