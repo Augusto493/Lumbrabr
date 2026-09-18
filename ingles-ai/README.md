@@ -188,6 +188,33 @@ costuma ser mais restrito). Serve pra validar com poucos usuários, mas
 mensalidade) ou limitar minutos de conversa por dia por usuário. Limites
 atuais: [ai.google.dev/gemini-api/docs/rate-limits](https://ai.google.dev/gemini-api/docs/rate-limits).
 
+## Deploy na VPS com Docker + Traefik (jeito usado em produção)
+
+É como o app roda hoje em `https://mel.179.197.235.4.sslip.io`, numa VPS
+que já tinha Traefik v3 (`network_mode: host`, Let's Encrypt) servindo
+outros containers. Nada fora da pasta do app foi alterado.
+
+```bash
+mkdir -p /docker/mel && cd /docker/mel
+# copie o conteúdo de ingles-ai/ pra cá (git clone ou scp)
+cp .env.example .env            # preencha GEMINI_API_KEY, JWT_SECRET, ADMIN_EMAIL, PUBLIC_URL
+cp docker-compose.example.yml docker-compose.yml   # ajuste o Host(...) e a subnet
+docker compose up -d --build
+docker logs -f mel-app          # deve mostrar "Mel ouvindo em http://0.0.0.0:3000"
+```
+
+- Os dados (`users.json`, `progress.json`, `sessions.json`, `plans.json`,
+  `orders.json`, `settings.json`) ficam no volume `mel_mel_data`, então
+  `docker compose up -d --build` atualiza o código sem perder nada.
+- Pra atualizar: copie o código novo pra `/docker/mel` e rode
+  `docker compose up -d --build` de novo.
+- Pra usar um domínio próprio: aponte um registro A pro IP da VPS, troque o
+  `Host(...)` nas labels e o `PUBLIC_URL` no `.env` (ou no painel), e suba
+  de novo — o Traefik pega o certificado sozinho.
+- Se o `docker compose up` reclamar de "address pools have been fully
+  subnetted" ou "Pool overlaps", mude a `subnet` no final do compose pra
+  uma faixa livre (`ip route` mostra as usadas).
+
 ## Deploy na VPS (sem Docker)
 
 Pressupõe Ubuntu/Debian com Node.js 18+.
@@ -227,7 +254,7 @@ Pressupõe Ubuntu/Debian com Node.js 18+.
 
 ## O que ainda não tem
 
-- Pagamento/assinatura (Pix, cartão), streak, notificações, analytics.
+- Cartão de crédito (só Pix), streak, notificações, analytics.
 - Banco de dados de verdade (JSON em arquivo aguenta poucos usuários
   simultâneos).
 - Recuperação de senha.
