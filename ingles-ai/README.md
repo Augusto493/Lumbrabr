@@ -139,13 +139,23 @@ tradução), `freeConversation` e `review` — a Mel recebe isso como roteiro.
    a lição da vez com anel branco e etiqueta "HOJE", as concluídas marcadas,
    as próximas apagadas, divisórias por nível. Tocar numa bolinha abre o
    card com título, foco e o botão de conversar.
-4. **Conversa**: é uma ligação contínua. A Mel abre a aula sozinha em
-   português e o **microfone já abre junto** — não tem botão de "falar"; o
-   Gemini detecta os turnos e, se o aluno falar por cima, a Mel para na
-   hora (o áudio pendente é descartado). O botão redondo só silencia/reabre
-   o microfone. O prompt manda a Mel obedecer pedidos de ritmo ("fala mais
-   devagar", "repete", "não entendi") na hora e manter o ritmo lento até o
-   aluno liberar.
+4. **Conversa**: é uma ligação contínua numa tela limpa — só a Mel no
+   centro e, quando ela dita algo, a frase em inglês (grande) com a
+   tradução embaixo. Sem botão de microfone, sem transcrição, sem status:
+   o microfone abre sozinho quando a sessão fica pronta e a Mel cresce um
+   pouco quando ouve a voz do aluno. O Gemini detecta os turnos e, se o
+   aluno falar por cima, a Mel para na hora (o áudio pendente é
+   descartado). A frase fica na tela até a Mel ditar outra (só esmaece
+   quando ela fala sem ditar). A seta no topo sai da aula; uma conversa de
+   90 s ou mais conta como lição concluída. O prompt manda a Mel obedecer
+   pedidos de ritmo ("fala mais devagar", "repete", "não entendi") na hora
+   e manter o ritmo lento até o aluno liberar.
+
+   Detalhe técnico que já deu dor de cabeça: os dois `AudioContext`
+   (captura e playback) são criados **dentro do clique** que abre a aula.
+   Criados depois, fora de um gesto do usuário, o Chrome os deixa
+   suspensos e o microfone "ouve" em silêncio — a Mel fala, mas nada do
+   aluno chega ao Gemini.
 
 > Os depoimentos da tela de prova social são **exemplos** (estão marcados na
 > própria tela). Troque por alunos reais em `TESTIMONIALS` no `public/app.js`

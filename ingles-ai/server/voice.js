@@ -131,11 +131,15 @@ export function attachVoiceServer(httpServer) {
       closedByClient = true;
       clearTimeout(limiter);
       geminiSession?.close();
+      const seconds = Math.round((Date.now() - startedAt) / 1000);
+      // a tela de aula nao tem botao de "concluir": uma conversa de pelo menos
+      // 90 s conta como licao feita
+      if (seconds >= 90) markLessonDone(user.email, lesson.id);
       logSession({
         email: user.email,
         lessonId: lesson.id,
         startedAt: new Date(startedAt).toISOString(),
-        seconds: Math.round((Date.now() - startedAt) / 1000),
+        seconds,
       });
     });
   });

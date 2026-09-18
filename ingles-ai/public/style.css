@@ -370,6 +370,20 @@ h2.title { font: 600 24px/1.16 var(--font-disp); letter-spacing: -0.02em; margin
 .answer-en { font: 700 22px/1.2 var(--font-disp); letter-spacing: -0.01em; }
 .answer-pt { font: 400 13.5px var(--font-body); color: var(--ink-2); margin-top: 4px; min-height: 1em; }
 .answer.hidden + .mic-wrap { margin-top: auto; }
+
+/* tela de conversa limpa: so a Mel e a frase pra repetir */
+.screen.zen { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+.zen .talk-head { min-height: 44px; }
+.zen-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; padding-bottom: 12vh; }
+.zen .stage-wrap { padding: 0; transition: transform 0.12s ease; }
+.zen .stage-wrap.hear { transform: scale(1.05); }
+.zen .status { display: none; }
+.zen .status.err { display: block; max-width: 300px; line-height: 1.5; }
+.zen .answer { margin: 0; width: 100%; background: transparent; border: 0; padding: 0 8px; transition: opacity 0.4s; }
+.zen .answer.hidden { display: none; }
+.zen .answer.dim { opacity: 0.4; }
+.zen .answer-en { font: 700 30px/1.15 var(--font-disp); letter-spacing: -0.02em; }
+.zen .answer-pt { font: 400 16px var(--font-body); color: var(--ink-2); margin-top: 10px; }
 .mic-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 16px; }
 .micbtn {
   width: 72px; height: 72px; border-radius: 50%; border: 0; background: #fff; color: var(--bg);

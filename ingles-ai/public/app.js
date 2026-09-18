@@ -702,49 +702,35 @@ function goPix(order, plan) {
 // ---------- conversa ----------
 
 async function openLesson(lessonId) {
+  // os dois AudioContext nascem aqui, dentro do clique: criados fora de um gesto
+  // do usuario o Chrome deixa eles suspensos e o microfone captura em silencio
   ensurePlayback();
+  ensureCapture();
   const res = await fetch(`/api/lessons/${lessonId}`, { headers: authHeaders() });
   if (res.status === 401) return logout();
   state.currentLesson = await res.json();
 
+  // Tela limpa: so a Mel no centro e a frase que o aluno tem que repetir.
+  // Sem botao de microfone (ele fica sempre aberto), sem transcricao, sem status —
+  // o unico texto extra e um aviso quando o microfone e bloqueado.
   render(`
-    <section class="screen talk">
-      <div class="talk-head">
-        <button class="iconbtn" id="back" aria-label="voltar">${icon("arrow-left", 20)}</button>
-        <span class="t">${esc(state.currentLesson.level)} — ${esc(state.currentLesson.title)}</span>
-        <span class="timer" id="timer">0:00</span>
-      </div>
-      <div class="stage-wrap"><div id="stage" data-mascot="150" data-mood="grumpy"></div></div>
-      <p class="status" id="status">conectando…</p>
-      <div class="say-wrap">
-        <p class="eyebrow left">mel</p>
-        <div class="say" id="say"><span class="muted">…</span></div>
-      </div>
-      <div class="transcript compact" id="transcript"></div>
-      <div class="answer hidden" id="answer">
-        <p class="eyebrow">o que responder</p>
-        <div class="answer-en" id="answerEn"></div>
-        <div class="answer-pt" id="answerPt"></div>
-      </div>
-      <div class="mic-wrap">
-        <button class="micbtn off" id="mic" aria-label="microfone">${icon("microphone", 26)}</button>
-        <p class="hint" id="micHint">abrindo o microfone…</p>
-        <button class="link small" id="end">encerrar lição</button>
+    <section class="screen talk zen">
+      <div class="talk-head"><button class="iconbtn" id="back" aria-label="sair da aula">${icon("arrow-left", 22)}</button></div>
+      <div class="zen-body">
+        <div class="stage-wrap" id="stageWrap"><div id="stage" data-mascot="210" data-mood="grumpy"></div></div>
+        <p class="status" id="status"></p>
+        <div class="answer hidden" id="answer">
+          <div class="answer-en" id="answerEn"></div>
+          <div class="answer-pt" id="answerPt"></div>
+        </div>
       </div>
     </section>`);
 
   $("#back").onclick = () => goHome();
-  $("#end").onclick = () => { state.ws?.send(JSON.stringify({ type: "lessonDone" })); goHome(); };
-  $("#mic").onclick = () => (state.recording ? stopRecording() : startRecording());
 
   state.turn = null;
   state.studentLine = null;
   state.startedAt = Date.now();
-  state.timer = setInterval(() => {
-    const s = Math.floor((Date.now() - state.startedAt) / 1000);
-    const el = $("#timer");
-    if (el) el.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
-  }, 1000);
   connectVoiceSession(lessonId);
 }
 
@@ -842,7 +828,7 @@ function parseDictation(raw) {
   if (split) {
     rest = split[1];
     // a traducao tem o mesmo numero de frases que o ingles; o resto e a Mel continuando a falar
-    const sentences = Math.max(1, (rest.match(/[.!?](?=\s|$)/g) || []).length);
+    const sentences = rest.split(/(?<=[.!?])\s+/).filter(Boolean).length || 1;
     pt = split[2].split(/(?<=[.!?])\s/).slice(0, sentences).join(" ");
   }
   else { const paren = rest.match(/^(.*?)\s*\((.+?)\)/); if (paren) { rest = paren[1]; pt = paren[2]; } }
@@ -850,11 +836,13 @@ function parseDictation(raw) {
   return rest ? { en: rest, pt: pt.trim() } : null;
 }
 
+// a frase fica na tela ate a Mel ditar outra (o aluno precisa dela enquanto repete);
+// quando a Mel fala sem ditar nada, a frase anterior so esmaece
 function updateAnswer(d) {
   const card = $("#answer");
   if (!card) return;
-  if (!d) { card.classList.add("hidden"); return; }
-  card.classList.remove("hidden");
+  if (!d) { card.classList.add("dim"); return; }
+  card.classList.remove("hidden", "dim");
   $("#answerEn").textContent = d.en;
   $("#answerPt").textContent = d.pt;
 }
@@ -863,7 +851,6 @@ function stopVoiceSession() {
   stopRecording();
   if (state.ws) { const ws = state.ws; state.ws = null; ws.close(); }
   clearTimeout(state.moodTimer);
-  clearInterval(state.timer);
 }
 
 // captura o microfone, faz downsample para 16kHz mono PCM16 e envia via WebSocket
@@ -873,26 +860,31 @@ async function startRecording() {
       audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
     });
   } catch {
-    setStatus("microfone bloqueado — libere no navegador", "err");
-    const hint = $("#micHint");
-    if (hint) hint.textContent = "toque pra tentar de novo";
+    setStatus("libere o microfone no navegador e abra a aula de novo", "err");
     return;
   }
-  state.audioCtx = new AudioContext();
-  const source = state.audioCtx.createMediaStreamSource(state.micStream);
-  state.processorNode = state.audioCtx.createScriptProcessor(4096, 1, 1);
+  const ctx = ensureCapture();
+  await resumeCtx(ctx);
+  const source = ctx.createMediaStreamSource(state.micStream);
+  state.sourceNode = source;
+  state.processorNode = ctx.createScriptProcessor(4096, 1, 1);
+  let loud = false;
   state.processorNode.onaudioprocess = (e) => {
-    const pcm16 = downsampleTo16kHz(e.inputBuffer.getChannelData(0), state.audioCtx.sampleRate);
+    const input = e.inputBuffer.getChannelData(0);
+    const pcm16 = downsampleTo16kHz(input, ctx.sampleRate);
     state.ws?.send(JSON.stringify({ type: "audio", data: int16ToBase64(pcm16) }));
+    // a Mel "reage" quando ouve voz: feedback visual de que o microfone esta captando
+    let sum = 0;
+    for (let i = 0; i < input.length; i += 8) sum += input[i] * input[i];
+    const rms = Math.sqrt(sum / (input.length / 8));
+    const now = rms > 0.02;
+    if (now !== loud) { loud = now; $("#stageWrap")?.classList.toggle("hear", loud); }
   };
   source.connect(state.processorNode);
-  state.processorNode.connect(state.audioCtx.destination);
+  state.processorNode.connect(ctx.destination);
 
   state.recording = true;
   state.studentLine = null;
-  $("#mic")?.classList.replace("off", "on");
-  const hint = $("#micHint");
-  if (hint) hint.textContent = "microfone aberto — é só falar";
   setMood("listening");
   setStatus("ouvindo", "live");
 }
@@ -900,15 +892,27 @@ async function startRecording() {
 function stopRecording() {
   if (!state.recording) return;
   state.processorNode?.disconnect();
-  state.audioCtx?.close();
+  state.sourceNode?.disconnect();
   state.micStream?.getTracks().forEach((t) => t.stop());
   state.ws?.send(JSON.stringify({ type: "audioStreamEnd" }));
   state.recording = false;
-  $("#mic")?.classList.replace("on", "off");
-  const hint = $("#micHint");
-  if (hint) hint.textContent = "microfone mudo — toque pra abrir";
+  $("#stageWrap")?.classList.remove("hear");
   setMood("grumpy");
-  setStatus("mudo", "");
+  setStatus("", "");
+}
+
+function ensureCapture() {
+  return (state.captureCtx ||= new AudioContext());
+}
+
+// tenta retomar o contexto; se o navegador exigir gesto, retoma no proximo toque
+async function resumeCtx(ctx) {
+  if (ctx.state === "running") return;
+  try { await ctx.resume(); } catch {}
+  if (ctx.state !== "running") {
+    const once = () => { ctx.resume().catch(() => {}); };
+    for (const ev of ["pointerdown", "touchend", "keydown"]) document.addEventListener(ev, once, { once: true, capture: true });
+  }
 }
 
 function downsampleTo16kHz(input, inputRate) {
