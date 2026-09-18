@@ -110,6 +110,7 @@ const LEVEL_GROUPS = [
 const voice = {
   on: store.get("voiceOn", true),
   el: null,
+  pending: null, // clipe que o navegador bloqueou (autoplay) e que toca no primeiro toque
   play(name) {
     if (!this.on || !name) return Promise.resolve();
     this.stop();
@@ -119,7 +120,16 @@ const voice = {
     el.onended = el.onpause = () => setAllMoods(null);
     return el.play();
   },
+  // Toca assim que a tela abre. Chrome/Safari bloqueiam som antes do primeiro
+  // gesto do usuario na pagina; nesse caso a fala fica pendente e dispara no
+  // primeiro toque/clique/tecla em qualquer lugar (o gesto libera o audio pra
+  // todas as telas seguintes).
+  autoplay(name) {
+    this.pending = null;
+    this.play(name).catch(() => { this.pending = name; });
+  },
   stop() {
+    this.pending = null;
     if (this.el) { this.el.onended = this.el.onpause = null; this.el.pause(); }
     setAllMoods(null);
   },
@@ -130,6 +140,13 @@ const voice = {
     $$("#voiceBtn").forEach(renderVoiceBtn);
   },
 };
+
+// primeiro gesto na pagina: se a Mel foi bloqueada pelo autoplay, ela fala agora
+for (const ev of ["pointerdown", "touchend", "keydown"]) {
+  document.addEventListener(ev, () => {
+    if (voice.pending) { const clip = voice.pending; voice.pending = null; voice.play(clip).catch(() => {}); }
+  }, { capture: true, passive: true });
+}
 
 function setAllMoods(mood) {
   $$(".mascot[data-base]").forEach((el) => Mascot.setMood(el, mood ?? el.dataset.base));
@@ -157,15 +174,10 @@ function render(html, clip) {
   });
   $$("#voiceBtn").forEach((btn) => { renderVoiceBtn(btn); btn.onclick = () => voice.toggle(); });
   window.scrollTo(0, 0);
-  if (clip) {
-    voice.play(clip).catch(() => {
-      // autoplay bloqueado ate o primeiro toque: mostra o convite e deixa a Mel tocavel
-      const hint = $("#tapHint");
-      if (hint) hint.hidden = false;
-    });
-  }
+  if (clip) voice.autoplay(clip);
+  // tocar na Mel repete a fala
   const tappable = $("[data-clip]");
-  if (tappable) tappable.onclick = () => { $("#tapHint") && ($("#tapHint").hidden = true); voice.play(tappable.dataset.clip).catch(() => {}); };
+  if (tappable) tappable.onclick = () => voice.play(tappable.dataset.clip).catch(() => {});
 }
 
 function esc(s) {
@@ -222,7 +234,6 @@ function orbitHtml(kind, mood, clip) {
   }
   return `<div class="orbit">${extras}
     <button class="tap" data-clip="${clip}" aria-label="ouvir a Mel"><div data-mascot="215" data-mood="${mood}"></div></button>
-    <span class="tap-hint" id="tapHint" hidden>toque pra me ouvir</span>
   </div>`;
 }
 
@@ -512,19 +523,77 @@ async function goHome() {
   if (res.status === 401) return logout();
   state.lessons = await res.json();
 
-  const card = (l) => `
-    <button class="lesson" data-id="${esc(l.id)}">
-      <span class="num">${esc(l.id.slice(0, 2))}</span>
-      <div><b><span class="lvl">${esc(l.level)}</span>${esc(l.title)}</b><span>${esc(l.focus)}</span>${l.completed ? `<span class="done">${icon("check", 12)} concluída</span>` : ""}</div>
-      <span class="go">${icon("arrow-right", 18)}</span>
-    </button>`;
+  renderTrail();
+}
 
-  $("#list").innerHTML = LEVEL_GROUPS.map((g) => {
-    const items = state.lessons.filter((l) => g.levels.includes(l.level));
-    if (!items.length) return "";
-    return `<div class="group-title"><b>${g.label}</b><span>${g.tag}</span></div><div class="lesson-list">${items.map(card).join("")}</div>`;
+// ---------- trilha de cenários (home) ----------
+
+// icones de reserva por posicao, quando a licao nao traz o seu proprio (`icon` no JSON)
+const TRAIL_ICONS = ["microphone", "users", "coffee", "fork-knife", "compass", "book-open", "chat-circle-dots", "chats-circle", "lightning", "mask-sad", "chart-line", "briefcase", "star-four", "guitar", "fire"];
+const TRAIL = { node: 64, nodeNow: 72, stepY: 88, labelY: 46, amp: 58 };
+
+function renderTrail() {
+  const lessons = state.lessons;
+  if (!lessons.length) { $("#list").innerHTML = `<p class="small">nenhuma lição publicada ainda.</p>`; return; }
+  const nowIdx = Math.max(0, lessons.findIndex((l) => !l.completed));
+  const current = lessons.findIndex((l) => !l.completed) === -1 ? -1 : nowIdx;
+
+  // monta a sequencia: divisoria de nivel + nós, em ordem
+  const rows = [];
+  let n = 0;
+  for (const g of LEVEL_GROUPS) {
+    const items = lessons.filter((l) => g.levels.includes(l.level));
+    if (!items.length) continue;
+    rows.push({ type: "label", text: `${g.label} · ${g.tag}` });
+    for (const l of items) rows.push({ type: "node", lesson: l, index: n++ });
+  }
+
+  // posiciona: zigue-zague suave (0, +amp, 0, -amp, ...)
+  let y = 12;
+  const nodes = [];
+  const html = rows.map((r) => {
+    if (r.type === "label") {
+      const out = `<span class="trail-label" style="top:${y}px">${esc(r.text)}</span>`;
+      y += TRAIL.labelY;
+      return out;
+    }
+    const cx = Math.round(Math.sin((r.index * Math.PI) / 2) * TRAIL.amp);
+    const cy = y + TRAIL.node / 2;
+    nodes.push({ cx, cy, index: r.index });
+    y += TRAIL.stepY;
+    const l = r.lesson;
+    const cls = ["trail-node", l.completed ? "done" : "", r.index === current ? "now" : "", !l.completed && r.index !== current ? "next" : ""].join(" ");
+    const ic = l.icon && window.ICONS[l.icon] ? l.icon : TRAIL_ICONS[r.index % TRAIL_ICONS.length];
+    return `<button class="${cls}" data-id="${esc(l.id)}" style="left:calc(50% + ${cx}px);top:${cy}px" aria-label="${esc(l.title)}">
+      ${icon(ic, 26)}${l.completed ? `<span class="tick">${icon("check", 11)}</span>` : ""}
+      ${r.index === current ? `<span class="today">HOJE</span>` : ""}
+    </button>`;
   }).join("");
-  $$("#list .lesson").forEach((btn) => (btn.onclick = () => openLesson(btn.dataset.id)));
+
+  // linha tracejada ligando nós consecutivos (em coordenadas relativas ao centro)
+  const W = 390;
+  const path = nodes.map((p, i) => `${i ? "L" : "M"}${W / 2 + p.cx} ${p.cy}`).join(" ");
+  $("#list").innerHTML = `
+    <p class="eyebrow left trail-title">cenários</p>
+    <div class="trail" style="height:${y}px">
+      <svg class="trail-line" viewBox="0 0 ${W} ${y}" preserveAspectRatio="none" aria-hidden="true"><path d="${path}"/></svg>
+      ${html}
+    </div>
+    <div class="trail-card" id="trailCard"></div>`;
+
+  const select = (id) => {
+    const l = lessons.find((x) => x.id === id);
+    $$(".trail-node").forEach((b) => b.classList.toggle("sel", b.dataset.id === id));
+    $("#trailCard").innerHTML = `
+      <div class="tc-head"><span class="lvl">${esc(l.level)}</span>${l.completed ? `<span class="tc-done">${icon("check", 12)} concluída</span>` : ""}</div>
+      <b>${esc(l.title)}</b>
+      <p>${esc(l.focus)}</p>
+      <button class="btn" id="startLesson">${l.completed ? "repetir cenário" : "conversar com a Mel"} ${icon("arrow-right", 18)}</button>`;
+    $("#startLesson").onclick = () => openLesson(id);
+  };
+  $$(".trail-node").forEach((b) => (b.onclick = () => select(b.dataset.id)));
+  select(lessons[current === -1 ? lessons.length - 1 : current].id);
+  if (current > 2) $(".trail-node.now")?.scrollIntoView({ block: "center" });
 }
 
 // ---------- planos / pix ----------
@@ -658,8 +727,8 @@ async function openLesson(lessonId) {
         <div class="answer-pt" id="answerPt"></div>
       </div>
       <div class="mic-wrap">
-        <button class="micbtn" id="mic" aria-label="falar">${icon("microphone", 26)}</button>
-        <p class="hint" id="micHint">toque para falar</p>
+        <button class="micbtn off" id="mic" aria-label="microfone">${icon("microphone", 26)}</button>
+        <p class="hint" id="micHint">abrindo o microfone…</p>
         <button class="link small" id="end">encerrar lição</button>
       </div>
     </section>`);
@@ -700,10 +769,14 @@ function connectVoiceSession(lessonId) {
     const msg = JSON.parse(event.data);
     if (msg.type === "ready") {
       setStatus("ao vivo", "live");
+      startRecording(); // conversa continua: microfone abre sozinho, sem toque
     } else if (msg.type === "audio") {
       playAudioChunk(msg.data);
     } else if (msg.type === "transcript") {
       msg.role === "tutora" ? tutorSaid(msg.text) : studentSaid(msg.text);
+    } else if (msg.type === "interrupted") {
+      flushPlayback();
+      if (state.turn) state.turn.done = true;
     } else if (msg.type === "turnComplete") {
       if (state.turn) state.turn.done = true;
     } else if (msg.type === "limit") {
@@ -801,6 +874,8 @@ async function startRecording() {
     });
   } catch {
     setStatus("microfone bloqueado — libere no navegador", "err");
+    const hint = $("#micHint");
+    if (hint) hint.textContent = "toque pra tentar de novo";
     return;
   }
   state.audioCtx = new AudioContext();
@@ -815,11 +890,11 @@ async function startRecording() {
 
   state.recording = true;
   state.studentLine = null;
-  $("#mic")?.classList.add("on");
+  $("#mic")?.classList.replace("off", "on");
   const hint = $("#micHint");
-  if (hint) hint.textContent = "toque quando terminar";
+  if (hint) hint.textContent = "microfone aberto — é só falar";
   setMood("listening");
-  setStatus("ouvindo — pode falar, ela responde sozinha", "live");
+  setStatus("ouvindo", "live");
 }
 
 function stopRecording() {
@@ -829,11 +904,11 @@ function stopRecording() {
   state.micStream?.getTracks().forEach((t) => t.stop());
   state.ws?.send(JSON.stringify({ type: "audioStreamEnd" }));
   state.recording = false;
-  $("#mic")?.classList.remove("on");
+  $("#mic")?.classList.replace("on", "off");
   const hint = $("#micHint");
-  if (hint) hint.textContent = "toque para falar";
+  if (hint) hint.textContent = "microfone mudo — toque pra abrir";
   setMood("grumpy");
-  setStatus("a Mel está pensando…", "live");
+  setStatus("mudo", "");
 }
 
 function downsampleTo16kHz(input, inputRate) {
@@ -889,14 +964,26 @@ function playAudioChunk(base64) {
   const startAt = Math.max(state.nextPlaybackTime, ctx.currentTime + 0.02);
   src.start(startAt);
   state.nextPlaybackTime = startAt + buffer.duration;
+  (state.playing ||= new Set()).add(src);
+  src.onended = () => state.playing?.delete(src);
 
   setMood("talking");
-  if (!state.recording) setStatus("a Mel está falando", "live");
+  setStatus("a Mel está falando", "live");
   clearTimeout(state.moodTimer);
   state.moodTimer = setTimeout(() => {
     setMood(state.recording ? "listening" : "grumpy");
-    if (!state.recording) setStatus("sua vez", "live");
+    setStatus(state.recording ? "sua vez — é só falar" : "mudo", state.recording ? "live" : "");
   }, (state.nextPlaybackTime - ctx.currentTime) * 1000 + 150);
+}
+
+// o aluno falou por cima da Mel: descarta o que ainda ia tocar
+function flushPlayback() {
+  state.playing?.forEach((src) => { try { src.stop(); } catch {} });
+  state.playing?.clear();
+  state.nextPlaybackTime = 0;
+  clearTimeout(state.moodTimer);
+  setMood(state.recording ? "listening" : "grumpy");
+  setStatus("ouvindo", "live");
 }
 
 // ---------- bootstrap ----------

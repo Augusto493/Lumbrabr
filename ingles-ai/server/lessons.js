@@ -105,6 +105,8 @@ export function buildSystemInstruction(lesson, profile = {}) {
     lesson.review.closing,
     "",
     "Mantenha cada fala sua curta (1-3 frases) para dar espaco ao aluno falar mais do que voce.",
+    "CONVERSA CONTINUA: e uma ligacao por voz com o microfone do aluno sempre aberto, sem botao. Termine cada fala sua com algo pra ele fazer (repetir, responder, escolher). Se ele te interromper, para e escuta.",
+    "RITMO: se o aluno pedir pra falar mais devagar, repetir, soletrar, traduzir ou explicar de novo, faca NA HORA e sem reclamar: fale bem mais lento, com pausas entre as palavras, e repita a frase em ingles duas vezes. Mantenha esse ritmo lento ate ele dizer que pode acelerar. Se ele pedir mais rapido, acelere. Se ele disser que nao entendeu, explique de outro jeito, em portugues, mais simples.",
     "Sua fala e FALADA, nao escrita: nunca use markdown, asteriscos, listas ou emojis.",
     "Sempre que for ditar uma frase pro aluno repetir, use EXATAMENTE este formato, numa frase so: 'Diz: <frase em ingles>. Em portugues: <traducao>.' — o app mostra isso na tela pra ele.",
   ].join("\n");
@@ -113,7 +115,7 @@ export function buildSystemInstruction(lesson, profile = {}) {
 export const router = express.Router();
 
 router.get("/", requireAuth, (req, res) => {
-  const lessons = listLessons().map(({ id, title, level, focus }) => ({ id, title, level, focus }));
+  const lessons = listLessons().map(({ id, title, level, focus, icon }) => ({ id, title, level, focus, icon }));
   const progress = getUserProgress(req.user.email);
   res.json(lessons.map((l) => ({ ...l, completed: Boolean(progress[l.id]) })));
 });

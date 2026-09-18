@@ -81,6 +81,10 @@ export function attachVoiceServer(httpServer) {
             const outputText = message?.serverContent?.outputTranscription?.text;
             if (outputText) safeSend(ws, { type: "transcript", role: "tutora", text: outputText });
 
+            // o aluno falou por cima da Mel: o app descarta o audio que ainda ia tocar
+            if (message?.serverContent?.interrupted) {
+              safeSend(ws, { type: "interrupted" });
+            }
             if (message?.serverContent?.turnComplete) {
               safeSend(ws, { type: "turnComplete" });
             }
@@ -99,7 +103,7 @@ export function attachVoiceServer(httpServer) {
     // a Mel abre a aula sozinha, sem esperar o aluno falar primeiro
     const firstName = (account?.name ?? "").trim().split(" ")[0];
     geminiSession.sendClientContent({
-      turns: [{ role: "user", parts: [{ text: `(${firstName ? `O aluno ${firstName}` : "O aluno"} acabou de entrar na aula. Comece voce, em portugues, do seu jeito.)` }] }],
+      turns: [{ role: "user", parts: [{ text: `(${firstName ? `O aluno ${firstName}` : "O aluno"} acabou de entrar na aula. O microfone dele ja esta aberto. Comece voce, em portugues, do seu jeito, e termine com uma pergunta curta pra ele responder.)` }] }],
       turnComplete: true,
     });
 

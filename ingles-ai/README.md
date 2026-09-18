@@ -28,8 +28,11 @@ simples e a API do Gemini.
 
 As telas de intro, perguntas, plano e login tocam clipes pré-gerados na voz
 da Mel (`public/audio/*.wav`), com botão de som no topo (a escolha fica
-salva). O navegador bloqueia autoplay antes do primeiro toque, então na
-primeira tela aparece "toque pra me ouvir" sobre a Mel.
+salva). A Mel tenta falar assim que a tela abre; Chrome e Safari bloqueiam
+som antes do primeiro gesto do usuário na página, então quando isso
+acontece a fala fica pendente e dispara no primeiro toque/clique/tecla em
+qualquer lugar — a partir daí todas as telas tocam sozinhas. Tocar na Mel
+repete a fala.
 
 Pra regenerar os clipes (ou mudar as falas em `LINES`):
 
@@ -131,9 +134,18 @@ tradução), `freeConversation` e `review` — a Mel recebe isso como roteiro.
    da Mel: nível ajusta o ritmo e a quantidade de inglês; o "bloqueio"
    (vergonha, congelo, não sei por onde começar, falta gente) ajusta como ela
    corrige.
-3. **Home**: a Mel recebe o aluno com uma frase ranzinza e lista as lições.
-4. **Conversa**: a Mel abre a aula sozinha em português; o aluno aperta
-   *Falar* e pode deixar o microfone aberto — o Gemini detecta os turnos.
+3. **Home**: a Mel recebe o aluno com uma frase ranzinza e mostra a
+   **trilha de cenários** — bolinhas com ícone ligadas por linha tracejada,
+   a lição da vez com anel branco e etiqueta "HOJE", as concluídas marcadas,
+   as próximas apagadas, divisórias por nível. Tocar numa bolinha abre o
+   card com título, foco e o botão de conversar.
+4. **Conversa**: é uma ligação contínua. A Mel abre a aula sozinha em
+   português e o **microfone já abre junto** — não tem botão de "falar"; o
+   Gemini detecta os turnos e, se o aluno falar por cima, a Mel para na
+   hora (o áudio pendente é descartado). O botão redondo só silencia/reabre
+   o microfone. O prompt manda a Mel obedecer pedidos de ritmo ("fala mais
+   devagar", "repete", "não entendi") na hora e manter o ritmo lento até o
+   aluno liberar.
 
 > Os depoimentos da tela de prova social são **exemplos** (estão marcados na
 > própria tela). Troque por alunos reais em `TESTIMONIALS` no `public/app.js`
