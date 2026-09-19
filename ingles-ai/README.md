@@ -137,8 +137,8 @@ tradução), `freeConversation` e `review` — a Mel recebe isso como roteiro.
 3. **Home**: a Mel recebe o aluno com uma frase ranzinza e mostra a
    **trilha de cenários** — bolinhas com ícone ligadas por linha tracejada,
    a lição da vez com anel branco e etiqueta "HOJE", as concluídas marcadas,
-   as próximas apagadas, divisórias por nível. Tocar numa bolinha abre o
-   card com título, foco e o botão de conversar.
+   as próximas apagadas, o nome de cada cenário embaixo da bolinha,
+   divisórias por nível. Tocar numa bolinha já entra na aula.
 4. **Conversa**: é uma ligação contínua numa tela limpa — só a Mel no
    centro e, quando ela dita algo, a frase em inglês (grande) com a
    tradução embaixo. Sem botão de microfone, sem transcrição, sem status:

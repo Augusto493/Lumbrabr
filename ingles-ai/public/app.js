@@ -530,7 +530,7 @@ async function goHome() {
 
 // icones de reserva por posicao, quando a licao nao traz o seu proprio (`icon` no JSON)
 const TRAIL_ICONS = ["microphone", "users", "coffee", "fork-knife", "compass", "book-open", "chat-circle-dots", "chats-circle", "lightning", "mask-sad", "chart-line", "briefcase", "star-four", "guitar", "fire"];
-const TRAIL = { node: 64, nodeNow: 72, stepY: 88, labelY: 46, amp: 58 };
+const TRAIL = { node: 64, nodeNow: 72, stepY: 122, labelY: 46, amp: 58 };
 
 function renderTrail() {
   const lessons = state.lessons;
@@ -567,6 +567,7 @@ function renderTrail() {
     return `<button class="${cls}" data-id="${esc(l.id)}" style="left:calc(50% + ${cx}px);top:${cy}px" aria-label="${esc(l.title)}">
       ${icon(ic, 26)}${l.completed ? `<span class="tick">${icon("check", 11)}</span>` : ""}
       ${r.index === current ? `<span class="today">HOJE</span>` : ""}
+      <span class="ttl">${esc(l.title)}</span>
     </button>`;
   }).join("");
 
@@ -575,24 +576,13 @@ function renderTrail() {
   const path = nodes.map((p, i) => `${i ? "L" : "M"}${W / 2 + p.cx} ${p.cy}`).join(" ");
   $("#list").innerHTML = `
     <p class="eyebrow left trail-title">cenários</p>
-    <div class="trail" style="height:${y}px">
+    <div class="trail" style="height:${y + 24}px">
       <svg class="trail-line" viewBox="0 0 ${W} ${y}" preserveAspectRatio="none" aria-hidden="true"><path d="${path}"/></svg>
       ${html}
-    </div>
-    <div class="trail-card" id="trailCard"></div>`;
+    </div>`;
 
-  const select = (id) => {
-    const l = lessons.find((x) => x.id === id);
-    $$(".trail-node").forEach((b) => b.classList.toggle("sel", b.dataset.id === id));
-    $("#trailCard").innerHTML = `
-      <div class="tc-head"><span class="lvl">${esc(l.level)}</span>${l.completed ? `<span class="tc-done">${icon("check", 12)} concluída</span>` : ""}</div>
-      <b>${esc(l.title)}</b>
-      <p>${esc(l.focus)}</p>
-      <button class="btn" id="startLesson">${l.completed ? "repetir cenário" : "conversar com a Mel"} ${icon("arrow-right", 18)}</button>`;
-    $("#startLesson").onclick = () => openLesson(id);
-  };
-  $$(".trail-node").forEach((b) => (b.onclick = () => select(b.dataset.id)));
-  select(lessons[current === -1 ? lessons.length - 1 : current].id);
+  // tocar na bolinha ja entra na aula (o clique tambem libera o audio no navegador)
+  $$(".trail-node").forEach((b) => (b.onclick = () => openLesson(b.dataset.id)));
   if (current > 2) $(".trail-node.now")?.scrollIntoView({ block: "center" });
 }
 
