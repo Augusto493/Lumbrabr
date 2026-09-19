@@ -151,6 +151,13 @@ tradução), `freeConversation` e `review` — a Mel recebe isso como roteiro.
    pedidos de ritmo ("fala mais devagar", "repete", "não entendi") na hora
    e manter o ritmo lento até o aluno liberar.
 
+   Latência: a sessão do Gemini Live é aberta com `thinkingBudget: 0`
+   (sem "pensar" antes de falar — com o padrão a primeira palavra levava
+   5–7 s; agora ~1 s) e com detecção de fim de fala em sensibilidade alta
+   (`silenceDurationMs: 500`), então a Mel responde ~1 s depois que o
+   aluno para de falar. A abertura da aula é limitada a duas frases mais a
+   primeira frase pra repetir.
+
    Detalhe técnico que já deu dor de cabeça: os dois `AudioContext`
    (captura e playback) são criados **dentro do clique** que abre a aula.
    Criados depois, fora de um gesto do usuário, o Chrome os deixa
@@ -228,8 +235,10 @@ docker logs -f mel-app          # deve mostrar "Mel ouvindo em http://0.0.0.0:30
 - Os dados (`users.json`, `progress.json`, `sessions.json`, `plans.json`,
   `orders.json`, `settings.json`) ficam no volume `mel_mel_data`, então
   `docker compose up -d --build` atualiza o código sem perder nada.
-- Pra atualizar: copie o código novo pra `/docker/mel` e rode
-  `docker compose up -d --build` de novo.
+- Pra atualizar: `bash /docker/mel/update-vps.sh` (baixa o branch do
+  GitHub, copia por cima e reconstrói; aceita o nome do branch como
+  argumento). Se o repositório for privado, o `git clone` vai pedir
+  usuário e token.
 - Pra usar um domínio próprio: aponte um registro A pro IP da VPS, troque o
   `Host(...)` nas labels e o `PUBLIC_URL` no `.env` (ou no painel), e suba
   de novo — o Traefik pega o certificado sozinho.

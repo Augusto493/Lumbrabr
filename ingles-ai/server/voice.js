@@ -1,5 +1,5 @@
 import { WebSocketServer } from "ws";
-import { GoogleGenAI, Modality } from "@google/genai";
+import { GoogleGenAI, Modality, StartSensitivity, EndSensitivity } from "@google/genai";
 import { verifyToken } from "./auth.js";
 import { getLesson, buildSystemInstruction } from "./lessons.js";
 import { markLessonDone, findUserByEmail, logSession, minutesUsedToday } from "./store.js";
@@ -65,6 +65,18 @@ export function attachVoiceServer(httpServer) {
           systemInstruction: buildSystemInstruction(lesson, profile),
           inputAudioTranscription: {},
           outputAudioTranscription: {},
+          // sem "pensar" antes de falar: numa conversa por voz cada segundo de
+          // silencio parece travamento (medido: ~5 s ate a primeira palavra com o padrao)
+          thinkingConfig: { thinkingBudget: 0 },
+          // detecta o fim da fala do aluno mais rapido pra Mel responder na hora
+          realtimeInputConfig: {
+            automaticActivityDetection: {
+              startOfSpeechSensitivity: StartSensitivity.START_SENSITIVITY_HIGH,
+              endOfSpeechSensitivity: EndSensitivity.END_SENSITIVITY_HIGH,
+              prefixPaddingMs: 100,
+              silenceDurationMs: 500,
+            },
+          },
         },
         callbacks: {
           onopen: () => safeSend(ws, { type: "ready" }),
@@ -103,7 +115,7 @@ export function attachVoiceServer(httpServer) {
     // a Mel abre a aula sozinha, sem esperar o aluno falar primeiro
     const firstName = (account?.name ?? "").trim().split(" ")[0];
     geminiSession.sendClientContent({
-      turns: [{ role: "user", parts: [{ text: `(${firstName ? `O aluno ${firstName}` : "O aluno"} acabou de entrar na aula. O microfone dele ja esta aberto. Comece voce, em portugues, do seu jeito, e termine com uma pergunta curta pra ele responder.)` }] }],
+      turns: [{ role: "user", parts: [{ text: `(${firstName ? `O aluno ${firstName}` : "O aluno"} acabou de entrar na aula. O microfone dele ja esta aberto. Abra voce, em portugues, em NO MAXIMO duas frases curtas, e ja dite a primeira frase pra ele repetir. Nada de discurso: cumprimenta, situa a cena numa frase e passa a frase.)` }] }],
       turnComplete: true,
     });
 

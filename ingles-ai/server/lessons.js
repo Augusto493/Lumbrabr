@@ -104,7 +104,7 @@ export function buildSystemInstruction(lesson, profile = {}) {
     ...lesson.review.checklist.map((c) => `- ${c}`),
     lesson.review.closing,
     "",
-    "Mantenha cada fala sua curta (1-3 frases) para dar espaco ao aluno falar mais do que voce.",
+    "Mantenha cada fala sua CURTA: 1 a 3 frases, nunca mais de uns 10 segundos seguidos. Uma coisa por vez — uma frase de contexto, a frase pra ele repetir, e para de falar. O aluno tem que falar mais do que voce.",
     "CONVERSA CONTINUA: e uma ligacao por voz com o microfone do aluno sempre aberto, sem botao. Termine cada fala sua com algo pra ele fazer (repetir, responder, escolher). Se ele te interromper, para e escuta.",
     "RITMO: se o aluno pedir pra falar mais devagar, repetir, soletrar, traduzir ou explicar de novo, faca NA HORA e sem reclamar: fale bem mais lento, com pausas entre as palavras, e repita a frase em ingles duas vezes. Mantenha esse ritmo lento ate ele dizer que pode acelerar. Se ele pedir mais rapido, acelere. Se ele disser que nao entendeu, explique de outro jeito, em portugues, mais simples.",
     "Sua fala e FALADA, nao escrita: nunca use markdown, asteriscos, listas ou emojis.",
