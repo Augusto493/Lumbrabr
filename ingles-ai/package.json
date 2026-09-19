@@ -1,0 +1,23 @@
+{
+  "name": "ingles-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MVP de app de conversacao em ingles com IA de voz (Gemini Live API)",
+  "type": "module",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "dependencies": {
+    "@google/genai": "^1.9.0",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "ws": "^8.18.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

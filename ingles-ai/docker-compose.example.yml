@@ -1,0 +1,33 @@
+# Copie para docker-compose.yml e ajuste o Host() e a subnet.
+# Pressupoe um Traefik ja rodando no host (network_mode: host, providers.docker,
+# entrypoint "websecure" e certresolver "letsencrypt"), como na VPS de exemplo.
+services:
+  app:
+    build: .
+    container_name: mel-app
+    restart: unless-stopped
+    mem_limit: 512m
+    memswap_limit: -1
+    env_file: .env
+    environment:
+      - TZ=America/Sao_Paulo
+    volumes:
+      - mel_data:/app/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mel.rule=Host(`mel.SEU-IP.sslip.io`)
+      - traefik.http.routers.mel.entrypoints=websecure
+      - traefik.http.routers.mel.tls=true
+      - traefik.http.routers.mel.tls.certresolver=letsencrypt
+      - traefik.http.services.mel.loadbalancer.server.port=3000
+
+volumes:
+  mel_data:
+
+# Necessario so se o Docker do host ja esgotou os pools de IP padrao
+# ("all predefined address pools have been fully subnetted").
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 10.210.0.0/24
