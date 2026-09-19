@@ -92,10 +92,10 @@ const GOAL_BY_BLOCKER = {
 };
 
 const GREETINGS = [
-  "Voltou. Que milagre. Escolhe uma lição aí.",
+  "Voltou. Que milagre. Toca na bolinha de hoje.",
   "Ah, é você de novo. Bora, não tenho o dia todo.",
-  "Chegou atrasado pra própria aula. Clássico. Escolhe uma.",
-  "Tá esperando o quê? Convite formal? Clica numa lição.",
+  "Chegou atrasado pra própria aula. Clássico. Toca aí.",
+  "Tá esperando o quê? Convite formal? Toca na de hoje.",
 ];
 
 const LEVEL_GROUPS = [
@@ -178,6 +178,10 @@ function render(html, clip) {
   // tocar na Mel repete a fala
   const tappable = $("[data-clip]");
   if (tappable) tappable.onclick = () => voice.play(tappable.dataset.clip).catch(() => {});
+}
+
+function firstName(name) {
+  return String(name || "").trim().split(/\s+/)[0] || "você";
 }
 
 function esc(s) {
@@ -497,25 +501,38 @@ async function goHome() {
     <section class="screen">
       <div class="topbar">
         <div class="brand"><div data-mascot="28" data-mood="grumpy"></div> Mel</div>
-        <div class="who">${state.role === "admin" ? `<a class="pill" href="/admin">painel</a>` : ""}<span>${esc(state.name)}</span><button class="iconbtn" id="logout" aria-label="sair">${icon("x", 18)}</button></div>
+        <div class="who">
+          <button class="who-btn" id="whoBtn" aria-haspopup="menu">${esc(firstName(state.name))}<i class="chev"></i></button>
+          <div class="menu" id="whoMenu" hidden>
+            ${state.role === "admin" ? `<a href="/admin">${icon("sliders-horizontal", 16)} painel</a>` : ""}
+            <button id="logout">${icon("x", 16)} sair</button>
+          </div>
+        </div>
       </div>
       <div class="screen-body top">
         <div class="greet">
           <div data-mascot="64" data-mood="grumpy"></div>
           <div class="bubble">${esc(GREETINGS[Math.floor(Math.random() * GREETINGS.length)])}</div>
         </div>
-        <div class="plan-line" id="planLine"></div>
+        <div class="home-row">
+          <span class="eyebrow-inline">cenários <b id="trailCount"></b></span>
+          <div class="plan-line" id="planLine"></div>
+        </div>
         <div id="list"><p class="small">carregando…</p></div>
       </div>
     </section>`);
   $("#logout").onclick = logout;
+  const menu = $("#whoMenu");
+  $("#whoBtn").onclick = (e) => { e.stopPropagation(); menu.hidden = !menu.hidden; };
+  document.addEventListener("click", () => { if (menu) menu.hidden = true; }, { once: true });
 
   fetch("/api/pay/me", { headers: authHeaders() }).then((r) => r.ok && r.json()).then((ent) => {
     if (!ent || !$("#planLine")) return;
     state.entitlement = ent;
+    const short = (iso) => new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
     $("#planLine").innerHTML = ent.free
-      ? `<span class="chip">grátis · ${ent.minutesPerDay} min/dia · usou ${ent.usedToday}</span> <button class="pill small" id="upgrade">assinar</button>`
-      : `<span class="chip">${esc(ent.planName)} · até ${new Date(ent.expiresAt).toLocaleDateString("pt-BR")}</span>`;
+      ? `<span class="chip">${ent.minutesPerDay} min grátis/dia</span><button class="pill small" id="upgrade">assinar</button>`
+      : `<span class="chip">${ent.minutesPerDay} min/dia · até ${short(ent.expiresAt)}</span>`;
     if ($("#upgrade")) $("#upgrade").onclick = () => goPaywall("upgrade");
   });
 
@@ -530,11 +547,13 @@ async function goHome() {
 
 // icones de reserva por posicao, quando a licao nao traz o seu proprio (`icon` no JSON)
 const TRAIL_ICONS = ["microphone", "users", "coffee", "fork-knife", "compass", "book-open", "chat-circle-dots", "chats-circle", "lightning", "mask-sad", "chart-line", "briefcase", "star-four", "guitar", "fire"];
-const TRAIL = { node: 64, nodeNow: 72, stepY: 122, labelY: 46, amp: 58 };
+const TRAIL = { node: 64, nodeNow: 72, stepY: 122, labelY: 40, amp: 58 };
 
 function renderTrail() {
   const lessons = state.lessons;
   if (!lessons.length) { $("#list").innerHTML = `<p class="small">nenhuma lição publicada ainda.</p>`; return; }
+  const doneCount = lessons.filter((l) => l.completed).length;
+  if ($("#trailCount")) $("#trailCount").textContent = `${doneCount}/${lessons.length}`;
   const nowIdx = Math.max(0, lessons.findIndex((l) => !l.completed));
   const current = lessons.findIndex((l) => !l.completed) === -1 ? -1 : nowIdx;
 
@@ -549,7 +568,7 @@ function renderTrail() {
   }
 
   // posiciona: zigue-zague suave (0, +amp, 0, -amp, ...)
-  let y = 12;
+  let y = 4;
   const nodes = [];
   const html = rows.map((r) => {
     if (r.type === "label") {
@@ -575,7 +594,6 @@ function renderTrail() {
   const W = 390;
   const path = nodes.map((p, i) => `${i ? "L" : "M"}${W / 2 + p.cx} ${p.cy}`).join(" ");
   $("#list").innerHTML = `
-    <p class="eyebrow left trail-title">cenários</p>
     <div class="trail" style="height:${y + 24}px">
       <svg class="trail-line" viewBox="0 0 ${W} ${y}" preserveAspectRatio="none" aria-hidden="true"><path d="${path}"/></svg>
       ${html}
