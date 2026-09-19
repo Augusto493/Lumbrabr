@@ -876,17 +876,38 @@ async function startRecording() {
   const source = ctx.createMediaStreamSource(state.micStream);
   state.sourceNode = source;
   state.processorNode = ctx.createScriptProcessor(4096, 1, 1);
-  let loud = false;
+  // Porta de voz: so sobe audio quando ha voz. Mandar silencio continuo enche a
+  // fila servidor -> Gemini em rede lenta (medido na VPS: a fala chegava tarde
+  // ou nunca). Pre-rolo de ~340 ms pra nao cortar a primeira silaba, 700 ms de
+  // folga depois da ultima voz, e ai avisa o fim do trecho (audioStreamEnd).
+  const gate = { floor: 0.01, speaking: false, lastVoice: 0, pre: [] };
   state.processorNode.onaudioprocess = (e) => {
     const input = e.inputBuffer.getChannelData(0);
     const pcm16 = downsampleTo16kHz(input, ctx.sampleRate);
-    state.ws?.send(JSON.stringify({ type: "audio", data: int16ToBase64(pcm16) }));
-    // a Mel "reage" quando ouve voz: feedback visual de que o microfone esta captando
     let sum = 0;
     for (let i = 0; i < input.length; i += 8) sum += input[i] * input[i];
     const rms = Math.sqrt(sum / (input.length / 8));
-    const now = rms > 0.02;
-    if (now !== loud) { loud = now; $("#stageWrap")?.classList.toggle("hear", loud); }
+    // piso de ruido: cai rapido, sobe devagar
+    gate.floor = rms < gate.floor ? rms : gate.floor + (rms - gate.floor) * 0.002;
+    const melTalking = state.playbackCtx && state.nextPlaybackTime > state.playbackCtx.currentTime;
+    const threshold = Math.max(0.012, gate.floor * 2.5) * (melTalking ? 1.6 : 1); // mais exigente com eco enquanto ela fala
+    const now = performance.now();
+    const send = (p) => state.ws?.send(JSON.stringify({ type: "audio", data: int16ToBase64(p) }));
+    if (rms > threshold) {
+      gate.lastVoice = now;
+      if (!gate.speaking) { gate.speaking = true; gate.pre.forEach(send); gate.pre.length = 0; $("#stageWrap")?.classList.add("hear"); }
+    }
+    if (gate.speaking) {
+      send(pcm16);
+      if (now - gate.lastVoice > 700) {
+        gate.speaking = false;
+        state.ws?.send(JSON.stringify({ type: "audioStreamEnd" }));
+        $("#stageWrap")?.classList.remove("hear");
+      }
+    } else {
+      gate.pre.push(pcm16);
+      if (gate.pre.length > 4) gate.pre.shift();
+    }
   };
   source.connect(state.processorNode);
   state.processorNode.connect(ctx.destination);
@@ -973,7 +994,9 @@ function playAudioChunk(base64) {
   const src = ctx.createBufferSource();
   src.buffer = buffer;
   src.connect(ctx.destination);
-  const startAt = Math.max(state.nextPlaybackTime, ctx.currentTime + 0.02);
+  // inicio de fala nova: 120 ms de folga pra absorver a variacao de chegada dos chunks
+  const fresh = state.nextPlaybackTime < ctx.currentTime;
+  const startAt = Math.max(state.nextPlaybackTime, ctx.currentTime + (fresh ? 0.12 : 0.02));
   src.start(startAt);
   state.nextPlaybackTime = startAt + buffer.duration;
   (state.playing ||= new Set()).add(src);

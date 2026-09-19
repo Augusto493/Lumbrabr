@@ -151,6 +151,17 @@ tradução), `freeConversation` e `review` — a Mel recebe isso como roteiro.
    pedidos de ritmo ("fala mais devagar", "repete", "não entendi") na hora
    e manter o ritmo lento até o aluno liberar.
 
+   Porta de voz: o navegador **só envia áudio quando detecta voz** (piso de
+   ruído adaptativo, ~340 ms de pré-rolo pra não cortar a primeira sílaba,
+   700 ms de folga depois da última voz e então `audioStreamEnd`). Mandar
+   silêncio contínuo parecia inofensivo, mas numa VPS com rota lenta até o
+   Google a fila servidor → Gemini enchia e a fala do aluno chegava tarde
+   ou nunca (medido: local respondia em 2 s, VPS não respondia em 20 s;
+   sem o fluxo de silêncio, a VPS respondeu em 0,6–2,6 s). Enquanto a Mel
+   fala, o limiar sobe 60% pra o eco das caixas não interromper ela à toa.
+   O servidor loga um resumo por sessão (`[voz] … audio aluno N chunks`)
+   pra dar pra ver no `docker logs` se o áudio do aluno está chegando.
+
    Latência: a sessão do Gemini Live é aberta com `thinkingBudget: 0`
    (sem "pensar" antes de falar — com o padrão a primeira palavra levava
    5–7 s; agora ~1 s) e com detecção de fim de fala em sensibilidade alta

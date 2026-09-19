@@ -51,6 +51,7 @@ export function attachVoiceServer(httpServer) {
 
     let geminiSession = null;
     let closedByClient = false;
+    const stats = { audioIn: 0, audioOut: 0, turns: 0 };
     const limiter = setTimeout(() => {
       safeSend(ws, { type: "limit", ...ent });
       ws.close();
@@ -84,6 +85,7 @@ export function attachVoiceServer(httpServer) {
             const parts = message?.serverContent?.modelTurn?.parts ?? [];
             for (const part of parts) {
               if (part.inlineData?.data) {
+                stats.audioOut++;
                 safeSend(ws, { type: "audio", data: part.inlineData.data });
               }
             }
@@ -98,6 +100,7 @@ export function attachVoiceServer(httpServer) {
               safeSend(ws, { type: "interrupted" });
             }
             if (message?.serverContent?.turnComplete) {
+              stats.turns++;
               safeSend(ws, { type: "turnComplete" });
             }
           },
@@ -128,6 +131,7 @@ export function attachVoiceServer(httpServer) {
       }
 
       if (msg.type === "audio" && msg.data) {
+        stats.audioIn++;
         geminiSession.sendRealtimeInput({
           audio: { data: msg.data, mimeType: "audio/pcm;rate=16000" },
         });
@@ -144,6 +148,8 @@ export function attachVoiceServer(httpServer) {
       clearTimeout(limiter);
       geminiSession?.close();
       const seconds = Math.round((Date.now() - startedAt) / 1000);
+      // resumo no log do container: ajuda a ver de longe se o audio do aluno esta chegando
+      console.log(`[voz] ${user.email} ${lesson.id} ${seconds}s | audio aluno ${stats.audioIn} chunks | audio Mel ${stats.audioOut} chunks | turnos ${stats.turns}`);
       // a tela de aula nao tem botao de "concluir": uma conversa de pelo menos
       // 90 s conta como licao feita
       if (seconds >= 90) markLessonDone(user.email, lesson.id);
