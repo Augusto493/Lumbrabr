@@ -222,10 +222,20 @@ tradução), `freeConversation` e `review` — a Mel recebe isso como roteiro.
 
    Latência: a sessão do Gemini Live é aberta com `thinkingBudget: 0`
    (sem "pensar" antes de falar — com o padrão a primeira palavra levava
-   5–7 s; agora ~1 s) e com detecção de fim de fala em sensibilidade alta
-   (`silenceDurationMs: 500`), então a Mel responde ~1 s depois que o
-   aluno para de falar. A abertura da aula é limitada a duas frases mais a
-   primeira frase pra repetir.
+   5–7 s) e com detecção de fim de fala em sensibilidade alta
+   (`silenceDurationMs: 400`; a porta de voz do navegador fecha em 550 ms,
+   depois do detector). A abertura da aula é limitada a duas frases mais a
+   primeira frase pra repetir. Se o primeiro turno terminar sem áudio
+   (alguns modelos respondem ao empurrão de abertura só em texto), o
+   servidor dá um segundo empurrão por `sendRealtimeInput`.
+
+   Modelos medidos pelo caminho real (fala do aluno → primeira palavra da
+   resposta), setembro/2026: `gemini-2.5-flash-native-audio-preview-12-2025`
+   ≈ 1,0–1,2 s; `gemini-3.1-flash-live-preview` ≈ 0,7 s (e abertura em
+   0,6–1,1 s). `gemini-3.8-live` ficou instável (turnos sem áudio, sem
+   resposta ao aluno). O modelo é trocado em Painel → Configurações →
+   Gemini → "Modelo de voz", sem reiniciar. Script de medição:
+   `scripts/` não tem — foi feito ad hoc; o método está descrito acima.
 
    Detalhe técnico que já deu dor de cabeça: os dois `AudioContext`
    (captura e playback) são criados **dentro do clique** que abre a aula.

@@ -66,7 +66,10 @@ export function attachVoiceServer(httpServer) {
 
     let geminiSession = null;
     let closedByClient = false;
+    let rekicked = false;
     const stats = { audioIn: 0, audioOut: 0, turns: 0 };
+    const firstName = (account?.name ?? "").trim().split(" ")[0];
+    const kickoffText = `${firstName ? `O aluno ${firstName}` : "O aluno"} acabou de entrar na aula. O microfone dele ja esta aberto. Abra voce, em portugues, em NO MAXIMO duas frases curtas, e ja dite a primeira frase pra ele repetir. Nada de discurso: cumprimenta, situa a cena numa frase e passa a frase.`;
     const limiter = setTimeout(() => {
       safeSend(ws, { type: "limit", ...ent });
       ws.close();
@@ -93,7 +96,7 @@ export function attachVoiceServer(httpServer) {
               startOfSpeechSensitivity: StartSensitivity.START_SENSITIVITY_HIGH,
               endOfSpeechSensitivity: EndSensitivity.END_SENSITIVITY_HIGH,
               prefixPaddingMs: 100,
-              silenceDurationMs: 500,
+              silenceDurationMs: 400,
             },
           },
         },
@@ -119,6 +122,13 @@ export function attachVoiceServer(httpServer) {
             }
             if (message?.serverContent?.turnComplete) {
               stats.turns++;
+              // alguns modelos respondem ao empurrao de abertura so em texto (sem audio):
+              // da um segundo empurrao por outro canal pra Mel falar de verdade
+              if (stats.turns === 1 && stats.audioOut === 0 && !rekicked) {
+                rekicked = true;
+                try { geminiSession.sendRealtimeInput({ text: `[sistema: ${kickoffText}]` }); } catch {}
+                return;
+              }
               safeSend(ws, { type: "turnComplete" });
             }
           },
@@ -138,9 +148,8 @@ export function attachVoiceServer(httpServer) {
     }
 
     // a Mel abre a aula sozinha, sem esperar o aluno falar primeiro
-    const firstName = (account?.name ?? "").trim().split(" ")[0];
     geminiSession.sendClientContent({
-      turns: [{ role: "user", parts: [{ text: `(${firstName ? `O aluno ${firstName}` : "O aluno"} acabou de entrar na aula. O microfone dele ja esta aberto. Abra voce, em portugues, em NO MAXIMO duas frases curtas, e ja dite a primeira frase pra ele repetir. Nada de discurso: cumprimenta, situa a cena numa frase e passa a frase.)` }] }],
+      turns: [{ role: "user", parts: [{ text: `(${kickoffText})` }] }],
       turnComplete: true,
     });
 

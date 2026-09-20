@@ -1137,8 +1137,9 @@ async function startRecording() {
   state.processorNode = ctx.createScriptProcessor(4096, 1, 1);
   // Porta de voz: so sobe audio quando ha voz. Mandar silencio continuo enche a
   // fila servidor -> Gemini em rede lenta (medido na VPS: a fala chegava tarde
-  // ou nunca). Pre-rolo de ~340 ms pra nao cortar a primeira silaba, 700 ms de
-  // folga depois da ultima voz, e ai avisa o fim do trecho (audioStreamEnd).
+  // ou nunca). Pre-rolo de ~340 ms pra nao cortar a primeira silaba, 550 ms de
+  // folga depois da ultima voz (o detector do Gemini fecha o turno com 400 ms
+  // de silencio, antes disso), e ai avisa o fim do trecho (audioStreamEnd).
   const gate = { floor: 0.01, speaking: false, lastVoice: 0, pre: [] };
   state.processorNode.onaudioprocess = (e) => {
     const input = e.inputBuffer.getChannelData(0);
@@ -1158,7 +1159,7 @@ async function startRecording() {
     }
     if (gate.speaking) {
       send(pcm16);
-      if (now - gate.lastVoice > 700) {
+      if (now - gate.lastVoice > 550) {
         gate.speaking = false;
         state.ws?.send(JSON.stringify({ type: "audioStreamEnd" }));
         $("#stageWrap")?.classList.remove("hear");
@@ -1253,9 +1254,9 @@ function playAudioChunk(base64) {
   const src = ctx.createBufferSource();
   src.buffer = buffer;
   src.connect(ctx.destination);
-  // inicio de fala nova: 120 ms de folga pra absorver a variacao de chegada dos chunks
+  // inicio de fala nova: 80 ms de folga pra absorver a variacao de chegada dos chunks
   const fresh = state.nextPlaybackTime < ctx.currentTime;
-  const startAt = Math.max(state.nextPlaybackTime, ctx.currentTime + (fresh ? 0.12 : 0.02));
+  const startAt = Math.max(state.nextPlaybackTime, ctx.currentTime + (fresh ? 0.08 : 0.02));
   src.start(startAt);
   state.nextPlaybackTime = startAt + buffer.duration;
   (state.playing ||= new Set()).add(src);
