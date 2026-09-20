@@ -146,17 +146,27 @@ missões) que só é consumido quando a cota do dia acaba.
   (`data/plans.json`, editável no painel). Quem não assinou tem
   `FREE_MINUTES_PER_DAY` (padrão 3). O servidor corta a sessão de voz
   quando a cota do dia acaba e o app mostra os planos.
-- Pagamento por **Pix via PagBank (PagSeguro)**: o app pede nome, CPF e
-  celular (exigência da API), cria o pedido (`POST /orders` com
-  `charges[].payment_method.type = "PIX"`), mostra QR code + copia e cola
-  e consulta o status a cada 4 s. Com `PUBLIC_URL` https configurada, o
-  PagBank também avisa por webhook (`/api/pay/webhook`, assinatura SHA-256
-  conferida no header `x-authenticity-token`); em todo caso o status é
-  reconfirmado em `GET /orders/{id}` antes de liberar o plano.
-- Configuração no `.env`: `PAGBANK_TOKEN` (crie em PagBank → Vender online
-  → Integrações; use o token de **sandbox** pra testar) e `PAGBANK_ENV`
-  (`sandbox` ou `production`). Sem token, o app mostra os planos mas avisa
-  que o Pix ainda não está liberado.
+- Pagamento por **Pix via AbacatePay** (`server/abacatepay.js`): sem
+  formulário — escolheu o plano, o app cria a cobrança
+  (`POST /v2/transparents/create`, `method: "PIX"`, valor em centavos,
+  `expiresIn` 30 min, `externalId` = referência do pedido), mostra o QR
+  (`brCodeBase64`) + copia e cola (`brCode`) e consulta
+  `GET /v2/transparents/check?id=` a cada 4 s. Status `PAID` libera o
+  plano; `EXPIRED/CANCELLED/FAILED` encerram o pedido.
+- Webhook (opcional, deixa a liberação instantânea): em AbacatePay →
+  Integração → Webhooks, cadastre `<PUBLIC_URL>/api/pay/webhook` com o
+  evento `transparent.completed` e um segredo; cole o mesmo segredo em
+  `ABACATEPAY_WEBHOOK_SECRET`. A AbacatePay manda o segredo em
+  `?webhookSecret=`; o app confere e, em todo caso, **reconfirma o status
+  na API** antes de liberar — o corpo do evento só serve pra achar o
+  pedido.
+- Chave: `ABACATEPAY_API_KEY` (abacatepay.com → Integração → Chaves de
+  API). A mesma URL serve pra teste e produção — quem define é a chave:
+  chave criada em **Dev mode** gera Pix simulado (`devMode: true`) e o app
+  mostra o botão "simular pagamento", que chama
+  `POST /v2/transparents/simulate-payment`; chave de produção cobra de
+  verdade. Sem chave, o app mostra os planos mas avisa que o Pix ainda não
+  está liberado.
 
 ## Gerar lições com IA
 

@@ -353,13 +353,13 @@ function renderPayments() {
   const pix = data.pix;
   $("#tabBody").innerHTML = `
     <section class="panel">
-      <h2 class="title">Pix (PagBank)</h2>
+      <h2 class="title">Pix (AbacatePay)</h2>
       <div class="status-grid">
-        <div><span class="kpi-label">token</span><b class="${pix.configured ? "ok" : "warn"}">${pix.configured ? "configurado" : "faltando PAGBANK_TOKEN"}</b></div>
-        <div><span class="kpi-label">ambiente</span><b>${esc(pix.environment)}</b></div>
-        <div><span class="kpi-label">webhook</span><b class="${pix.webhook ? "ok" : "warn"}">${pix.webhook ? "PUBLIC_URL https ok" : "sem PUBLIC_URL — o app confere o pagamento por consulta"}</b></div>
+        <div><span class="kpi-label">chave da API</span><b class="${pix.configured ? "ok" : "warn"}">${pix.configured ? "configurada" : "faltando"}</b></div>
+        <div><span class="kpi-label">ambiente</span><b class="${pix.devMode === false ? "ok" : "warn"}">${pix.devMode === null ? "— (nenhum pix gerado ainda)" : pix.devMode ? "modo de teste (chave Dev)" : "produção"}</b></div>
+        <div><span class="kpi-label">webhook</span><b class="${pix.webhook ? "ok" : "warn"}">${pix.webhook ? "segredo + PUBLIC_URL ok" : "sem webhook — o app confere por consulta a cada 4 s"}</b></div>
       </div>
-      ${pix.configured ? "" : `<p class="muted" style="margin-top:10px">Pra ligar: crie o token em <b>PagBank → Vender online → Integrações</b> (sandbox pra testar) e cole em <button class="link" id="goSettings">Configurações → Pagamento</button>.</p>`}
+      <p class="muted" style="margin-top:10px">${pix.configured ? "" : "Pra ligar: crie a chave em <b>abacatepay.com → Integração → Chaves de API</b> e cole em "}<button class="link" id="goSettings">Configurações → Pagamento</button>. Webhook (opcional, deixa a liberação instantânea): em <b>Integração → Webhooks</b>, URL <code>${esc(pix.webhookUrl)}</code>, evento <code>transparent.completed</code>, e o mesmo segredo nas Configurações.</p>
     </section>
     <section class="panel">
       <h2 class="title">Pedidos <span class="muted">(${data.orders.length})</span></h2>
@@ -435,7 +435,7 @@ const GROUP_META = {
   limites: { title: "Limites de uso", icon: "chart-line", desc: "Quanto quem não paga pode conversar, e quantas conversas ao mesmo tempo o servidor aceita." },
   lancamento: { title: "Promoção de lançamento", icon: "fire", desc: "Os primeiros N cadastros ganham minutos grátis por um período. O app mostra as vagas restantes na tela inicial." },
   viral: { title: "Indique e ganhe / missões", icon: "users", desc: "Prêmios em minutos por indicação e por posts com print aprovado na aba Viral." },
-  pagamento: { title: "Pagamento (Pix / PagBank)", icon: "credit-card", desc: "Credenciais pra gerar e confirmar cobranças por Pix." },
+  pagamento: { title: "Pagamento (Pix / AbacatePay)", icon: "credit-card", desc: "Chave da API e segredo do webhook pra gerar e confirmar cobranças por Pix." },
   seguranca: { title: "Segurança", icon: "shield-check", desc: "Segredo usado para assinar as sessões de login." },
 };
 

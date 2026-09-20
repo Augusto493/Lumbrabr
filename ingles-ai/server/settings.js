@@ -96,18 +96,17 @@ export const DEFINITIONS = [
     help: "Aparece nas missões: 'poste e marque @...'.",
   },
   {
-    key: "PAGBANK_TOKEN", group: "pagamento", label: "Token do PagBank", secret: true,
-    help: "Crie em PagBank → Vender online → Integrações. Use o token de sandbox pra testar antes de ir pra produção.",
+    key: "ABACATEPAY_API_KEY", group: "pagamento", label: "Chave da API da AbacatePay", secret: true,
+    help: "Crie em abacatepay.com → Integração → Chaves de API. Chave criada em Dev mode gera Pix simulado (dá pra 'pagar' com um botão no app); chave de produção cobra de verdade.",
   },
   {
-    key: "PAGBANK_ENV", group: "pagamento", label: "Ambiente do PagBank", type: "select", options: ["sandbox", "production"],
-    default: "sandbox",
-    help: "Sandbox = dinheiro de mentira, pra testar. Production = Pix de verdade.",
+    key: "ABACATEPAY_WEBHOOK_SECRET", group: "pagamento", label: "Segredo do webhook da AbacatePay", secret: true,
+    help: "Em abacatepay.com → Integração → Webhooks, cadastre a URL <PUBLIC_URL>/api/pay/webhook com o evento transparent.completed e um segredo; cole o mesmo segredo aqui. Sem webhook o app confere o pagamento por consulta a cada 4 s (funciona, só não é instantâneo).",
   },
   {
     key: "PUBLIC_URL", group: "pagamento", label: "URL pública do app (https)", type: "url",
     default: "https://heymel.online",
-    help: "Usada nos links de indicação e pra o PagBank confirmar o pagamento por webhook.",
+    help: "Usada nos links de indicação e pra a AbacatePay confirmar o pagamento por webhook.",
   },
   {
     key: "JWT_SECRET", group: "seguranca", label: "Segredo de sessão (JWT)", secret: true,

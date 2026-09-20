@@ -10,7 +10,7 @@ import { generateLesson } from "./generate.js";
 import { entitlement, launchPromo } from "./pay.js";
 import { MISSIONS, missionReward } from "./viral.js";
 import { activeVoiceSessions } from "./voice.js";
-import * as pagbank from "./pagbank.js";
+import * as abacate from "./abacatepay.js";
 import * as settings from "./settings.js";
 import { jwtSecret } from "./auth.js";
 
@@ -126,7 +126,13 @@ router.get("/stats", (_req, res) => {
     plans: getPlans(),
     orders: orders.slice(-100).reverse(),
     recentSessions: sessions.slice(-40).reverse(),
-    pix: { configured: pagbank.isConfigured(), environment: pagbank.currentEnv(), webhook: String(settings.get("PUBLIC_URL") ?? "").startsWith("https://") },
+    pix: {
+      configured: abacate.isConfigured(),
+      // a chave define o ambiente; o ultimo pedido diz em qual modo ela esta
+      devMode: orders.length ? Boolean(orders[orders.length - 1].devMode) : null,
+      webhook: Boolean(settings.get("ABACATEPAY_WEBHOOK_SECRET")) && String(settings.get("PUBLIC_URL") ?? "").startsWith("https://"),
+      webhookUrl: `${String(settings.get("PUBLIC_URL") ?? "").replace(/\/$/, "")}/api/pay/webhook`,
+    },
   });
 });
 

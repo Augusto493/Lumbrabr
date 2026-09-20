@@ -30,8 +30,8 @@ app.set("trust proxy", 1); // atras do Traefik: req.ip vem do X-Forwarded-For
 app.use(securityHeaders);
 app.use(gzip);
 
-// o webhook precisa do corpo cru pra conferir a assinatura, por isso vem antes do json()
-app.post("/api/pay/webhook", express.text({ type: "*/*", limit: "1mb" }), handleWebhook);
+// webhook da AbacatePay (autenticado pelo ?webhookSecret= e reconfirmado na API)
+app.post("/api/pay/webhook", express.json({ type: "*/*", limit: "1mb" }), handleWebhook);
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public"), {

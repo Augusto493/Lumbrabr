@@ -872,75 +872,65 @@ async function goPaywall(reason) {
     $$(".plan-card").forEach((x) => x.classList.toggle("on", x === b));
     $("#next").disabled = !pixConfigured;
   }));
-  $("#next").onclick = () => chosen && goCheckout(chosen);
-}
-
-function goCheckout(plan) {
-  render(`
-    <section class="screen">
-      <div class="talk-head"><button class="iconbtn" id="back" aria-label="voltar">${icon("arrow-left", 20)}</button><span class="t">pagar com pix</span></div>
-      <div class="screen-body top">
-        <div class="ask"><div data-mascot="70" data-mood="neutral"></div><div class="bubble">${esc(plan.name)} por ${brl(plan.priceCents)}. Preciso desses dados pra gerar o Pix — exigência do banco, não minha.</div></div>
-        <form id="form" novalidate>
-          <div class="field"><label>Nome completo</label><input name="name" value="${esc(state.name)}" autocomplete="name" required /></div>
-          <div class="field"><label>CPF</label><input name="cpf" inputmode="numeric" placeholder="000.000.000-00" autocomplete="off" required /></div>
-          <div class="field"><label>Celular com DDD</label><input name="phone" inputmode="tel" placeholder="11 99999-8888" autocomplete="tel" required /></div>
-          <button class="btn" type="submit" id="submit">gerar pix de ${brl(plan.priceCents)}</button>
-          <p class="error" id="err"></p>
-        </form>
-      </div>
-    </section>`);
-  $("#back").onclick = () => goPaywall("upgrade");
-  $("#form").onsubmit = async (e) => {
-    e.preventDefault();
-    const f = Object.fromEntries(new FormData(e.target).entries());
-    const submit = $("#submit");
-    submit.classList.add("loading"); submit.textContent = "gerando pix…";
-    $("#err").textContent = "";
+  $("#next").onclick = async () => {
+    if (!chosen) return;
+    const btn = $("#next");
+    btn.disabled = true; btn.textContent = "gerando pix…";
     try {
-      const res = await fetch("/api/pay/pix", { method: "POST", headers: { ...authHeaders(), "Content-Type": "application/json" }, body: JSON.stringify({ planId: plan.id, ...f }) });
-      const order = await res.json();
-      if (!res.ok) throw new Error(order.error || "erro ao gerar o pix");
-      goPix(order, plan);
+      const r = await fetch("/api/pay/pix", { method: "POST", headers: { ...authHeaders(), "Content-Type": "application/json" }, body: JSON.stringify({ planId: chosen.id }) });
+      const order = await r.json();
+      if (!r.ok) throw new Error(order.error || "erro ao gerar o pix");
+      goPix(order, chosen);
     } catch (err) {
-      $("#err").textContent = err.message;
-      submit.classList.remove("loading"); submit.textContent = `gerar pix de ${brl(plan.priceCents)}`;
+      btn.disabled = false; btn.textContent = "continuar";
+      $("#plans").insertAdjacentHTML("beforeend", `<p class="error">${esc(err.message)}</p>`);
     }
   };
 }
 
+// Pix da AbacatePay: QR + copia e cola, sem formulario. O app consulta o status a
+// cada 4 s; em modo de teste (chave Dev) aparece um botao pra simular o pagamento.
 function goPix(order, plan) {
   render(`
     <section class="screen">
       <div class="talk-head"><button class="iconbtn" id="back" aria-label="voltar">${icon("arrow-left", 20)}</button><span class="t">pix · ${brl(order.amountCents)}</span></div>
       <div class="screen-body top">
-        <p class="sub" style="text-align:center;max-width:none">Abre o app do seu banco, escolhe <b>Pix Copia e Cola</b> (ou lê o QR) e confirma. Eu libero na hora.</p>
+        <p class="sub" style="text-align:center;max-width:none">${esc(plan.name)}. Abre o app do seu banco, escolhe <b>Pix Copia e Cola</b> (ou lê o QR) e confirma. Eu libero na hora.</p>
         ${order.qrPng ? `<div class="qr-box"><img src="${esc(order.qrPng)}" alt="QR code do pix" /></div>` : ""}
         <div class="copy-row"><textarea id="qrText" readonly>${esc(order.qrText ?? "")}</textarea><button class="btn" id="copy">copiar</button></div>
         <p class="pay-status" id="payStatus">aguardando pagamento…</p>
         <p class="hint" style="margin-top:14px">vale até ${new Date(order.expiresAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</p>
+        ${order.devMode ? `<button class="btn btn-ghost" id="simulate" style="margin-top:14px">simular pagamento (modo de teste)</button>` : ""}
       </div>
     </section>`);
   $("#back").onclick = goHome;
   $("#copy").onclick = async () => {
     try { await navigator.clipboard.writeText(order.qrText ?? ""); $("#copy").textContent = "copiado"; } catch { $("#qrText").select(); }
   };
+  const paid = () => {
+    $("#payStatus").textContent = "pago — liberado";
+    $("#payStatus").classList.add("ok");
+    setTimeout(goHome, 1500);
+  };
   const poll = setInterval(async () => {
     if (!$("#payStatus")) return clearInterval(poll);
     try {
       const res = await fetch(`/api/pay/status/${encodeURIComponent(order.orderId)}`, { headers: authHeaders() });
       const s = await res.json();
-      if (s.status === "PAID") {
+      if (s.status === "PAID") { clearInterval(poll); paid(); }
+      else if (["EXPIRED", "CANCELLED", "CANCELED", "FAILED"].includes(s.status)) {
         clearInterval(poll);
-        $("#payStatus").textContent = "pago — liberado";
-        $("#payStatus").classList.add("ok");
-        setTimeout(goHome, 1500);
-      } else if (s.status === "DECLINED" || s.status === "CANCELED") {
-        clearInterval(poll);
-        $("#payStatus").textContent = "pagamento não concluído";
+        $("#payStatus").textContent = s.status === "EXPIRED" ? "esse pix expirou — volta e gera outro" : "pagamento não concluído";
       }
     } catch {}
   }, 4000);
+  if ($("#simulate")) $("#simulate").onclick = async () => {
+    $("#simulate").disabled = true;
+    const res = await fetch(`/api/pay/simulate/${encodeURIComponent(order.orderId)}`, { method: "POST", headers: authHeaders() });
+    const s = await res.json().catch(() => ({}));
+    if (res.ok && s.status === "PAID") { clearInterval(poll); paid(); }
+    else { $("#simulate").disabled = false; $("#payStatus").textContent = s.error || "não deu pra simular"; }
+  };
 }
 
 // ---------- conversa ----------
