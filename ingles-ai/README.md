@@ -178,6 +178,16 @@ um erro típico de brasileiro pra Mel caçar. Você vê a prévia e só
 aparece pros alunos. Lições podem ser escondidas (botão *visível*) ou
 excluídas.
 
+> **Nomes de modelo mudam sem aviso.** A família `gemini-2.5-*` (incluindo
+> `-lite`) já não está disponível pra chaves de API novas — só continua
+> funcionando pra quem já usava antes. Se `GEMINI_TEXT_MODEL` ou algum
+> nome em `GEMINI_TEXT_FALLBACKS` sumir, a lição volta com "o Gemini não
+> respondeu" citando o erro (404 = nome não existe mais; 503 = sobrecarga
+> temporária, o próprio retry resolve). Troque em Configurações → IA sem
+> reiniciar; confira os nomes atuais pra sua chave em
+> [ai.google.dev/gemini-api/docs/models](https://ai.google.dev/gemini-api/docs/models)
+> ou chamando `GET /v1beta/models?key=SUACHAVE`.
+
 ## Currículo
 
 15 lições em `content/lessons/`, de A0 a C1, agrupadas na home por nível:

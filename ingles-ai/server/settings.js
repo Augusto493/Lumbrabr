@@ -26,8 +26,8 @@ export const DEFINITIONS = [
   },
   {
     key: "GEMINI_TEXT_FALLBACKS", group: "ia", label: "Modelos reserva (separados por vírgula)",
-    default: "gemini-3.5-flash,gemini-3.6-flash-lite",
-    help: "Se o modelo de texto principal estiver sobrecarregado (503), tenta estes na ordem.",
+    default: "gemini-3.5-flash,gemini-3.7-flash,gemini-3.5-flash-lite",
+    help: "Se o modelo de texto principal estiver sobrecarregado (503) ou não existir mais (404), tenta estes na ordem.",
   },
   {
     key: "ADMIN_EMAIL", group: "acesso", label: "E-mails com acesso de admin",
