@@ -42,10 +42,18 @@ export function normalize(data) {
   };
 }
 
+// a API rejeita travessao, aspas curvas e afins na descricao: reduz a ASCII simples
+function plainDescription(text) {
+  return String(text ?? "")
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[–—−]/g, "-").replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
+    .replace(/[^\x20-\x7E]/g, "").replace(/\s+/g, " ").trim().slice(0, 140);
+}
+
 export async function createPix({ amountCents, description, expiresInSec, externalId, metadata }) {
   const data = await call("POST", "/v2/transparents/create", {
     method: "PIX",
-    data: { amount: amountCents, description, expiresIn: expiresInSec, externalId, metadata },
+    data: { amount: amountCents, description: plainDescription(description), expiresIn: expiresInSec, externalId, metadata },
   });
   return normalize(data);
 }

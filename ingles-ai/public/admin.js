@@ -44,6 +44,29 @@ function mount(html) {
   $$("[data-mascot]").forEach((el) => Mascot.build(el, { size: Number(el.dataset.mascot), mood: el.dataset.mood || "grumpy" }));
 }
 
+// No celular as tabelas viram cartoes (CSS): cada celula ganha o titulo da
+// coluna em data-label e o conteudo vai pra um <span class="cell">. Os nos sao
+// movidos, nao recriados, pra nao perder os onclick ja ligados.
+function labelTables() {
+  $$("table").forEach((table) => {
+    const heads = $$("thead th", table).map((th) => th.textContent.trim());
+    $$("tbody tr", table).forEach((tr) => {
+      [...tr.children].forEach((td, i) => {
+        if (td.dataset.labeled) return;
+        td.dataset.labeled = "1";
+        if (td.hasAttribute("colspan")) return;
+        td.dataset.label = heads[i] ?? "";
+        if (!heads[i]) td.classList.add("no-label");
+        const cell = document.createElement("span");
+        cell.className = "cell";
+        while (td.firstChild) cell.appendChild(td.firstChild);
+        td.appendChild(cell);
+      });
+    });
+  });
+}
+new MutationObserver(labelTables).observe(app, { childList: true, subtree: true });
+
 function toast(msg, isError = false) {
   const el = document.createElement("div");
   el.className = `toast ${isError ? "err" : ""}`;
@@ -124,6 +147,8 @@ function renderShell() {
   $("#refresh").onclick = load;
   $("#logout").onclick = () => { sessionStorage.removeItem("adminToken"); token = null; showLogin(); };
   $$(".side-btn").forEach((b) => (b.onclick = () => { tab = b.dataset.tab; sessionStorage.setItem("adminTab", tab); renderShell(); }));
+  $(".side-btn.on")?.scrollIntoView({ inline: "center", block: "nearest" }); // nav horizontal no celular
+  window.scrollTo(0, 0);
   ({ overview: renderOverview, users: renderUsers, lessons: renderLessons, plans: renderPlans, payments: renderPayments, viral: renderViral, settings: renderSettings })[tab]();
 }
 

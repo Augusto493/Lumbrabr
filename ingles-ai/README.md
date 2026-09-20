@@ -55,8 +55,12 @@ conversa por lição, últimas sessões e o custo estimado de IA (R$ 0,07/min
 no tier pago). Os dados vêm de `data/users.json`, `data/progress.json` e
 `data/sessions.json` (cada conversa de voz é registrada ao terminar).
 
-O painel tem seis abas, numa barra lateral com ícones (empilha no topo em
-telas estreitas): **visão geral** (KPIs, receita, custo de IA),
+O painel tem sete abas, numa barra lateral com ícones. No celular (≤ 760
+px) ele vira coluna única: a nav fica fixa no topo rolando de lado, as
+tabelas viram cartões (cada célula ganha o título da coluna via
+`data-label`, preenchido por `labelTables()` em `admin.js`), o modal de
+edição vira uma folha que sobe de baixo e os botões de ação ocupam a
+largura toda. As abas: **visão geral** (KPIs, receita, custo de IA),
 **usuários** (editar nome, papel, nível/tom/trava, plano manual com data,
 nova senha, bloquear, excluir), **lições** (gerar com IA, publicar,
 esconder, excluir), **planos** (criar/editar/desativar), **pagamentos**
