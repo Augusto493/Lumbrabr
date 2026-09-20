@@ -82,6 +82,64 @@ disso também podem ser trocadas pelo painel. Trocar o `JWT_SECRET` desloga
 todo mundo, você incluso; o painel te dá um token novo automaticamente
 pra não te jogar pra fora no meio da troca.
 
+## Lançamento: os primeiros N ganham grátis
+
+Com `LAUNCH_PROMO_ENABLED=sim` (padrão), os primeiros `LAUNCH_PROMO_SLOTS`
+cadastros (100) ganham automaticamente `LAUNCH_PROMO_MINUTES` (3) por dia
+durante `LAUNCH_PROMO_DAYS` (30). A tela inicial mostra "**N vagas**
+restantes", a conta nova cai numa tela "você entrou no lançamento — vaga
+nº X" e o chip da home mostra "Lançamento · 3 min/dia · até dd/mm". Tudo
+ajustável em **/admin → Configurações → Promoção de lançamento**; o admin
+também dá/tira a promoção de uma conta específica na edição do usuário.
+Quando a promoção acaba (ou as vagas), a conta volta pra cota
+`FREE_MINUTES_PER_DAY` normal.
+
+Prioridade do direito de uso (`entitlement`): plano pago → promoção →
+grátis. Por cima disso existe um **saldo de minutos bônus** (indicações e
+missões) que só é consumido quando a cota do dia acaba.
+
+## Indique e ganhe + missões (motor viral)
+
+- Cada conta tem um código (`refCode`) e um link `PUBLIC_URL/?ref=CODE`.
+  Quem entra pelo link ganha `REF_WELCOME_MINUTES` (5) na hora; quem
+  indicou ganha `REF_REWARD_MINUTES` (10) **quando o indicado faz a
+  primeira aula** (≥ 90 s) — assim conta fake não gera bônus.
+- Tela **Indique e ganhe** (faixa na home e no menu): link, botão do
+  WhatsApp, compartilhar nativo, contadores (convidados, fizeram aula,
+  minutos ganhos, bônus atual) e as **missões**: *story marcando a Mel*
+  (+15 min, a cada 7 dias) e *post/vídeo* (+30 min, a cada 30 dias). O
+  aluno manda o print (comprimido no navegador a 1280 px, JPEG) e opcional
+  o link; o print fica em `data/uploads/` e entra na fila.
+- **Card de compartilhamento pós-aula**: ao sair de uma aula com 1 min ou
+  mais, o app gera um card 1080×1920 no canvas ("Sobrevivi a N min com a
+  Mel", frase da Mel, vagas restantes e o link de indicação) com botão de
+  compartilhar (Web Share com arquivo, no celular) ou salvar.
+- **Painel → Viral**: vagas da promoção, fila de prints com miniatura e
+  botões aprovar/recusar (aprovar credita na hora; recusar pede motivo que
+  o aluno vê), ranking de quem mais indica, histórico. Prêmios em
+  **Configurações → Indique e ganhe / missões**.
+
+## Velocidade e robustez (pré-lançamento)
+
+- Gravação dos JSON é atômica (temp + rename); e-mails normalizados em
+  minúsculas; erro de rota vira 500 em JSON (não derruba o processo);
+  `uncaughtException` sai com código 1 e o Docker reinicia.
+- gzip nas respostas de texto, ETag + revalidação em JS/CSS, 1 dia de
+  cache em áudio/imagens, cabeçalhos de segurança, `trust proxy` (IP real
+  atrás do Traefik), keep-alive de 65 s.
+- Limite de tentativas por IP em login/cadastro (40 por 10 min), no login
+  do painel (10) e no envio de prints (60/h).
+- Voz: teto de conversas simultâneas (`MAX_CONCURRENT_VOICE`, padrão 20)
+  com aviso "a Mel está com muita gente" em vez de erro da API; ping no
+  WebSocket a cada 25 s; se a ligação cair no meio da aula o app reconecta
+  sozinho uma vez, e tocar na Mel tenta de novo; erro 429 do Gemini vira a
+  mesma mensagem amigável. O log do container mostra sessões simultâneas.
+- **Tier do Gemini**: o plano grátis limita sessões simultâneas e
+  requisições por dia. Com dezenas de pessoas ao mesmo tempo vai dar 429.
+  Antes de abrir pro público, ative faturamento no projeto do AI Studio
+  (o custo continua ≈ R$ 0,07 por minuto de conversa) e suba
+  `MAX_CONCURRENT_VOICE` no painel.
+
 ## Planos, limite diário e Pix
 
 - Cada plano define **minutos por dia** com a Mel, preço e duração em dias
@@ -250,9 +308,13 @@ docker logs -f mel-app          # deve mostrar "Mel ouvindo em http://0.0.0.0:30
   GitHub, copia por cima e reconstrói; aceita o nome do branch como
   argumento). Se o repositório for privado, o `git clone` vai pedir
   usuário e token.
-- Pra usar um domínio próprio: aponte um registro A pro IP da VPS, troque o
-  `Host(...)` nas labels e o `PUBLIC_URL` no `.env` (ou no painel), e suba
-  de novo — o Traefik pega o certificado sozinho.
+- Domínio próprio (`heymel.online`): crie registros **A** pra `@` e `www`
+  apontando pro IP da VPS, espere resolver (`nslookup heymel.online`),
+  troque o `Host(...)` nas labels pelo do `docker-compose.example.yml` (já
+  vem com apex + www + sslip, e redirect de www → apex), ajuste
+  `PUBLIC_URL=https://heymel.online` no `.env` e `docker compose up -d`.
+  O Traefik emite o certificado sozinho — só depois do DNS resolver, senão
+  o Let's Encrypt falha pros três nomes.
 - Se o `docker compose up` reclamar de "address pools have been fully
   subnetted" ou "Pool overlaps", mude a `subnet` no final do compose pra
   uma faixa livre (`ip route` mostra as usadas).

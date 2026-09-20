@@ -255,6 +255,7 @@ function goIntro(index = 0) {
       </div>
       <div class="screen-foot">
         <div class="dots">${SLIDES.map((_, i) => `<span class="dot ${i === index ? "on" : ""}"></span>`).join("")}</div>
+        <div id="launch"></div>
         <button class="btn" id="next">${icon("arrow-right", 18)} ${first ? "criar minha conta" : "continuar"}</button>
         ${first
           ? `<button class="btn btn-ghost" id="toLogin" style="margin-top:10px">já tenho conta — entrar</button>`
@@ -263,6 +264,22 @@ function goIntro(index = 0) {
     </section>`, s.clip);
   $("#next").onclick = () => (index + 1 < SLIDES.length ? goIntro(index + 1) : goProof());
   $("#toLogin").onclick = () => goAuth("login");
+  if (first) showLaunchBanner();
+}
+
+// "restam N vagas" na porta: urgencia real, vinda do servidor
+async function showLaunchBanner() {
+  try {
+    state.launch ||= (await (await fetch("/api/pay/plans")).json()).launch;
+  } catch { return; }
+  const l = state.launch;
+  const box = $("#launch");
+  if (!box) return;
+  const ref = store.get("ref", null);
+  if (l?.enabled) {
+    box.innerHTML = `<div class="launch-pill">${icon("fire", 16)}<span><b>${l.slotsLeft} vagas</b> restantes: ${l.minutesPerDay} min/dia grátis por ${l.days} dias</span></div>`;
+  }
+  if (ref) box.innerHTML += `<p class="ref-note">${icon("users", 14)} um amigo te indicou — você já entra com minutos de bônus</p>`;
 }
 
 // ---------- prova social ----------
@@ -468,6 +485,8 @@ function goAuth(mode) {
     if (!isLogin) {
       const { voiceMode, level, blocker, tone } = state.onboarding;
       body.profile = { voiceMode, level, blocker, tone };
+      const ref = store.get("ref", null);
+      if (ref) body.ref = ref;
     }
     const submit = $("#submit");
     submit.classList.add("loading");
@@ -485,13 +504,36 @@ function goAuth(mode) {
       store.set("token", state.token);
       store.set("name", state.name);
       store.set("role", state.role);
-      goHome();
+      store.del("ref");
+      if (!isLogin && data.promo) goWelcome(data.promo, data.referred);
+      else goHome();
     } catch (err) {
       $("#err").textContent = err.message;
       submit.classList.remove("loading");
       submit.textContent = isLogin ? "Entrar" : "Criar conta";
     }
   };
+}
+
+// conta nova que pegou vaga da promocao: a Mel avisa o que a pessoa ganhou
+function goWelcome(promo, referred) {
+  const until = new Date(promo.expiresAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+  render(`
+    <section class="screen">
+      ${topMini()}
+      <div class="screen-body">
+        ${orbitHtml("glow", "happy", null)}
+        <span class="tag" style="margin-bottom:16px">vaga nº ${promo.slot ?? "?"} garantida</span>
+        <h1 class="hero">Você entrou no lançamento.</h1>
+        <p class="sub">${promo.minutesPerDay} minutos por dia comigo, de graça, até ${until}.${referred ? " E como veio por indicação, já tem minutos de bônus na conta." : ""} Agora para de me olhar e vem falar.</p>
+      </div>
+      <div class="screen-foot">
+        <button class="btn" id="go">${icon("arrow-right", 18)} começar a primeira aula</button>
+        <button class="btn btn-ghost" id="invite" style="margin-top:10px">${icon("users", 18)} chamar amigos e ganhar minutos</button>
+      </div>
+    </section>`);
+  $("#go").onclick = goHome;
+  $("#invite").onclick = goInvite;
 }
 
 // ---------- home / licoes ----------
@@ -504,6 +546,7 @@ async function goHome() {
         <div class="who">
           <button class="who-btn" id="whoBtn" aria-haspopup="menu">${esc(firstName(state.name))}<i class="chev"></i></button>
           <div class="menu" id="whoMenu" hidden>
+            <button id="menuInvite">${icon("users", 16)} indique e ganhe</button>
             ${state.role === "admin" ? `<a href="/admin">${icon("sliders-horizontal", 16)} painel</a>` : ""}
             <button id="logout">${icon("x", 16)} sair</button>
           </div>
@@ -518,10 +561,13 @@ async function goHome() {
           <span class="eyebrow-inline">cenários <b id="trailCount"></b></span>
           <div class="plan-line" id="planLine"></div>
         </div>
+        <button class="invite-strip" id="inviteStrip">${icon("users", 18)}<span><b>Indica um amigo, ganha minutos.</b> Ele também ganha.</span>${icon("arrow-right", 16)}</button>
         <div id="list"><p class="small">carregando…</p></div>
       </div>
     </section>`);
   $("#logout").onclick = logout;
+  $("#menuInvite").onclick = goInvite;
+  $("#inviteStrip").onclick = goInvite;
   const menu = $("#whoMenu");
   $("#whoBtn").onclick = (e) => { e.stopPropagation(); menu.hidden = !menu.hidden; };
   document.addEventListener("click", () => { if (menu) menu.hidden = true; }, { once: true });
@@ -530,9 +576,10 @@ async function goHome() {
     if (!ent || !$("#planLine")) return;
     state.entitlement = ent;
     const short = (iso) => new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+    const bonus = ent.bonusMinutes > 0 ? ` · +${Math.round(ent.bonusMinutes)} bônus` : "";
     $("#planLine").innerHTML = ent.free
-      ? `<span class="chip">${ent.minutesPerDay} min grátis/dia</span><button class="pill small" id="upgrade">assinar</button>`
-      : `<span class="chip">${ent.minutesPerDay} min/dia · até ${short(ent.expiresAt)}</span>`;
+      ? `<span class="chip">${ent.minutesPerDay} min grátis/dia${bonus}</span><button class="pill small" id="upgrade">assinar</button>`
+      : `<span class="chip">${ent.kind === "promo" ? `${esc(ent.planName)} · ` : ""}${ent.minutesPerDay} min/dia · até ${short(ent.expiresAt)}${bonus}</span>`;
     if ($("#upgrade")) $("#upgrade").onclick = () => goPaywall("upgrade");
   });
 
@@ -602,6 +649,195 @@ function renderTrail() {
   // tocar na bolinha ja entra na aula (o clique tambem libera o audio no navegador)
   $$(".trail-node").forEach((b) => (b.onclick = () => openLesson(b.dataset.id)));
   if (current > 2) $(".trail-node.now")?.scrollIntoView({ block: "center" });
+}
+
+// ---------- indique e ganhe / missoes ----------
+
+async function loadViral() {
+  const res = await fetch("/api/viral/me", { headers: authHeaders() });
+  if (res.status === 401) return logout();
+  state.viral = await res.json();
+  return state.viral;
+}
+
+function shareText(v) {
+  return `Tô aprendendo inglês levando bronca de uma IA mal-humorada 😂 A Mel te faz falar em 3 minutos por dia. Entra pelo meu link que você ganha minutos de bônus: ${v.link}`;
+}
+
+async function copyText(text, btn) {
+  try { await navigator.clipboard.writeText(text); } catch {
+    const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove();
+  }
+  if (btn) { const old = btn.innerHTML; btn.innerHTML = `${icon("check", 16)} copiado`; setTimeout(() => (btn.innerHTML = old), 1600); }
+}
+
+async function goInvite() {
+  render(`
+    <section class="screen">
+      <div class="talk-head"><button class="iconbtn" id="back" aria-label="voltar">${icon("arrow-left", 20)}</button><span class="t">indique e ganhe</span></div>
+      <div class="screen-body top" id="inviteBody"><p class="small">carregando…</p></div>
+    </section>`);
+  $("#back").onclick = goHome;
+  const v = await loadViral();
+  if (!v) return;
+  const st = { pending: "aguardando aprovação", approved: "aprovado", rejected: "recusado" };
+  const missionCard = (type) => {
+    const rule = v.rules[type]; const reward = v.rewards[type];
+    const mine = v.missions.filter((m) => m.type === type);
+    const last = mine[0];
+    const lastApproved = mine.find((m) => m.status === "approved");
+    const lockedUntil = lastApproved ? new Date(new Date(lastApproved.reviewedAt).getTime() + rule.days * 86400000) : null;
+    const locked = last?.status === "pending" || (lockedUntil && lockedUntil > new Date());
+    return `<div class="mission">
+      <div class="m-head"><b>${esc(rule.label)}</b><span class="m-reward">+${reward} min</span></div>
+      <p>${esc(rule.how)} Perfil: <b>${esc(v.social)}</b></p>
+      ${last ? `<p class="m-status ${last.status}">${icon(last.status === "approved" ? "check" : last.status === "rejected" ? "x" : "star-four", 12)} último envio: ${st[last.status]}${last.note ? ` — ${esc(last.note)}` : ""}</p>` : ""}
+      ${locked && last?.status !== "pending" ? `<p class="m-status">libera de novo em ${lockedUntil.toLocaleDateString("pt-BR")}</p>` : ""}
+      ${locked ? "" : `<label class="btn btn-ghost m-send">${icon("star-four", 16)} enviar print <input type="file" accept="image/*" data-mission="${type}" hidden /></label>`}
+    </div>`;
+  };
+  const credited = v.referrals.filter((r) => r.credited).length;
+  $("#inviteBody").innerHTML = `
+    <div class="ask"><div data-mascot="70" data-mood="grumpy"></div><div class="bubble">Traz gente pra eu xingar. Cada amigo que fizer a primeira aula te dá <b>+${v.rewards.referrer} min</b>. Ele entra com <b>+${v.rewards.welcome} min</b>. Todo mundo ganha, menos meu humor.</div></div>
+    <div class="share-box">
+      <span class="eyebrow-inline">seu link</span>
+      <div class="share-link" id="shareLink">${esc(v.link)}</div>
+      <div class="btn-row">
+        <button class="btn" id="wa">${icon("chats-circle", 18)} WhatsApp</button>
+        <button class="btn btn-ghost" id="copy">${icon("check", 18)} copiar</button>
+        ${navigator.share ? `<button class="btn btn-ghost narrow" id="share" aria-label="compartilhar">${icon("arrow-right", 18)}</button>` : ""}
+      </div>
+    </div>
+    <div class="stat-row">
+      <div><b>${v.referrals.length}</b><span>convidados</span></div>
+      <div><b>${credited}</b><span>fizeram aula</span></div>
+      <div><b>${Math.round(v.minutesEarned)}</b><span>min ganhos</span></div>
+      <div><b>${Math.round(v.bonusMinutes)}</b><span>bônus agora</span></div>
+    </div>
+    ${v.referrals.length ? `<div class="ref-list">${v.referrals.slice(0, 8).map((r) => `<span class="chip ${r.credited ? "ok" : ""}">${esc(r.name)}${r.credited ? " ✓" : ""}</span>`).join("")}</div>` : ""}
+    <p class="eyebrow-inline" style="display:block;margin:22px 0 8px">missões · poste e ganhe</p>
+    ${missionCard("story")}
+    ${missionCard("post")}
+    <p class="hint">os prints são conferidos por uma pessoa. Print falso = conta bloqueada.</p>`;
+  Mascot.build($("#inviteBody [data-mascot]"), { size: 70, mood: "grumpy" });
+  $("#wa").onclick = () => window.open(`https://wa.me/?text=${encodeURIComponent(shareText(v))}`, "_blank");
+  $("#copy").onclick = () => copyText(v.link, $("#copy"));
+  if ($("#share")) $("#share").onclick = () => navigator.share({ title: "Mel — inglês na bronca", text: shareText(v) }).catch(() => {});
+  $$("input[data-mission]").forEach((input) => (input.onchange = () => input.files[0] && submitMission(input.dataset.mission, input.files[0])));
+}
+
+// comprime o print no navegador (max 1280px, jpeg) e manda pra fila de aprovacao
+async function submitMission(type, file) {
+  const dataUrl = await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, 1280 / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      resolve(c.toDataURL("image/jpeg", 0.85));
+    };
+    img.onerror = () => reject(new Error("não consegui ler essa imagem"));
+    img.src = URL.createObjectURL(file);
+  }).catch((err) => { alert(err.message); return null; });
+  if (!dataUrl) return;
+  const link = prompt("Cola o link do post/story (opcional):") ?? "";
+  const res = await fetch("/api/viral/missions", { method: "POST", headers: { "Content-Type": "application/json", ...authHeaders() }, body: JSON.stringify({ type, image: dataUrl, link }) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) { alert(data.error || "não deu pra enviar"); return; }
+  goInvite();
+}
+
+// ---------- card de compartilhamento pos-aula ----------
+
+const SHARE_LINES = [
+  "Ela me chamou de cabeça de vento. Três vezes.",
+  "Errei 'I have' de novo e ela quase desligou.",
+  "Nunca fui tão xingado aprendendo tanto.",
+  "Sobrevivi. Ela não elogiou, mas também não me expulsou.",
+  "A professora mais mal-humorada do Brasil. E funciona.",
+];
+
+async function goShare(seconds) {
+  const lesson = state.currentLesson;
+  render(`
+    <section class="screen">
+      <div class="talk-head"><button class="iconbtn" id="back" aria-label="voltar">${icon("arrow-left", 20)}</button><span class="t">mostra pros amigos</span></div>
+      <div class="screen-body top">
+        <div class="ask"><div data-mascot="64" data-mood="neutral"></div><div class="bubble">Sobreviveu a ${Math.max(1, Math.round(seconds / 60))} min comigo. Posta isso e marca a Mel: cada amigo que entrar te dá minutos a mais pra eu te xingar.</div></div>
+        <canvas id="card" class="share-card" width="1080" height="1920"></canvas>
+        <div class="btn-row" style="margin-top:14px">
+          <button class="btn" id="shareBtn">${icon("arrow-right", 18)} compartilhar</button>
+          <button class="btn btn-ghost" id="dl">${icon("check", 18)} salvar</button>
+        </div>
+        <button class="link small" id="skip" style="display:block;margin:12px auto 0">agora não</button>
+      </div>
+    </section>`);
+  $("#back").onclick = goHome;
+  $("#skip").onclick = goHome;
+  const v = state.viral ?? (await loadViral().catch(() => null));
+  const line = SHARE_LINES[Math.floor(Math.random() * SHARE_LINES.length)];
+  await drawShareCard($("#card"), { minutes: Math.max(1, Math.round(seconds / 60)), title: lesson?.title ?? "", line, link: v?.link ?? "heymel.online", launch: state.launch });
+  const toBlob = () => new Promise((r) => $("#card").toBlob(r, "image/png"));
+  $("#dl").onclick = async () => { const a = document.createElement("a"); a.href = URL.createObjectURL(await toBlob()); a.download = "mel.png"; a.click(); };
+  $("#shareBtn").onclick = async () => {
+    const blob = await toBlob();
+    const file = new File([blob], "mel.png", { type: "image/png" });
+    const text = v ? shareText(v) : "heymel.online";
+    if (navigator.canShare?.({ files: [file] })) navigator.share({ files: [file], text }).catch(() => {});
+    else { await copyText(text, $("#shareBtn")); $("#dl").click(); }
+  };
+}
+
+async function drawShareCard(canvas, { minutes, title, line, link, launch }) {
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width, H = canvas.height;
+  try { await Promise.all([document.fonts.load("700 96px 'Bricolage Grotesque'"), document.fonts.load("500 36px 'DM Mono'"), document.fonts.load("500 44px 'DM Sans'")]); } catch {}
+  ctx.fillStyle = "#0A0A0A"; ctx.fillRect(0, 0, W, H);
+  // brilho + esfera da Mel
+  const cx = W / 2, cy = 640, r = 250;
+  const glow = ctx.createRadialGradient(cx, cy, r * 0.6, cx, cy, r * 2.1);
+  glow.addColorStop(0, "rgba(255,140,90,0.28)"); glow.addColorStop(1, "rgba(255,140,90,0)");
+  ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = "rgba(255,160,110,0.55)"; ctx.lineWidth = 6; ctx.lineCap = "round";
+  for (let i = 0; i < 44; i++) { const a = (i / 44) * Math.PI * 2; const len = 40 + (i % 3) * 26; ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * (r + 40), cy + Math.sin(a) * (r + 40)); ctx.lineTo(cx + Math.cos(a) * (r + 40 + len), cy + Math.sin(a) * (r + 40 + len)); ctx.stroke(); }
+  const sphere = ctx.createRadialGradient(cx - 90, cy - 110, 30, cx, cy, r);
+  sphere.addColorStop(0, "#FFC9AE"); sphere.addColorStop(0.55, "#F2865E"); sphere.addColorStop(1, "#B8482A");
+  ctx.fillStyle = sphere; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+  // cara brava
+  ctx.strokeStyle = "#14100E"; ctx.lineWidth = 22; ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(cx - 130, cy - 70); ctx.lineTo(cx - 40, cy - 40); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx + 130, cy - 70); ctx.lineTo(cx + 40, cy - 40); ctx.stroke();
+  ctx.fillStyle = "#14100E";
+  for (const dx of [-85, 85]) { ctx.beginPath(); ctx.ellipse(cx + dx, cy + 10, 20, 34, 0, 0, Math.PI * 2); ctx.fill(); }
+  ctx.beginPath(); ctx.moveTo(cx - 70, cy + 120); ctx.quadraticCurveTo(cx, cy + 80, cx + 70, cy + 120); ctx.stroke();
+  // textos
+  ctx.textAlign = "center"; ctx.fillStyle = "rgba(255,255,255,0.55)";
+  ctx.font = "500 34px 'DM Mono', monospace"; ctx.fillText("SOBREVIVI A", cx, 1010);
+  ctx.fillStyle = "#fff"; ctx.font = "700 130px 'Bricolage Grotesque', sans-serif";
+  ctx.fillText(`${minutes} min com a Mel`, cx, 1140);
+  ctx.fillStyle = "rgba(255,255,255,0.75)"; ctx.font = "500 44px 'DM Sans', sans-serif";
+  wrapText(ctx, `“${line}”`, cx, 1240, 900, 56);
+  if (title) { ctx.fillStyle = "rgba(255,255,255,0.45)"; ctx.font = "500 32px 'DM Mono', monospace"; ctx.fillText(title.toUpperCase().slice(0, 40), cx, 1420); }
+  // rodape com link
+  ctx.fillStyle = "rgba(255,255,255,0.08)"; roundRect(ctx, 110, 1560, W - 220, 150, 40); ctx.fill();
+  ctx.fillStyle = "rgba(255,255,255,0.6)"; ctx.font = "500 30px 'DM Mono', monospace"; ctx.fillText(launch?.enabled ? `${launch.slotsLeft} VAGAS GRÁTIS · ENTRA PELO MEU LINK` : "ENTRA PELO MEU LINK", cx, 1615);
+  ctx.fillStyle = "#fff"; ctx.font = "700 46px 'Bricolage Grotesque', sans-serif"; ctx.fillText(link.replace(/^https?:\/\//, ""), cx, 1675);
+  ctx.fillStyle = "rgba(255,255,255,0.35)"; ctx.font = "500 28px 'DM Mono', monospace"; ctx.fillText("heymel.online", cx, 1800);
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(" "); let line = "";
+  for (const w of words) {
+    const test = line ? `${line} ${w}` : w;
+    if (ctx.measureText(test).width > maxWidth && line) { ctx.fillText(line, x, y); line = w; y += lineHeight; }
+    else line = test;
+  }
+  if (line) ctx.fillText(line, x, y);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
 }
 
 // ---------- planos / pix ----------
@@ -734,11 +970,19 @@ async function openLesson(lessonId) {
       </div>
     </section>`);
 
-  $("#back").onclick = () => goHome();
+  // sair da aula: se conversou pelo menos 1 min, oferece o card pra postar
+  $("#back").onclick = () => {
+    const seconds = Math.round((Date.now() - state.startedAt) / 1000);
+    stopVoiceSession();
+    seconds >= 60 ? goShare(seconds) : goHome();
+  };
+  // Mel ocupada / caiu: tocar nela tenta de novo
+  $("#stageWrap").onclick = () => { if (!state.ws || state.ws.readyState > 1) { setStatus("tentando de novo…", "live"); connectVoiceSession(lessonId); } };
 
   state.turn = null;
   state.studentLine = null;
   state.startedAt = Date.now();
+  state.reconnects = 0;
   connectVoiceSession(lessonId);
 }
 
@@ -776,12 +1020,27 @@ function connectVoiceSession(lessonId) {
     } else if (msg.type === "limit") {
       state.entitlement = msg;
       goPaywall("limit");
+    } else if (msg.type === "busy") {
+      state.busy = true;
+      setStatus(`${msg.message} (toca na Mel pra tentar)`, "err");
     } else if (msg.type === "error") {
+      state.lastError = msg.message;
       setStatus(msg.message, "err");
-      pushHistory("sys", msg.message);
     }
   };
-  ws.onclose = () => { if (state.ws === ws) setStatus("desconectado"); };
+  ws.onclose = () => {
+    if (state.ws !== ws) return; // fechamos de proposito (saiu da aula)
+    stopRecording();
+    // queda inesperada no meio da aula: reconecta sozinho uma vez
+    if (!state.busy && state.reconnects < 1 && !/bloqueada|invalid/i.test(state.lastError ?? "")) {
+      state.reconnects += 1;
+      setStatus("caiu a ligação — reconectando…", "live");
+      setTimeout(() => { if (state.ws === ws && state.currentLesson) connectVoiceSession(lessonId); }, 1500);
+    } else if (!state.busy) {
+      setStatus("a ligação caiu. toca na Mel pra ligar de novo", "err");
+    }
+    state.busy = false;
+  };
 }
 
 // a transcricao chega em pedacos: a fala atual da Mel fica no card grande,
@@ -1022,6 +1281,12 @@ function flushPlayback() {
 }
 
 // ---------- bootstrap ----------
+
+// link de indicacao: guarda o codigo pra mandar no cadastro e limpa a URL
+{
+  const ref = new URLSearchParams(location.search).get("ref");
+  if (ref) { store.set("ref", ref.toUpperCase().slice(0, 12)); history.replaceState(null, "", location.pathname); }
+}
 
 // deslogado = sempre a Mel na porta, como no app de referencia
 if (state.token) goHome();

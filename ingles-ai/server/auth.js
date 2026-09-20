@@ -1,8 +1,13 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { findUserByEmail, saveUser } from "./store.js";
+import { findUserByEmail, saveUser, findUserByRefCode, newRefCode } from "./store.js";
+import { launchPromo } from "./pay.js";
 import * as settings from "./settings.js";
+
+export function normalizeEmail(email) {
+  return String(email ?? "").trim().toLowerCase();
+}
 
 const TOKEN_TTL = "30d";
 
@@ -34,24 +39,45 @@ function cleanProfile(input) {
 }
 
 router.post("/register", async (req, res) => {
-  const { email, password, name, profile } = req.body ?? {};
-  if (!email || !password || password.length < 6) {
-    return res.status(400).json({ error: "email e senha (min. 6 caracteres) sao obrigatorios" });
+  const { password, name, profile, ref } = req.body ?? {};
+  const email = normalizeEmail(req.body?.email);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !password || password.length < 6) {
+    return res.status(400).json({ error: "email valido e senha (min. 6 caracteres) sao obrigatorios" });
   }
   if (findUserByEmail(email)) {
     return res.status(409).json({ error: "ja existe uma conta com esse email" });
   }
   const passwordHash = await bcrypt.hash(password, 10);
   const cleaned = cleanProfile(profile);
-  saveUser({ email, name: name ?? "", passwordHash, profile: cleaned, createdAt: new Date().toISOString() });
+  const now = new Date();
+  const user = { email, name: String(name ?? "").trim().slice(0, 80), passwordHash, profile: cleaned, createdAt: now.toISOString(), refCode: newRefCode(), bonusMinutes: 0 };
+
+  // veio por link de indicacao: registra quem indicou e da o bonus de boas-vindas
+  const referrer = ref ? findUserByRefCode(ref) : null;
+  if (referrer && referrer.email !== email) {
+    user.referredBy = referrer.email;
+    const welcome = settings.getNumber("REF_WELCOME_MINUTES", 0);
+    if (welcome > 0) {
+      user.bonusMinutes = welcome;
+      user.bonusLog = [{ at: now.toISOString(), minutes: welcome, reason: "boas-vindas por indicação" }];
+    }
+  }
+
+  // promocao de lancamento: os primeiros N cadastros ganham o plano automaticamente
+  const promo = launchPromo();
+  if (promo.enabled && promo.slotsLeft > 0) {
+    user.promo = { name: promo.name, minutesPerDay: promo.minutesPerDay, grantedAt: now.toISOString(), expiresAt: new Date(now.getTime() + promo.days * 86400000).toISOString(), slot: promo.used + 1 };
+  }
+
+  saveUser(user);
   const role = roleOf(email);
   const token = jwt.sign({ email, role }, jwtSecret(), { expiresIn: TOKEN_TTL });
-  res.json({ token, email, name: name ?? "", profile: cleaned, role });
+  res.json({ token, email, name: user.name, profile: cleaned, role, promo: user.promo ?? null, referred: Boolean(user.referredBy) });
 });
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body ?? {};
-  const user = findUserByEmail(email ?? "");
+  const user = findUserByEmail(normalizeEmail(email)) ?? findUserByEmail(String(email ?? "").trim());
   if (!user) return res.status(401).json({ error: "email ou senha invalidos" });
   const ok = await bcrypt.compare(password ?? "", user.passwordHash);
   if (!ok) return res.status(401).json({ error: "email ou senha invalidos" });

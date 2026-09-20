@@ -2,13 +2,18 @@ import { WebSocketServer } from "ws";
 import { GoogleGenAI, Modality, StartSensitivity, EndSensitivity } from "@google/genai";
 import { verifyToken } from "./auth.js";
 import { getLesson, buildSystemInstruction } from "./lessons.js";
-import { markLessonDone, findUserByEmail, logSession, minutesUsedToday } from "./store.js";
-import { entitlement } from "./pay.js";
+import { markLessonDone, findUserByEmail, logSession, minutesUsedToday, addBonusMinutes } from "./store.js";
+import { entitlement, remainingSeconds } from "./pay.js";
+import { creditReferralForFirstLesson } from "./viral.js";
 import * as settings from "./settings.js";
 
 function safeSend(ws, payload) {
   if (ws.readyState === ws.OPEN) ws.send(JSON.stringify(payload));
 }
+
+// sessoes de voz abertas agora (teto configuravel: MAX_CONCURRENT_VOICE)
+let activeSessions = 0;
+export function activeVoiceSessions() { return activeSessions; }
 
 export function attachVoiceServer(httpServer) {
   const wss = new WebSocketServer({ server: httpServer, path: "/ws/voice" });
@@ -41,13 +46,23 @@ export function attachVoiceServer(httpServer) {
       return ws.close();
     }
 
-    // limite diario de minutos: plano ativo ou cota gratis
+    // limite diario de minutos: plano/promocao/cota gratis + saldo bonus
     const ent = entitlement(account);
-    const remainingSec = Math.max(0, Math.round(ent.minutesPerDay * 60 - minutesUsedToday(user.email) * 60));
+    const usedBeforeMin = minutesUsedToday(user.email);
+    const remainingSec = remainingSeconds(account, usedBeforeMin);
     if (remainingSec < 20) {
       safeSend(ws, { type: "limit", ...ent });
       return ws.close();
     }
+
+    // teto de conversas simultaneas: melhor avisar "ocupada" do que estourar a API
+    if (activeSessions >= settings.getNumber("MAX_CONCURRENT_VOICE", 20)) {
+      safeSend(ws, { type: "busy", message: "a Mel está com muita gente agora. Tenta de novo em 1 minuto." });
+      return ws.close();
+    }
+    activeSessions += 1;
+    let released = false;
+    const release = () => { if (!released) { released = true; activeSessions = Math.max(0, activeSessions - 1); } };
 
     let geminiSession = null;
     let closedByClient = false;
@@ -56,6 +71,9 @@ export function attachVoiceServer(httpServer) {
       safeSend(ws, { type: "limit", ...ent });
       ws.close();
     }, remainingSec * 1000);
+    // mantem a conexao viva atraves de proxies que cortam WebSocket ocioso
+    const pinger = setInterval(() => { if (ws.readyState === ws.OPEN) ws.ping(); }, 25000);
+    ws.on("error", () => {});
 
     try {
       const ai = new GoogleGenAI({ apiKey: settings.get("GEMINI_API_KEY") });
@@ -111,7 +129,11 @@ export function attachVoiceServer(httpServer) {
         },
       });
     } catch (err) {
-      safeSend(ws, { type: "error", message: `falha ao conectar com a IA: ${err.message}` });
+      release();
+      clearTimeout(limiter);
+      clearInterval(pinger);
+      const msg = /429|quota|RESOURCE_EXHAUSTED/i.test(err.message) ? "a Mel está com muita gente agora. Tenta de novo em 1 minuto." : `falha ao conectar com a IA: ${err.message}`;
+      safeSend(ws, { type: "error", message: msg });
       return ws.close();
     }
 
@@ -146,13 +168,22 @@ export function attachVoiceServer(httpServer) {
     ws.on("close", () => {
       closedByClient = true;
       clearTimeout(limiter);
-      geminiSession?.close();
+      clearInterval(pinger);
+      release();
+      try { geminiSession?.close(); } catch {}
       const seconds = Math.round((Date.now() - startedAt) / 1000);
       // resumo no log do container: ajuda a ver de longe se o audio do aluno esta chegando
-      console.log(`[voz] ${user.email} ${lesson.id} ${seconds}s | audio aluno ${stats.audioIn} chunks | audio Mel ${stats.audioOut} chunks | turnos ${stats.turns}`);
+      console.log(`[voz] ${user.email} ${lesson.id} ${seconds}s | audio aluno ${stats.audioIn} chunks | audio Mel ${stats.audioOut} chunks | turnos ${stats.turns} | simultaneas ${activeSessions}`);
       // a tela de aula nao tem botao de "concluir": uma conversa de pelo menos
-      // 90 s conta como licao feita
-      if (seconds >= 90) markLessonDone(user.email, lesson.id);
+      // 90 s conta como licao feita (e libera o bonus de quem indicou, na primeira)
+      if (seconds >= 90) {
+        markLessonDone(user.email, lesson.id);
+        try { creditReferralForFirstLesson(user.email); } catch (err) { console.error("[viral]", err.message); }
+      }
+      // o que passou da cota do dia sai do saldo bonus
+      const usedAfterMin = usedBeforeMin + seconds / 60;
+      const overflow = Math.max(0, usedAfterMin - ent.minutesPerDay) - Math.max(0, usedBeforeMin - ent.minutesPerDay);
+      if (overflow > 0 && ent.bonusMinutes > 0) addBonusMinutes(user.email, -Math.min(overflow, ent.bonusMinutes), "usado na conversa");
       logSession({
         email: user.email,
         lessonId: lesson.id,

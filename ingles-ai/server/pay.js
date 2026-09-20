@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import express from "express";
 import { requireAuth } from "./auth.js";
-import { findUserByEmail, updateUser, getPlans, saveOrder, findOrder, minutesUsedToday } from "./store.js";
+import { findUserByEmail, updateUser, getPlans, saveOrder, findOrder, minutesUsedToday, countPromoUsers } from "./store.js";
 import * as pagbank from "./pagbank.js";
 import * as settings from "./settings.js";
 
@@ -17,12 +17,39 @@ function publicUrl() {
 
 export const router = express.Router();
 
+// prioridade: plano pago > promocao de lancamento > cota gratis.
+// bonusMinutes e um saldo a parte (indicacoes/missoes) que entra quando a cota do dia acaba.
 export function entitlement(account) {
+  const now = new Date();
+  const bonusMinutes = Math.max(0, Number(account?.bonusMinutes ?? 0));
   const plan = account?.plan;
-  if (plan && new Date(plan.expiresAt) > new Date()) {
-    return { free: false, planId: plan.id, planName: plan.name, minutesPerDay: plan.minutesPerDay, expiresAt: plan.expiresAt };
+  if (plan && new Date(plan.expiresAt) > now) {
+    return { free: false, kind: "plan", planId: plan.id, planName: plan.name, minutesPerDay: plan.minutesPerDay, expiresAt: plan.expiresAt, bonusMinutes };
   }
-  return { free: true, planId: null, planName: "grátis", minutesPerDay: freeMinutesPerDay(), expiresAt: null };
+  const promo = account?.promo;
+  if (promo && new Date(promo.expiresAt) > now) {
+    return { free: false, kind: "promo", planId: "promo", planName: promo.name, minutesPerDay: promo.minutesPerDay, expiresAt: promo.expiresAt, bonusMinutes };
+  }
+  return { free: true, kind: "free", planId: null, planName: "grátis", minutesPerDay: freeMinutesPerDay(), expiresAt: null, bonusMinutes };
+}
+
+// segundos que a pessoa ainda pode conversar agora: o que sobrou da cota do dia + saldo bonus
+export function remainingSeconds(account, usedTodayMin) {
+  const ent = entitlement(account);
+  const daily = Math.max(0, ent.minutesPerDay - usedTodayMin);
+  return Math.round((daily + ent.bonusMinutes) * 60);
+}
+
+export function launchPromo() {
+  const enabled = settings.get("LAUNCH_PROMO_ENABLED") !== "nao";
+  const slots = settings.getNumber("LAUNCH_PROMO_SLOTS", 0);
+  const used = countPromoUsers();
+  return {
+    enabled, slots, used, slotsLeft: Math.max(0, slots - used),
+    minutesPerDay: settings.getNumber("LAUNCH_PROMO_MINUTES", 3),
+    days: settings.getNumber("LAUNCH_PROMO_DAYS", 30),
+    name: settings.get("LAUNCH_PROMO_NAME") || "Lançamento",
+  };
 }
 
 export function activateOrder(order) {
@@ -38,13 +65,18 @@ export function activateOrder(order) {
 }
 
 router.get("/plans", (_req, res) => {
-  res.json({ plans: getPlans().filter((p) => p.active), pixConfigured: pagbank.isConfigured(), freeMinutesPerDay: freeMinutesPerDay() });
+  const promo = launchPromo();
+  res.json({
+    plans: getPlans().filter((p) => p.active), pixConfigured: pagbank.isConfigured(), freeMinutesPerDay: freeMinutesPerDay(),
+    launch: { enabled: promo.enabled && promo.slotsLeft > 0, slotsLeft: promo.slotsLeft, slots: promo.slots, minutesPerDay: promo.minutesPerDay, days: promo.days },
+  });
 });
 
 router.get("/me", requireAuth, (req, res) => {
   const account = findUserByEmail(req.user.email);
   const ent = entitlement(account);
-  res.json({ ...ent, usedToday: Math.round(minutesUsedToday(req.user.email) * 10) / 10 });
+  const usedToday = Math.round(minutesUsedToday(req.user.email) * 10) / 10;
+  res.json({ ...ent, usedToday, remainingSeconds: remainingSeconds(account, usedToday) });
 });
 
 router.post("/pix", requireAuth, async (req, res) => {

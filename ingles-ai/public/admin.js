@@ -103,6 +103,7 @@ const TABS = [
   ["lessons", "Lições", "book-open"],
   ["plans", "Planos", "credit-card"],
   ["payments", "Pagamentos", "receipt"],
+  ["viral", "Viral", "fire"],
   ["settings", "Configurações", "gear"],
 ];
 
@@ -123,7 +124,7 @@ function renderShell() {
   $("#refresh").onclick = load;
   $("#logout").onclick = () => { sessionStorage.removeItem("adminToken"); token = null; showLogin(); };
   $$(".side-btn").forEach((b) => (b.onclick = () => { tab = b.dataset.tab; sessionStorage.setItem("adminTab", tab); renderShell(); }));
-  ({ overview: renderOverview, users: renderUsers, lessons: renderLessons, plans: renderPlans, payments: renderPayments, settings: renderSettings })[tab]();
+  ({ overview: renderOverview, users: renderUsers, lessons: renderLessons, plans: renderPlans, payments: renderPayments, viral: renderViral, settings: renderSettings })[tab]();
 }
 
 // ---------- visao geral ----------
@@ -134,7 +135,9 @@ function renderOverview() {
   $("#tabBody").innerHTML = `
     <section class="kpis">
       ${kpi("usuários", t.users, `+${t.usersToday} hoje · +${t.usersLast7d} em 7 dias`)}
-      ${kpi("assinantes", t.subscribers, "com plano ativo")}
+      ${kpi("falando com a Mel agora", t.activeVoice, "sessões de voz abertas")}
+      ${kpi("assinantes", t.subscribers, `com plano ativo · ${t.promoUsers} na promoção`)}
+      ${kpi("prints pra aprovar", t.pendingMissions, `${t.bonusMinutesOutstanding} min de bônus em circulação`)}
       ${kpi("receita no mês", brl(t.revenueMonthCents), `${brl(t.revenueTotalCents)} no total`)}
       ${kpi("ativos em 7 dias", t.activeLast7d, "falaram com a Mel")}
       ${kpi("minutos de conversa", t.minutesTotal, `${t.minutesToday} hoje`)}
@@ -191,6 +194,10 @@ function editUser(email) {
       <div class="field"><label>O que trava</label><select name="blocker">${opt(BLOCKER_LABEL, u.profile.blocker)}</select></div>
       <div class="field"><label>Plano</label><select name="planId"><option value="">sem plano (grátis)</option>${data.plans.map((p) => `<option value="${p.id}" ${u.plan?.id === p.id ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select></div>
       <div class="field"><label>Plano expira em</label><input name="expiresAt" type="date" value="${dateInput(u.plan?.expiresAt)}" /></div>
+      <div class="field"><label>Promoção de lançamento</label><select name="promoOn"><option value="" ${!u.promo ? "selected" : ""}>não tem</option><option value="1" ${u.promo ? "selected" : ""}>tem (${u.promo ? `até ${fmtDay(u.promo.expiresAt)}` : "dá a vaga agora"})</option></select></div>
+      <div class="field"><label>Promoção expira em</label><input name="promoExpiresAt" type="date" value="${dateInput(u.promo?.expiresAt)}" /></div>
+      <div class="field"><label>Minutos bônus <span class="muted">(indicações/missões)</span></label><input name="bonusMinutes" type="number" min="0" step="1" value="${u.bonusMinutes ?? 0}" /></div>
+      <div class="field"><label>Indicação</label><input value="${u.refCode ? `código ${u.refCode}` : "—"}${u.referredBy ? ` · veio por ${u.referredBy}` : ""}" disabled /></div>
       <div class="field"><label>Nova senha <span class="muted">(opcional)</span></label><input name="password" type="text" placeholder="mínimo 6 caracteres" autocomplete="off" /></div>
       <label class="check"><input type="checkbox" name="blocked" ${u.blocked ? "checked" : ""} /> conta bloqueada (não consegue entrar nem falar com a Mel)</label>
       <div class="modal-actions">
@@ -212,6 +219,8 @@ function editUser(email) {
       name: f.name, role: f.role, blocked: Boolean(f.blocked),
       profile: { level: f.level, tone: f.tone, blocker: f.blocker },
       plan: f.planId ? { planId: f.planId, expiresAt: f.expiresAt ? `${f.expiresAt}T23:59:59.000Z` : undefined } : null,
+      promo: f.promoOn ? { expiresAt: f.promoExpiresAt ? `${f.promoExpiresAt}T23:59:59.000Z` : undefined } : null,
+      bonusMinutes: Number(f.bonusMinutes || 0),
     };
     try {
       await api("PUT", `/users/${encodeURIComponent(email)}`, body);
@@ -364,12 +373,68 @@ function renderPayments() {
   if ($("#goSettings")) $("#goSettings").onclick = () => { tab = "settings"; sessionStorage.setItem("adminTab", tab); renderShell(); };
 }
 
+// ---------- viral: promocao, indicacoes e missoes ----------
+
+async function renderViral() {
+  $("#tabBody").innerHTML = `<p class="muted">carregando…</p>`;
+  let v;
+  try { v = await api("GET", "/viral"); } catch (err) { toast(err.message, true); return; }
+  const kpi = (label, value, note = "") => `<div class="kpi"><span class="kpi-label">${label}</span><span class="kpi-value">${value}</span>${note ? `<span class="kpi-note">${note}</span>` : ""}</div>`;
+  const pending = v.missions.filter((m) => m.status === "pending");
+  const reviewed = v.missions.filter((m) => m.status !== "pending");
+  const STATUS = { approved: ["aprovado", "ok"], rejected: ["recusado", "red"] };
+  const missionCard = (m) => `
+    <div class="mission-card ${m.status}">
+      <a href="/api/admin/missions/${m.id}/image?token=${encodeURIComponent(token)}" target="_blank"><img src="/api/admin/missions/${m.id}/image?token=${encodeURIComponent(token)}" alt="print" loading="lazy" /></a>
+      <div class="mission-info">
+        <b>${esc(m.rule)}</b> <span class="badge">+${m.reward} min</span>
+        <div class="mono">${esc(m.userName || "")} · ${esc(m.email)}</div>
+        <div class="muted">${fmtDate(m.createdAt)}${m.link ? ` · <a href="${esc(m.link)}" target="_blank" rel="noopener">abrir link</a>` : ""}</div>
+        ${m.status === "pending"
+          ? `<div class="mission-actions"><button class="pill small" data-approve="${m.id}">aprovar</button><button class="pill small danger" data-reject="${m.id}">recusar</button></div>`
+          : `<div><span class="badge ${STATUS[m.status]?.[1] ?? ""}">${STATUS[m.status]?.[0] ?? m.status}</span> <span class="muted">${fmtDate(m.reviewedAt)}${m.note ? ` · ${esc(m.note)}` : ""}</span></div>`}
+      </div>
+    </div>`;
+  $("#tabBody").innerHTML = `
+    <section class="kpis">
+      ${kpi("vagas da promoção", `${v.promo.used}/${v.promo.slots}`, v.promo.enabled ? `${v.promo.slotsLeft} restantes · ${v.promo.minutesPerDay} min/dia por ${v.promo.days} dias` : "promoção desligada")}
+      ${kpi("indicados", v.referredTotal, `${v.creditedTotal} fizeram a primeira aula`)}
+      ${kpi("prints pendentes", pending.length, "aprovar libera os minutos na hora")}
+      ${kpi("prêmios", `${v.rewards.referrer}/${v.rewards.welcome}`, `min indica/indicado · story +${v.rewards.story} · post +${v.rewards.post}`)}
+    </section>
+    <section class="panel">
+      <div class="panel-head"><h2 class="title">Prints pra aprovar <span class="muted">(${pending.length})</span></h2><button class="pill" id="toSettings">ajustar prêmios</button></div>
+      <div class="mission-grid">${pending.map(missionCard).join("") || `<p class="muted">fila vazia</p>`}</div>
+    </section>
+    <section class="panel">
+      <h2 class="title">Quem mais indica</h2>
+      <div class="tablewrap"><table>
+        <thead><tr><th>quem</th><th>código</th><th>convidou</th><th>fizeram aula</th><th>bônus atual</th></tr></thead>
+        <tbody>${v.referrers.map((r) => `<tr><td>${esc(r.name) || "—"}<div class="mono muted">${esc(r.email)}</div></td><td class="mono">${esc(r.refCode ?? "")}</td><td>${r.invited}</td><td>${r.credited}</td><td>${Math.round(r.bonusMinutes)} min</td></tr>`).join("") || `<tr><td colspan="5" class="muted">ninguém indicou ainda</td></tr>`}</tbody>
+      </table></div>
+    </section>
+    <section class="panel">
+      <h2 class="title">Já avaliados <span class="muted">(${reviewed.length})</span></h2>
+      <div class="mission-grid">${reviewed.slice(0, 30).map(missionCard).join("") || `<p class="muted">nada ainda</p>`}</div>
+    </section>`;
+  $("#toSettings").onclick = () => { tab = "settings"; sessionStorage.setItem("adminTab", tab); renderShell(); };
+  const review = async (id, action) => {
+    const note = action === "reject" ? (prompt("Motivo (o aluno vê):") ?? "") : "";
+    try { await api("POST", `/missions/${id}/review`, { action, note }); toast(action === "approve" ? "aprovado, minutos creditados" : "recusado"); renderViral(); }
+    catch (err) { toast(err.message, true); }
+  };
+  $$("[data-approve]").forEach((b) => (b.onclick = () => review(b.dataset.approve, "approve")));
+  $$("[data-reject]").forEach((b) => (b.onclick = () => review(b.dataset.reject, "reject")));
+}
+
 // ---------- configuracoes ----------
 
 const GROUP_META = {
   ia: { title: "Inteligência artificial (Gemini)", icon: "sliders-horizontal", desc: "Chave e modelos usados na conversa por voz e na geração de lições." },
   acesso: { title: "Acesso ao painel", icon: "key", desc: "Quem consegue entrar em /admin." },
-  limites: { title: "Limites de uso", icon: "chart-line", desc: "Controla o quanto quem não paga pode conversar com a Mel." },
+  limites: { title: "Limites de uso", icon: "chart-line", desc: "Quanto quem não paga pode conversar, e quantas conversas ao mesmo tempo o servidor aceita." },
+  lancamento: { title: "Promoção de lançamento", icon: "fire", desc: "Os primeiros N cadastros ganham minutos grátis por um período. O app mostra as vagas restantes na tela inicial." },
+  viral: { title: "Indique e ganhe / missões", icon: "users", desc: "Prêmios em minutos por indicação e por posts com print aprovado na aba Viral." },
   pagamento: { title: "Pagamento (Pix / PagBank)", icon: "credit-card", desc: "Credenciais pra gerar e confirmar cobranças por Pix." },
   seguranca: { title: "Segurança", icon: "shield-check", desc: "Segredo usado para assinar as sessões de login." },
 };

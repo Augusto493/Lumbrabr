@@ -43,6 +43,59 @@ export const DEFINITIONS = [
     help: "Quanto quem não assinou pode conversar com a Mel por dia antes de ver o paywall.",
   },
   {
+    key: "MAX_CONCURRENT_VOICE", group: "limites", label: "Conversas simultâneas (máximo)", type: "number", min: 1,
+    default: "20",
+    help: "Acima disso a Mel avisa que está ocupada e pede pra tentar em 1 minuto, em vez de estourar o limite da API do Gemini. No tier grátis do Gemini deixe baixo (3); com faturamento ativado pode subir.",
+  },
+  {
+    key: "LAUNCH_PROMO_ENABLED", group: "lancamento", label: "Promoção de lançamento ligada", type: "select", options: ["sim", "nao"],
+    default: "sim",
+    help: "Enquanto ligada e houver vaga, quem cria conta ganha o plano de lançamento automaticamente.",
+  },
+  {
+    key: "LAUNCH_PROMO_SLOTS", group: "lancamento", label: "Vagas (primeiros N cadastros)", type: "number", min: 0,
+    default: "100",
+    help: "Quantas contas ganham a promoção. O app mostra 'restam X vagas' na tela inicial.",
+  },
+  {
+    key: "LAUNCH_PROMO_MINUTES", group: "lancamento", label: "Minutos por dia da promoção", type: "number", min: 1,
+    default: "3",
+  },
+  {
+    key: "LAUNCH_PROMO_DAYS", group: "lancamento", label: "Duração da promoção (dias)", type: "number", min: 1,
+    default: "30",
+  },
+  {
+    key: "LAUNCH_PROMO_NAME", group: "lancamento", label: "Nome do plano de lançamento",
+    default: "Lançamento",
+    help: "Aparece no chip do plano na home do aluno.",
+  },
+  {
+    key: "REF_REWARD_MINUTES", group: "viral", label: "Bônus pra quem indica (minutos)", type: "number", min: 0,
+    default: "10",
+    help: "Creditado quando o amigo indicado faz a primeira aula (não no cadastro, pra não valer conta fake).",
+  },
+  {
+    key: "REF_WELCOME_MINUTES", group: "viral", label: "Bônus pra quem foi indicado (minutos)", type: "number", min: 0,
+    default: "5",
+    help: "Creditado no cadastro de quem entrou por link de indicação.",
+  },
+  {
+    key: "MISSION_STORY_MINUTES", group: "viral", label: "Missão story (minutos)", type: "number", min: 0,
+    default: "15",
+    help: "Prêmio por story marcando o perfil, com print aprovado no painel. Uma vez a cada 7 dias por aluno.",
+  },
+  {
+    key: "MISSION_POST_MINUTES", group: "viral", label: "Missão post/vídeo (minutos)", type: "number", min: 0,
+    default: "30",
+    help: "Prêmio por post ou vídeo público sobre a Mel, com print aprovado. Uma vez a cada 30 dias por aluno.",
+  },
+  {
+    key: "SOCIAL_HANDLE", group: "viral", label: "Perfil pra marcar (Instagram/TikTok)",
+    default: "@heymel.online",
+    help: "Aparece nas missões: 'poste e marque @...'.",
+  },
+  {
     key: "PAGBANK_TOKEN", group: "pagamento", label: "Token do PagBank", secret: true,
     help: "Crie em PagBank → Vender online → Integrações. Use o token de sandbox pra testar antes de ir pra produção.",
   },
@@ -53,7 +106,8 @@ export const DEFINITIONS = [
   },
   {
     key: "PUBLIC_URL", group: "pagamento", label: "URL pública do app (https)", type: "url",
-    help: "Necessária pra o PagBank confirmar o pagamento por webhook. Sem ela, o app confere o status por consulta (funciona, só que não é instantâneo).",
+    default: "https://heymel.online",
+    help: "Usada nos links de indicação e pra o PagBank confirmar o pagamento por webhook.",
   },
   {
     key: "JWT_SECRET", group: "seguranca", label: "Segredo de sessão (JWT)", secret: true,

@@ -4,12 +4,14 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, "..", "data");
+export const UPLOADS_DIR = path.join(DATA_DIR, "uploads");
 const FILE = {
   users: path.join(DATA_DIR, "users.json"),
   progress: path.join(DATA_DIR, "progress.json"),
   sessions: path.join(DATA_DIR, "sessions.json"),
   plans: path.join(DATA_DIR, "plans.json"),
   orders: path.join(DATA_DIR, "orders.json"),
+  missions: path.join(DATA_DIR, "missions.json"),
 };
 
 function readJson(file, fallback) {
@@ -20,9 +22,13 @@ function readJson(file, fallback) {
   }
 }
 
+// escrita atomica: grava num temporario e renomeia, pra uma queda no meio
+// da escrita nunca deixar o arquivo pela metade
 function writeJson(file, data) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, JSON.stringify(data, null, 2));
+  const tmp = `${file}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(data, null, 2));
+  fs.renameSync(tmp, file);
 }
 
 // Armazenamento simples em arquivo: suficiente para o volume de um MVP
@@ -52,6 +58,38 @@ export function updateUser(email, patch) {
   users[email] = { ...users[email], ...patch };
   writeJson(FILE.users, users);
   return users[email];
+}
+
+export function findUserByRefCode(code) {
+  const wanted = String(code ?? "").trim().toUpperCase();
+  if (!wanted) return null;
+  return Object.values(getUsers()).find((u) => u.refCode === wanted) ?? null;
+}
+
+// codigo de indicacao curto e legivel (sem 0/O, 1/I)
+export function newRefCode() {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const users = getUsers();
+  for (;;) {
+    let code = "";
+    for (let i = 0; i < 6; i++) code += alphabet[Math.floor(Math.random() * alphabet.length)];
+    if (!Object.values(users).some((u) => u.refCode === code)) return code;
+  }
+}
+
+// saldo de minutos bonus (indicacoes e missoes): soma ou desconta, nunca fica negativo
+export function addBonusMinutes(email, minutes, reason) {
+  const users = getUsers();
+  const u = users[email];
+  if (!u) return null;
+  u.bonusMinutes = Math.max(0, Math.round(((u.bonusMinutes ?? 0) + minutes) * 10) / 10);
+  u.bonusLog = [...(u.bonusLog ?? []).slice(-49), { at: new Date().toISOString(), minutes, reason }];
+  writeJson(FILE.users, users);
+  return u.bonusMinutes;
+}
+
+export function countPromoUsers() {
+  return Object.values(getUsers()).filter((u) => u.promo).length;
 }
 
 export function deleteUser(email) {
@@ -97,6 +135,21 @@ export function minutesUsedToday(email) {
   return getSessions()
     .filter((s) => s.email === email && s.startedAt.slice(0, 10) === today)
     .reduce((sum, s) => sum + s.seconds / 60, 0);
+}
+
+// ---------- missoes (poste e ganhe) ----------
+
+export function getMissions() {
+  return readJson(FILE.missions, []);
+}
+
+export function saveMission(mission) {
+  const missions = getMissions();
+  const i = missions.findIndex((m) => m.id === mission.id);
+  if (i >= 0) missions[i] = mission;
+  else missions.push(mission);
+  writeJson(FILE.missions, missions);
+  return mission;
 }
 
 // ---------- planos ----------

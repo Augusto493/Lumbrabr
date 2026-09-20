@@ -2,10 +2,14 @@ import crypto from "node:crypto";
 import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { getUsers, getProgress, getSessions, findUserByEmail, updateUser, deleteUser, getPlans, savePlans, getOrders } from "./store.js";
+import fs from "node:fs";
+import path from "node:path";
+import { getUsers, getProgress, getSessions, findUserByEmail, updateUser, deleteUser, getPlans, savePlans, getOrders, getMissions, saveMission, addBonusMinutes, UPLOADS_DIR } from "./store.js";
 import { listLessons, getLesson, saveLesson, deleteLesson } from "./lessons.js";
 import { generateLesson } from "./generate.js";
-import { entitlement } from "./pay.js";
+import { entitlement, launchPromo } from "./pay.js";
+import { MISSIONS, missionReward } from "./viral.js";
+import { activeVoiceSessions } from "./voice.js";
 import * as pagbank from "./pagbank.js";
 import * as settings from "./settings.js";
 import { jwtSecret } from "./auth.js";
@@ -34,7 +38,8 @@ router.post("/login", (req, res) => {
 
 function requireAdmin(req, res, next) {
   const header = req.headers.authorization ?? "";
-  const token = header.startsWith("Bearer ") ? header.slice(7) : "";
+  // ?token= so pra <img> de prints das missoes (tag img nao manda header)
+  const token = header.startsWith("Bearer ") ? header.slice(7) : (req.path.endsWith("/image") ? String(req.query.token ?? "") : "");
   try {
     const decoded = jwt.verify(token, jwtSecret());
     if (decoded.role !== "admin") throw new Error();
@@ -80,6 +85,10 @@ router.get("/stats", (_req, res) => {
 
   res.json({
     totals: {
+      activeVoice: activeVoiceSessions(),
+      promoUsers: users.filter((u) => u.promo).length,
+      bonusMinutesOutstanding: Math.round(users.reduce((a, u) => a + (u.bonusMinutes ?? 0), 0)),
+      pendingMissions: getMissions().filter((m) => m.status === "pending").length,
       users: users.length,
       usersToday: users.filter((u) => dayKey(u.createdAt) === today).length,
       usersLast7d: users.filter((u) => (u.createdAt ?? "") >= weekAgo).length,
@@ -103,6 +112,10 @@ router.get("/stats", (_req, res) => {
         role: u.role ?? "user",
         blocked: Boolean(u.blocked),
         plan: u.plan ?? null,
+        promo: u.promo ?? null,
+        bonusMinutes: u.bonusMinutes ?? 0,
+        refCode: u.refCode ?? null,
+        referredBy: u.referredBy ?? null,
         entitlement: entitlement(u),
         lessonsDone: Object.keys(progress[u.email] ?? {}).length,
         minutes: Math.round(minutesByEmail[u.email] ?? 0),
@@ -123,9 +136,24 @@ router.put("/users/:email", (req, res) => {
   const email = req.params.email;
   const user = findUserByEmail(email);
   if (!user) return res.status(404).json({ error: "usuario nao encontrado" });
-  const { name, role, blocked, profile, plan } = req.body ?? {};
+  const { name, role, blocked, profile, plan, bonusMinutes, promo } = req.body ?? {};
   const patch = {};
   if (typeof name === "string") patch.name = name.trim().slice(0, 80);
+  if (bonusMinutes !== undefined) {
+    const n = Number(bonusMinutes);
+    if (!Number.isFinite(n) || n < 0) return res.status(400).json({ error: "minutos bonus invalidos" });
+    patch.bonusMinutes = Math.round(n * 10) / 10;
+    patch.bonusLog = [...(user.bonusLog ?? []).slice(-49), { at: new Date().toISOString(), minutes: patch.bonusMinutes - (user.bonusMinutes ?? 0), reason: "ajuste pelo painel" }];
+  }
+  if (promo !== undefined) {
+    if (!promo) patch.promo = null;
+    else {
+      const lp = launchPromo();
+      const expiresAt = promo.expiresAt ? new Date(promo.expiresAt) : new Date(Date.now() + lp.days * 86400000);
+      if (Number.isNaN(expiresAt.getTime())) return res.status(400).json({ error: "data da promocao invalida" });
+      patch.promo = { name: lp.name, minutesPerDay: lp.minutesPerDay, grantedAt: user.promo?.grantedAt ?? new Date().toISOString(), expiresAt: expiresAt.toISOString(), grantedByAdmin: true };
+    }
+  }
   if (role === "admin" || role === "user") patch.role = role;
   if (typeof blocked === "boolean") patch.blocked = blocked;
   if (profile && typeof profile === "object") {
@@ -245,6 +273,52 @@ router.put("/lessons/:id", (req, res) => {
 
 router.delete("/lessons/:id", (req, res) => {
   try { deleteLesson(req.params.id); res.json({ ok: true }); } catch { res.status(404).json({ error: "licao nao encontrada" }); }
+});
+
+// ---------- viral: promocao, indicacoes e missoes ----------
+
+router.get("/viral", (_req, res) => {
+  const users = Object.values(getUsers());
+  const byEmail = Object.fromEntries(users.map((u) => [u.email, u]));
+  const referrers = {};
+  for (const u of users) {
+    if (!u.referredBy) continue;
+    const r = (referrers[u.referredBy] ??= { email: u.referredBy, name: byEmail[u.referredBy]?.name ?? "", refCode: byEmail[u.referredBy]?.refCode ?? null, invited: 0, credited: 0, bonusMinutes: byEmail[u.referredBy]?.bonusMinutes ?? 0 });
+    r.invited += 1;
+    if (u.referralCredited) r.credited += 1;
+  }
+  const missions = getMissions()
+    .map((m) => ({ ...m, userName: byEmail[m.email]?.name ?? "", rule: MISSIONS[m.type]?.label ?? m.type }))
+    .sort((a, b) => (a.status === "pending" ? -1 : 1) - (b.status === "pending" ? -1 : 1) || b.createdAt.localeCompare(a.createdAt));
+  res.json({
+    promo: launchPromo(),
+    rewards: { referrer: settings.getNumber("REF_REWARD_MINUTES", 0), welcome: settings.getNumber("REF_WELCOME_MINUTES", 0), story: missionReward("story"), post: missionReward("post") },
+    referrers: Object.values(referrers).sort((a, b) => b.credited - a.credited || b.invited - a.invited),
+    referredTotal: users.filter((u) => u.referredBy).length,
+    creditedTotal: users.filter((u) => u.referralCredited).length,
+    missions: missions.slice(0, 200),
+  });
+});
+
+router.get("/missions/:id/image", (req, res) => {
+  const m = getMissions().find((x) => x.id === req.params.id);
+  if (!m) return res.status(404).end();
+  const file = path.join(UPLOADS_DIR, path.basename(m.image));
+  if (!fs.existsSync(file)) return res.status(404).end();
+  res.setHeader("Cache-Control", "private, max-age=3600");
+  res.sendFile(file);
+});
+
+router.post("/missions/:id/review", (req, res) => {
+  const m = getMissions().find((x) => x.id === req.params.id);
+  if (!m) return res.status(404).json({ error: "missao nao encontrada" });
+  if (m.status !== "pending") return res.status(409).json({ error: "essa missao ja foi avaliada" });
+  const { action, note } = req.body ?? {};
+  if (action !== "approve" && action !== "reject") return res.status(400).json({ error: "acao invalida" });
+  const reward = action === "approve" ? missionReward(m.type) : 0;
+  const updated = saveMission({ ...m, status: action === "approve" ? "approved" : "rejected", reward, reviewedAt: new Date().toISOString(), note: String(note ?? "").trim().slice(0, 200) || null });
+  if (reward > 0) addBonusMinutes(m.email, reward, `missão: ${MISSIONS[m.type]?.label ?? m.type}`);
+  res.json(updated);
 });
 
 // ---------- configuracoes do sistema ----------
