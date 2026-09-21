@@ -1,0 +1,25 @@
+{
+  "id": "09-falsos-amigos",
+  "title": "Falsos amigos que te entregam",
+  "level": "B1",
+  "focus": "As palavras que parecem português e não são: pretend (fingir) vs intend, actually (na verdade) vs atualmente, push (empurrar) vs puxar, library (biblioteca) vs livraria",
+  "warmup": {
+    "instruction": "Em português, conte a armadilha: 'I pretend to travel next year' quer dizer que ele FINGE viajar. Faça ele dizer a frase certa com 'intend'. Depois passe por 'actually' (na verdade, não atualmente) e 'push' (empurrar). Um falso amigo por vez, sempre com a frase certa pra repetir.",
+    "examples": [
+      { "en": "I intend to travel next year.", "pt": "Eu pretendo viajar ano que vem." },
+      { "en": "Actually, I work from home.", "pt": "Na verdade, eu trabalho de casa." },
+      { "en": "I'm currently studying English.", "pt": "Atualmente eu estou estudando inglês." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Planos pro ano que vem",
+    "instruction": "Pergunte em inglês sobre os planos do aluno (viagem, trabalho, estudo) — terreno fértil pra 'pretend' aparecer. Use 'actually' nas suas respostas pra ver se ele entende. Cada falso amigo que escapar, você para tudo, mostra o que ele acabou de dizer de verdade, e dá a frase certa."
+  },
+  "review": {
+    "checklist": [
+      "O aluno usou 'intend' (e não 'pretend') pra falar de planos?",
+      "Entendeu 'actually' como 'na verdade'?"
+    ],
+    "closing": "Feche listando em português os três falsos amigos do dia e o que cada um significa de verdade. Diga que a partir de hoje 'pretend' morreu no vocabulário dele."
+  }
+}

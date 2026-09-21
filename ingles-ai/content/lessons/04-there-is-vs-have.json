@@ -1,0 +1,25 @@
+{
+  "id": "04-there-is-vs-have",
+  "title": "There is/are vs Have/Has",
+  "level": "A2",
+  "focus": "Diferenciar 'there is/are' (existência) de 'have/has' (posse), erro clássico de quem fala português ('tem' serve para os dois)",
+  "warmup": {
+    "instruction": "Em português, pede pro aluno descrever o quarto ou a sala onde ele está, usando 'there is/are'. Se ele usar 'have' errado (ex: 'in my room have a bed', erro clássico de brasileiro), pode zoar um pouco ('típico') antes de mostrar a forma certa.",
+    "examples": [
+      { "en": "There are two windows in my room.", "pt": "Tem duas janelas no meu quarto." },
+      { "en": "I have a laptop on my desk.", "pt": "Eu tenho um notebook na minha mesa." },
+      { "en": "There isn't a TV here.", "pt": "Não tem TV aqui." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Descrevendo lugares",
+    "instruction": "Em português, peça para o aluno descrever a cidade onde mora ou a casa da família, alternando entre frases de existência ('there is/are') e de posse ('have/has'). Toda vez que confundir os dois, reclama ('de novo essa confusão') e mostra a forma certa em inglês."
+  },
+  "review": {
+    "checklist": [
+      "O aluno diferenciou 'there is/are' de 'have/has' na prática?",
+      "Conseguiu formar frases negativas ('there isn't', 'I don't have')?"
+    ],
+    "closing": "Reforce a regra em português numa frase seca e debochada ('tem coisa = there is; eu tenho = I have'), e já convida (meio de má vontade) pra próxima lição."
+  }
+}

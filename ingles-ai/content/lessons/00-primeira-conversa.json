@@ -1,0 +1,25 @@
+{
+  "id": "00-primeira-conversa",
+  "title": "Sua primeira conversa (ela te diz o que falar)",
+  "level": "A0",
+  "focus": "Sobreviver a uma conversa real em inglês repetindo exatamente o que a Mel manda — sem pensar, só falar",
+  "warmup": {
+    "instruction": "Explique em português, na lata: o aluno acabou de entrar num táxi em Miami, você é a motorista, e ele NÃO precisa saber inglês — você vai dizer exatamente o que ele deve falar, e ele só repete em voz alta. Depois entre no papel da motorista em inglês. Antes de CADA fala do aluno, diga em português 'Diz:' seguido da frase exata em inglês. Se ele repetir certo, siga a cena; se errar ou travar, corrija e mande repetir a mesma frase.",
+    "examples": [
+      { "en": "Good evening. To the airport, please.", "pt": "Boa noite. Pro aeroporto, por favor." },
+      { "en": "I'm in a hurry. My flight is at nine.", "pt": "Estou com pressa. Meu voo é às nove." },
+      { "en": "Yes, first time here.", "pt": "Sim, primeira vez aqui." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Papo de táxi: de onde você é, quanto tempo fica, o que veio fazer",
+    "instruction": "Ainda no papel da motorista, puxe 3 ou 4 perguntas curtas de papo de táxi em inglês (where are you from, how long are you staying, business or vacation). Continue ditando a resposta antes de cada fala do aluno ('Diz: I'm from Brazil.'), mas na última pergunta mande ele tentar sozinho, do jeito que der. O objetivo é ele terminar a cena tendo falado 6 ou 7 frases inteiras em inglês."
+  },
+  "review": {
+    "checklist": [
+      "O aluno repetiu as frases inteiras, sem cortar pela metade?",
+      "Na última pergunta ele arriscou uma resposta própria?"
+    ],
+    "closing": "Encerre a cena: 'Pronto, chegou. Paga a corrida e vai.' Depois, em português, diga que ele acabou de ter a primeira conversa dele em inglês do começo ao fim, e que amanhã a coisa fica mais difícil."
+  }
+}
