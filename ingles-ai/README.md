@@ -233,6 +233,29 @@ tradução), `freeConversation` e `review` — a Mel recebe isso como roteiro.
    pedidos de ritmo ("fala mais devagar", "repete", "não entendi") na hora
    e manter o ritmo lento até o aluno liberar.
 
+   **Fim de turno é sinalizado explicitamente, não detectado por silêncio.**
+   A sessão do Gemini abre com `automaticActivityDetection: { disabled: true }`;
+   o navegador (que já sabe com precisão quando a pessoa começa/para de
+   falar, pela porta de voz abaixo) manda `activityStart`/`activityEnd`
+   pelo WebSocket. Antes disso, o Gemini tentava detectar o silêncio
+   sozinho dentro do áudio que chegava — e numa rede com variação entre a
+   VPS e o Google isso podia nunca "fechar o turno": a ligação ficava
+   aberta, o aluno tinha falado, e a Mel nunca respondia, sem erro nenhum
+   (medido em produção logo após o lançamento: 2 de 11 conversas de teste
+   ficaram mudas assim). Confirmado que interromper a Mel no meio da fala
+   continua instantâneo com sinalização manual (`activityStart` durante a
+   resposta dispara `interrupted` do mesmo jeito).
+
+   **Vigia de travamento** (dos dois lados, redundante de propósito): o
+   servidor arma um timer de 7 s depois de receber `activityEnd`; se nada
+   voltar do Gemini nesse tempo, manda `{type:"stall"}` pro cliente e
+   conta no log. O navegador arma o seu próprio timer de 9 s; se estourar
+   (o aviso do servidor pode se perder na mesma rede instável), fecha o
+   WebSocket sozinho — o que já aciona a reconexão automática existente.
+   Uma conversa saudável (qualquer `turnComplete`) reseta o crédito de
+   reconexão, então travamentos repetidos numa sessão longa continuam se
+   recuperando, não só o primeiro.
+
    Porta de voz: o navegador **só envia áudio quando detecta voz** (piso de
    ruído adaptativo, ~340 ms de pré-rolo pra não cortar a primeira sílaba,
    700 ms de folga depois da última voz e então `audioStreamEnd`). Mandar

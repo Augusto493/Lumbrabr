@@ -976,6 +976,20 @@ async function openLesson(lessonId) {
   connectVoiceSession(lessonId);
 }
 
+// Vigia local: se 9s depois de activityEnd nada chegar (audio/transcricao/
+// turnComplete), a ligacao esta travada de verdade — fecha o WS, o que aciona
+// a reconexao automatica ja existente em ws.onclose. O aviso do servidor
+// (msg "stall", aos 7s) chega antes e so troca o texto na tela.
+function armStallWatch() {
+  clearTimeout(state.stallTimer);
+  state.stallTimer = setTimeout(() => {
+    if (state.ws && state.ws.readyState === WebSocket.OPEN) { try { state.ws.close(); } catch {} }
+  }, 9000);
+}
+function clearStallWatch() {
+  clearTimeout(state.stallTimer);
+}
+
 function setStatus(text, cls = "") {
   const el = $("#status");
   if (!el) return;
@@ -999,14 +1013,22 @@ function connectVoiceSession(lessonId) {
       setStatus("ao vivo", "live");
       startRecording(); // conversa continua: microfone abre sozinho, sem toque
     } else if (msg.type === "audio") {
+      clearStallWatch();
       playAudioChunk(msg.data);
     } else if (msg.type === "transcript") {
       msg.role === "tutora" ? tutorSaid(msg.text) : studentSaid(msg.text);
     } else if (msg.type === "interrupted") {
+      clearStallWatch();
       flushPlayback();
       if (state.turn) state.turn.done = true;
     } else if (msg.type === "turnComplete") {
+      clearStallWatch();
+      state.reconnects = 0; // turno completo prova que a ligacao esta saudavel: renova o credito de reconexao
       if (state.turn) state.turn.done = true;
+    } else if (msg.type === "stall") {
+      // o servidor mandou activityEnd ha 7s e o Gemini nao respondeu: avisa
+      // enquanto o vigia do cliente (9s) prepara a reconexao automatica
+      setStatus("ela tá emperrada… reconectando", "err");
     } else if (msg.type === "limit") {
       state.entitlement = msg;
       goPaywall("limit");
@@ -1020,6 +1042,7 @@ function connectVoiceSession(lessonId) {
   };
   ws.onclose = () => {
     if (state.ws !== ws) return; // fechamos de proposito (saiu da aula)
+    clearStallWatch();
     stopRecording();
     // queda inesperada no meio da aula: reconecta sozinho uma vez
     if (!state.busy && state.reconnects < 1 && !/bloqueada|invalid/i.test(state.lastError ?? "")) {
@@ -1128,8 +1151,10 @@ async function startRecording() {
   // Porta de voz: so sobe audio quando ha voz. Mandar silencio continuo enche a
   // fila servidor -> Gemini em rede lenta (medido na VPS: a fala chegava tarde
   // ou nunca). Pre-rolo de ~340 ms pra nao cortar a primeira silaba, 550 ms de
-  // folga depois da ultima voz (o detector do Gemini fecha o turno com 400 ms
-  // de silencio, antes disso), e ai avisa o fim do trecho (audioStreamEnd).
+  // folga depois da ultima voz. O inicio/fim de fala e avisado explicitamente
+  // (activityStart/activityEnd) — o servidor desliga a deteccao automatica do
+  // Gemini porque, sob rede instavel, ela podia nunca "fechar o turno" e travar
+  // a conversa em silencio sem erro nenhum.
   const gate = { floor: 0.01, speaking: false, lastVoice: 0, pre: [] };
   state.processorNode.onaudioprocess = (e) => {
     const input = e.inputBuffer.getChannelData(0);
@@ -1145,13 +1170,20 @@ async function startRecording() {
     const send = (p) => state.ws?.send(JSON.stringify({ type: "audio", data: int16ToBase64(p) }));
     if (rms > threshold) {
       gate.lastVoice = now;
-      if (!gate.speaking) { gate.speaking = true; gate.pre.forEach(send); gate.pre.length = 0; $("#stageWrap")?.classList.add("hear"); }
+      if (!gate.speaking) {
+        gate.speaking = true;
+        clearStallWatch();
+        state.ws?.send(JSON.stringify({ type: "activityStart" }));
+        gate.pre.forEach(send); gate.pre.length = 0;
+        $("#stageWrap")?.classList.add("hear");
+      }
     }
     if (gate.speaking) {
       send(pcm16);
       if (now - gate.lastVoice > 550) {
         gate.speaking = false;
-        state.ws?.send(JSON.stringify({ type: "audioStreamEnd" }));
+        state.ws?.send(JSON.stringify({ type: "activityEnd" }));
+        armStallWatch();
         $("#stageWrap")?.classList.remove("hear");
       }
     } else {
@@ -1170,10 +1202,10 @@ async function startRecording() {
 
 function stopRecording() {
   if (!state.recording) return;
+  clearStallWatch();
   state.processorNode?.disconnect();
   state.sourceNode?.disconnect();
   state.micStream?.getTracks().forEach((t) => t.stop());
-  state.ws?.send(JSON.stringify({ type: "audioStreamEnd" }));
   state.recording = false;
   $("#stageWrap")?.classList.remove("hear");
   setMood("grumpy");

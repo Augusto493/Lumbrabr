@@ -1,5 +1,5 @@
 import { WebSocketServer } from "ws";
-import { GoogleGenAI, Modality, StartSensitivity, EndSensitivity } from "@google/genai";
+import { GoogleGenAI, Modality } from "@google/genai";
 import { verifyToken } from "./auth.js";
 import { getLesson, buildSystemInstruction } from "./lessons.js";
 import { markLessonDone, findUserByEmail, logSession, minutesUsedToday, addBonusMinutes } from "./store.js";
@@ -67,7 +67,22 @@ export function attachVoiceServer(httpServer) {
     let geminiSession = null;
     let closedByClient = false;
     let rekicked = false;
-    const stats = { audioIn: 0, audioOut: 0, turns: 0 };
+    const stats = { audioIn: 0, audioOut: 0, turns: 0, stalls: 0 };
+    // Vigia de travamento: o fim de fala e sinalizado explicitamente pelo cliente
+    // (activityEnd), nao mais por deteccao automatica de silencio no audio — numa
+    // rede instavel entre a VPS e o Google, pacotes atrasados/perdidos podiam
+    // fazer o detector automatico nunca "fechar" o turno, e a conversa travava
+    // sem erro nenhum (medido em producao: ~1 a cada 4 conversas ficava muda).
+    // Se 7s depois de activityEnd nada chegar, avisa o cliente pra ele se recuperar.
+    let stallTimer = null;
+    const armStall = () => {
+      clearTimeout(stallTimer);
+      stallTimer = setTimeout(() => {
+        stats.stalls++;
+        safeSend(ws, { type: "stall" });
+      }, 7000);
+    };
+    const clearStall = () => clearTimeout(stallTimer);
     const firstName = (account?.name ?? "").trim().split(" ")[0];
     const kickoffText = `${firstName ? `O aluno ${firstName}` : "O aluno"} acabou de entrar na aula. O microfone dele ja esta aberto. Abra voce, em portugues, em NO MAXIMO duas frases curtas, e ja dite a primeira frase pra ele repetir. Nada de discurso: cumprimenta, situa a cena numa frase e passa a frase.`;
     const limiter = setTimeout(() => {
@@ -90,15 +105,11 @@ export function attachVoiceServer(httpServer) {
           // sem "pensar" antes de falar: numa conversa por voz cada segundo de
           // silencio parece travamento (medido: ~5 s ate a primeira palavra com o padrao)
           thinkingConfig: { thinkingBudget: 0 },
-          // detecta o fim da fala do aluno mais rapido pra Mel responder na hora
-          realtimeInputConfig: {
-            automaticActivityDetection: {
-              startOfSpeechSensitivity: StartSensitivity.START_SENSITIVITY_HIGH,
-              endOfSpeechSensitivity: EndSensitivity.END_SENSITIVITY_HIGH,
-              prefixPaddingMs: 100,
-              silenceDurationMs: 400,
-            },
-          },
+          // deteccao automatica de fala DESLIGADA: o navegador ja sabe com precisao
+          // quando o aluno comeca/para de falar (porta de voz por volume) e manda
+          // isso explicito (activityStart/activityEnd). Depender do Gemini detectar
+          // silencio dentro do audio recebido falhava sob rede instavel.
+          realtimeInputConfig: { automaticActivityDetection: { disabled: true } },
         },
         callbacks: {
           onopen: () => safeSend(ws, { type: "ready" }),
@@ -107,6 +118,7 @@ export function attachVoiceServer(httpServer) {
             for (const part of parts) {
               if (part.inlineData?.data) {
                 stats.audioOut++;
+                clearStall();
                 safeSend(ws, { type: "audio", data: part.inlineData.data });
               }
             }
@@ -118,9 +130,11 @@ export function attachVoiceServer(httpServer) {
 
             // o aluno falou por cima da Mel: o app descarta o audio que ainda ia tocar
             if (message?.serverContent?.interrupted) {
+              clearStall();
               safeSend(ws, { type: "interrupted" });
             }
             if (message?.serverContent?.turnComplete) {
+              clearStall();
               stats.turns++;
               // alguns modelos respondem ao empurrao de abertura so em texto (sem audio):
               // da um segundo empurrao por outro canal pra Mel falar de verdade
@@ -166,8 +180,16 @@ export function attachVoiceServer(httpServer) {
         geminiSession.sendRealtimeInput({
           audio: { data: msg.data, mimeType: "audio/pcm;rate=16000" },
         });
-      } else if (msg.type === "audioStreamEnd") {
-        geminiSession.sendRealtimeInput({ audioStreamEnd: true });
+      } else if (msg.type === "activityStart") {
+        clearStall();
+        try { geminiSession.sendRealtimeInput({ activityStart: {} }); } catch {}
+      } else if (msg.type === "activityEnd" || msg.type === "audioStreamEnd") {
+        // audioStreamEnd (nome antigo) so chega de uma aba que ja estava aberta
+        // antes do deploy — sem o activityStart correspondente o turno nao fecha
+        // de jeito nenhum; o vigia de travamento entra em acao e recarregar a
+        // pagina resolve (pega o app.js novo, que manda os dois sinais certos)
+        try { geminiSession.sendRealtimeInput({ activityEnd: {} }); } catch {}
+        armStall();
       } else if (msg.type === "lessonDone") {
         markLessonDone(user.email, lesson.id);
       }
@@ -178,11 +200,13 @@ export function attachVoiceServer(httpServer) {
       closedByClient = true;
       clearTimeout(limiter);
       clearInterval(pinger);
+      clearStall();
       release();
       try { geminiSession?.close(); } catch {}
       const seconds = Math.round((Date.now() - startedAt) / 1000);
       // resumo no log do container: ajuda a ver de longe se o audio do aluno esta chegando
-      console.log(`[voz] ${user.email} ${lesson.id} ${seconds}s | audio aluno ${stats.audioIn} chunks | audio Mel ${stats.audioOut} chunks | turnos ${stats.turns} | simultaneas ${activeSessions}`);
+      // e se a sessao travou (stalls > 0) mesmo com audio chegando dos dois lados
+      console.log(`[voz] ${user.email} ${lesson.id} ${seconds}s | audio aluno ${stats.audioIn} chunks | audio Mel ${stats.audioOut} chunks | turnos ${stats.turns} | travamentos ${stats.stalls} | simultaneas ${activeSessions}`);
       // a tela de aula nao tem botao de "concluir": uma conversa de pelo menos
       // 90 s conta como licao feita (e libera o bonus de quem indicou, na primeira)
       if (seconds >= 90) {
