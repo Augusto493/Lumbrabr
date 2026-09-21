@@ -44,8 +44,8 @@ export const DEFINITIONS = [
   },
   {
     key: "MAX_CONCURRENT_VOICE", group: "limites", label: "Conversas simultâneas (máximo)", type: "number", min: 1,
-    default: "20",
-    help: "Acima disso a Mel avisa que está ocupada e pede pra tentar em 1 minuto, em vez de estourar o limite da API do Gemini. No tier grátis do Gemini deixe baixo (3); com faturamento ativado pode subir.",
+    default: "4",
+    help: "Acima disso a Mel avisa que está ocupada e pede pra tentar em 1 minuto, em vez de estourar a API do Gemini. Padrão conservador (4): testado em produção que várias conversas ao mesmo tempo aumentam muito o risco de travar (a detecção de fim de fala tem mais chance de falhar sob mais tráfego). Suba aos poucos e só depois de confirmar que uma conversa sozinha nunca trava.",
   },
   {
     key: "LAUNCH_PROMO_ENABLED", group: "lancamento", label: "Promoção de lançamento ligada", type: "select", options: ["sim", "nao"],
