@@ -1,0 +1,39 @@
+{
+  "id": "es-de-colores",
+  "language": "es",
+  "title": "De colores",
+  "artist": "Tradicional",
+  "source": "dominio-publico",
+  "credit": "Canção folclórica tradicional — domínio público",
+  "level": "A2",
+  "icon": "star-four",
+  "focus": "Frases longas cantadas com calma, 'se visten', e 'me gustan a mí' no plural.",
+  "description": "Canção folclórica de primavera. E um 'me gustan' bonito no final.",
+  "style": "Warm Latin folk, nylon guitars and soft harp, gentle choir-like female vocal, 84 bpm",
+  "lines": [
+    {
+      "section": "Verso",
+      "text": "De colores, de colores se visten los campos en la primavera",
+      "pt": "De cores, de cores se vestem os campos na primavera",
+      "tip": "Se visten = se vestem. O V soa quase como B: 'bisten'."
+    },
+    {
+      "section": "Verso",
+      "text": "De colores, de colores son los pajaritos que vienen de afuera",
+      "pt": "De cores, de cores são os passarinhos que vêm de fora",
+      "tip": "Pajaritos: o J é aspirado, 'parritos' sai do fundo da garganta."
+    },
+    {
+      "section": "Verso",
+      "text": "De colores, de colores es el arco iris que vemos lucir",
+      "pt": "De cores, de cores é o arco-íris que vemos brilhar"
+    },
+    {
+      "section": "Coro",
+      "text": "Y por eso los grandes amores de muchos colores me gustan a mí",
+      "pt": "E por isso os grandes amores de muitas cores me agradam",
+      "tip": "Los amores (plural) → me gustan. A regra do gustar na vida real."
+    }
+  ],
+  "active": true
+}

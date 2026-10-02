@@ -1,0 +1,42 @@
+# Copie para docker-compose.yml e ajuste o Host() e a subnet.
+# Pressupoe um Traefik ja rodando no host (network_mode: host, providers.docker,
+# entrypoint "websecure" e certresolver "letsencrypt"), como na VPS de exemplo.
+#
+# Dominio: aponte os registros A de `heymel.online` e `www.heymel.online` pro IP
+# da VPS ANTES de subir com esses hosts -- o Let's Encrypt precisa resolver os
+# dois pra emitir o certificado. O host .sslip.io fica como reserva.
+services:
+  app:
+    build: .
+    container_name: mel-app
+    restart: unless-stopped
+    mem_limit: 768m
+    memswap_limit: -1
+    env_file: .env
+    environment:
+      - TZ=America/Sao_Paulo
+    volumes:
+      - mel_data:/app/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mel.rule=Host(`heymel.online`) || Host(`www.heymel.online`) || Host(`mel.179.197.235.4.sslip.io`)
+      - traefik.http.routers.mel.entrypoints=websecure
+      - traefik.http.routers.mel.tls=true
+      - traefik.http.routers.mel.tls.certresolver=letsencrypt
+      - traefik.http.routers.mel.middlewares=mel-www
+      - traefik.http.services.mel.loadbalancer.server.port=3000
+      # www.heymel.online -> heymel.online
+      - traefik.http.middlewares.mel-www.redirectregex.regex=^https?://www\.heymel\.online/(.*)
+      - traefik.http.middlewares.mel-www.redirectregex.replacement=https://heymel.online/$${1}
+      - traefik.http.middlewares.mel-www.redirectregex.permanent=true
+
+volumes:
+  mel_data:
+
+# Necessario so se o Docker do host ja esgotou os pools de IP padrao
+# ("all predefined address pools have been fully subnetted").
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 10.210.0.0/24

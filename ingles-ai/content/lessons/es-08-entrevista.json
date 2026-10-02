@@ -1,0 +1,28 @@
+{
+  "id": "es-08-entrevista",
+  "language": "es",
+  "icon": "briefcase",
+  "title": "Entrevista de emprego em espanhol",
+  "level": "B2",
+  "focus": "Falar de experiência e qualidades com usted, 'llevo X años trabajando', 'se me da bien' e 'me encargo de'",
+  "warmup": {
+    "instruction": "Em português, explique que em entrevista na Espanha ou América Latina o tom é mais formal: usted. E três estruturas que soam nativas: 'llevo cinco años trabajando en...' (em vez de 'trabalho há cinco anos'), 'me encargo de...' (sou responsável por) e 'se me da bien...' (sou bom em). Faça ele montar uma frase com cada uma sobre a vida profissional dele.",
+    "examples": [
+      { "es": "Llevo cinco años trabajando en marketing.", "pt": "Trabalho com marketing há cinco anos." },
+      { "es": "Me encargo de las redes sociales de la empresa.", "pt": "Sou responsável pelas redes sociais da empresa." },
+      { "es": "Se me da bien trabajar en equipo.", "pt": "Sou bom trabalhando em equipe." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Entrevista: experiência, pontos fortes, um desafio e por que quer a vaga",
+    "instruction": "Seja a recrutadora, tratando o aluno por usted. Pergunte: hábleme de su experiencia, ¿cuál es su mayor fortaleza?, cuénteme un desafío que resolvió, ¿por qué quiere este puesto? Exija respostas de pelo menos duas frases. Corrija tú/usted misturado, falta de conectores e qualquer palavra em português."
+  },
+  "review": {
+    "checklist": [
+      "Usou 'llevo ... años' pra tempo de experiência?",
+      "Manteve o tratamento formal (usted) do começo ao fim?",
+      "Respondeu com frases completas e conectores (además, por eso, sin embargo)?"
+    ],
+    "closing": "Feche em português dando uma nota de 0 a 10 pra entrevista, com uma coisa que convenceu e uma que você cortaria. Diga se você contrataria ele — com sinceridade brutal."
+  }
+}

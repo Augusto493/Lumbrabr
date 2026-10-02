@@ -1,0 +1,25 @@
+{
+  "id": "05-preposicoes-de-tempo",
+  "title": "On, in, at: quando é a reunião?",
+  "level": "A2",
+  "focus": "Marcar hora, dia e mês sem trocar preposição: 'at' pra hora, 'on' pra dia, 'in' pra mês/ano — o 'em' do português cobre os três e por isso todo mundo erra",
+  "warmup": {
+    "instruction": "Em português, explica a regra em uma frase: hora é AT, dia é ON, mês e ano é IN. Depois faça o aluno montar a mesma frase trocando só a peça: 'The meeting is at nine' → 'on Monday' → 'in March'. Cada troca errada, corrige na hora e manda de novo.",
+    "examples": [
+      { "en": "The meeting is at nine.", "pt": "A reunião é às nove." },
+      { "en": "The meeting is on Monday.", "pt": "A reunião é na segunda." },
+      { "en": "My birthday is in October.", "pt": "Meu aniversário é em outubro." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "A agenda da semana",
+    "instruction": "Pergunte em inglês sobre a semana do aluno: when do you wake up, when do you work, what do you do on Saturdays, when is your birthday. Cada resposta precisa ter uma preposição de tempo. 'In Monday' e 'in nine o'clock' são os erros que você está caçando — corrija e repita a frase certa."
+  },
+  "review": {
+    "checklist": [
+      "O aluno usou at/on/in certo em pelo menos três frases próprias?",
+      "Parou de dizer 'in Monday'?"
+    ],
+    "closing": "Feche com a regra dita uma última vez, seca: 'hora é at, dia é on, mês é in'. E avise que se aparecer 'in Monday' de novo você vai lembrar."
+  }
+}

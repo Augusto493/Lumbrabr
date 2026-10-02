@@ -1,0 +1,60 @@
+{
+  "id": "en-coffee-at-seven",
+  "language": "en",
+  "title": "Coffee at Seven",
+  "artist": "Mel",
+  "source": "original",
+  "level": "A2",
+  "icon": "coffee",
+  "focus": "Presente simples com he/she/it: o verbo ganha -s (she runs, he sleeps, it rains).",
+  "description": "Uma família inteira de manhã. E o -s que brasileiro sempre esquece.",
+  "style": "Laid-back indie folk, acoustic guitar and soft drums, sunny morning mood, clear female vocal, 92 bpm",
+  "lines": [
+    {
+      "section": "Verse",
+      "text": "My sister wakes up at six",
+      "pt": "Minha irmã acorda às seis",
+      "tip": "Ela → wakeS. Com he/she/it o verbo ganha -s. Sempre."
+    },
+    {
+      "section": "Verse",
+      "text": "She runs before the sun comes out",
+      "pt": "Ela corre antes do sol sair"
+    },
+    {
+      "section": "Verse",
+      "text": "My brother sleeps until eleven",
+      "pt": "Meu irmão dorme até as onze"
+    },
+    {
+      "section": "Verse",
+      "text": "He never knows what time it is",
+      "pt": "Ele nunca sabe que horas são",
+      "tip": "Knows: o K é mudo. 'nôuz'."
+    },
+    {
+      "section": "Chorus",
+      "text": "And I drink coffee at seven",
+      "pt": "E eu tomo café às sete",
+      "tip": "Com I não tem -s: I drink."
+    },
+    {
+      "section": "Chorus",
+      "text": "Coffee at seven, every day",
+      "pt": "Café às sete, todo dia"
+    },
+    {
+      "section": "Chorus",
+      "text": "She drinks, he sleeps, it rains outside",
+      "pt": "Ela bebe, ele dorme, chove lá fora",
+      "tip": "It rains: em inglês até a chuva precisa de sujeito."
+    },
+    {
+      "section": "Chorus",
+      "text": "But I drink coffee anyway",
+      "pt": "Mas eu tomo café mesmo assim",
+      "tip": "Anyway = mesmo assim. 'é-ni-uei'."
+    }
+  ],
+  "active": true
+}

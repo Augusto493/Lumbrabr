@@ -1,0 +1,25 @@
+{
+  "id": "07-contar-o-que-aconteceu",
+  "title": "Contar o que aconteceu (passado)",
+  "level": "A2",
+  "focus": "Narrar o fim de semana no passado simples: verbos regulares com -ed, os irregulares que mais aparecem (went, had, saw, ate) e a pergunta 'What did you do?'",
+  "warmup": {
+    "instruction": "Em português, diga que hoje é o dia de falar do passado sem enrolar. Ensine o padrão: 'I worked / I watched' (regular) e os quatro irregulares que ele vai usar toda semana: went, had, saw, ate. Mande ele contar três coisas que fez ontem, uma frase cada.",
+    "examples": [
+      { "en": "I went to the beach on Saturday.", "pt": "Eu fui à praia no sábado." },
+      { "en": "We had pizza and watched a movie.", "pt": "A gente comeu pizza e viu um filme." },
+      { "en": "What did you do last weekend?", "pt": "O que você fez no fim de semana passado?" }
+    ]
+  },
+  "freeConversation": {
+    "topic": "O último fim de semana, do começo ao fim",
+    "instruction": "Pergunte em inglês o que ele fez no fim de semana e vá puxando detalhes: what did you eat, who did you see, did you like it. Erros a caçar: 'I go' no lugar de 'I went', e 'did you went' (did + passado). Corrija e faça repetir a frase inteira."
+  },
+  "review": {
+    "checklist": [
+      "O aluno usou pelo menos três verbos no passado corretamente?",
+      "Formou uma pergunta com 'did' sem dobrar o passado?"
+    ],
+    "closing": "Feche mandando ele contar o fim de semana inteiro de uma vez, em quatro frases seguidas, sem parar. Depois diga em português que agora ele consegue contar qualquer história — devagar, mas consegue."
+  }
+}

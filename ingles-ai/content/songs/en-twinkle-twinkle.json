@@ -1,0 +1,49 @@
+{
+  "id": "en-twinkle-twinkle",
+  "language": "en",
+  "title": "Twinkle, Twinkle, Little Star",
+  "artist": "Tradicional",
+  "source": "dominio-publico",
+  "credit": "Letra: Jane Taylor (1806) — domínio público",
+  "level": "A0",
+  "icon": "star-four",
+  "focus": "O som do 'th' (the, what), o 'w' de wonder e frases curtinhas pra perder o medo.",
+  "description": "A primeira música de todo mundo. Agora sem sotaque.",
+  "style": "Gentle lullaby, music box and soft acoustic guitar, tender female vocal, 76 bpm",
+  "lines": [
+    {
+      "section": "Verse",
+      "text": "Twinkle, twinkle, little star",
+      "pt": "Brilha, brilha, estrelinha",
+      "tip": "Little: o 't' do meio vira quase um 'r' rápido no inglês americano: 'lírou'."
+    },
+    {
+      "section": "Verse",
+      "text": "How I wonder what you are",
+      "pt": "Como eu queria saber o que você é",
+      "tip": "Wonder começa com 'u' bem curto: 'uânder'."
+    },
+    {
+      "section": "Verse",
+      "text": "Up above the world so high",
+      "pt": "Lá em cima do mundo, tão alto",
+      "tip": "The: língua entre os dentes. Não é 'de', nem 'dã'."
+    },
+    {
+      "section": "Verse",
+      "text": "Like a diamond in the sky",
+      "pt": "Como um diamante no céu"
+    },
+    {
+      "section": "Chorus",
+      "text": "Twinkle, twinkle, little star",
+      "pt": "Brilha, brilha, estrelinha"
+    },
+    {
+      "section": "Chorus",
+      "text": "How I wonder what you are",
+      "pt": "Como eu queria saber o que você é"
+    }
+  ],
+  "active": true
+}

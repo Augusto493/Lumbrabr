@@ -1,0 +1,39 @@
+{
+  "id": "en-row-your-boat",
+  "language": "en",
+  "title": "Row, Row, Row Your Boat",
+  "artist": "Tradicional",
+  "source": "dominio-publico",
+  "credit": "Canção tradicional (publicada em 1852) — domínio público",
+  "level": "A0",
+  "icon": "compass",
+  "focus": "O 'r' do inglês (row, merrily, dream) e o ritmo de frase curta.",
+  "description": "Quatro versos, um 'r' que brasileiro sempre erra.",
+  "style": "Cheerful folk round, ukulele and light percussion, bright female vocal, 96 bpm",
+  "lines": [
+    {
+      "section": "Verse",
+      "text": "Row, row, row your boat",
+      "pt": "Rema, rema, rema o seu barco",
+      "tip": "Row soa 'rôu', com o 'r' enrolado pra trás, sem tocar no céu da boca."
+    },
+    {
+      "section": "Verse",
+      "text": "Gently down the stream",
+      "pt": "Devagar, descendo o riacho"
+    },
+    {
+      "section": "Verse",
+      "text": "Merrily, merrily, merrily, merrily",
+      "pt": "Alegremente, alegremente",
+      "tip": "Merrily: 'mé-ri-li', rápido. É o trava-língua da música."
+    },
+    {
+      "section": "Verse",
+      "text": "Life is but a dream",
+      "pt": "A vida é só um sonho",
+      "tip": "But aqui quer dizer 'só, apenas' — uso antigo e poético."
+    }
+  ],
+  "active": true
+}

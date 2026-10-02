@@ -1,0 +1,27 @@
+{
+  "id": "es-06-falsos-amigos",
+  "language": "es",
+  "icon": "mask-sad",
+  "title": "Falsos amigos que te fazem passar vergonha",
+  "level": "B1",
+  "focus": "Palavras que parecem português e não são: embarazada (grávida), exquisito (delicioso), oficina (escritório), apellido (sobrenome), rato (momento), polvo (pó), borrar (apagar), largo (comprido)",
+  "warmup": {
+    "instruction": "Em português, conte as armadilhas com humor: brasileira que diz 'estoy embarazada' achando que está envergonhada acabou de anunciar uma gravidez. 'Exquisito' é delicioso, não esquisito. 'Oficina' é escritório. 'Apellido' é sobrenome. Um falso amigo por vez: você mostra a frase errada que o brasileiro diria, explica o que ela significa de verdade, e ele repete a certa.",
+    "examples": [
+      { "es": "Estoy avergonzada, me equivoqué.", "pt": "Estou envergonhada, errei." },
+      { "es": "La comida estaba exquisita.", "pt": "A comida estava deliciosa." },
+      { "es": "Trabajo en una oficina en el centro.", "pt": "Trabalho num escritório no centro." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Contar uma situação constrangedora",
+    "instruction": "Peça em espanhol pra ele contar uma situação em que passou vergonha (¿cuándo fue la última vez que pasaste vergüenza?) e o que comeu de mais gostoso numa viagem. Esse é o terreno onde 'embarazada' e 'exquisito' escapam. Cada falso amigo que aparecer, pare tudo, traduza o que ele acabou de dizer de verdade e dê a frase certa."
+  },
+  "review": {
+    "checklist": [
+      "Usou 'avergonzado/a' (e não 'embarazado/a') pra vergonha?",
+      "Entendeu 'exquisito' como delicioso e 'oficina' como escritório?"
+    ],
+    "closing": "Feche em português listando os falsos amigos do dia e o que cada um significa de verdade. Diga que a partir de hoje 'embarazada' só se for verdade."
+  }
+}

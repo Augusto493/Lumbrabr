@@ -1,0 +1,40 @@
+{
+  "id": "es-arroz-con-leche",
+  "language": "es",
+  "title": "Arroz con leche",
+  "artist": "Tradicional",
+  "source": "dominio-publico",
+  "credit": "Canção tradicional hispânica — domínio público",
+  "level": "A0",
+  "icon": "fork-knife",
+  "focus": "O 'll' de leche/señorita, o 'ñ' e o 'que sepa' (subjuntivo sem dor).",
+  "description": "A canção de roda que toda criança hispânica sabe.",
+  "style": "Playful children's folk song, acoustic guitar and tambourine, sweet female vocal, 100 bpm",
+  "lines": [
+    {
+      "section": "Verso",
+      "text": "Arroz con leche, me quiero casar",
+      "pt": "Arroz doce, eu quero me casar",
+      "tip": "Arroz con leche = arroz doce. E é LA leche, feminino."
+    },
+    {
+      "section": "Verso",
+      "text": "Con una señorita de San Nicolás",
+      "pt": "Com uma moça de San Nicolás",
+      "tip": "Ñ = nh. Señorita soa 'senhorita'."
+    },
+    {
+      "section": "Verso",
+      "text": "Que sepa coser, que sepa bordar",
+      "pt": "Que saiba costurar, que saiba bordar",
+      "tip": "Que sepa = que saiba. Subjuntivo de saber."
+    },
+    {
+      "section": "Verso",
+      "text": "Que sepa abrir la puerta para ir a jugar",
+      "pt": "Que saiba abrir a porta pra ir brincar",
+      "tip": "Jugar = brincar/jogar. O J é aspirado: 'rugar'."
+    }
+  ],
+  "active": true
+}

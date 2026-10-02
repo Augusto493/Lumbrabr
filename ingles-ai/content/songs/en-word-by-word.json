@@ -1,0 +1,60 @@
+{
+  "id": "en-word-by-word",
+  "language": "en",
+  "title": "Word by Word",
+  "artist": "Mel",
+  "source": "original",
+  "level": "A1",
+  "icon": "microphone",
+  "focus": "Present continuous (I'm learning, I'm trying) e a contração I'm, numa sílaba só.",
+  "description": "O hino de quem tá aprendendo. Brava, mas motivacional.",
+  "style": "Upbeat acoustic pop, hand claps, warm playful female vocal, 100 bpm, simple catchy chorus",
+  "lines": [
+    {
+      "section": "Verse",
+      "text": "I'm waking up, I'm making tea",
+      "pt": "Tô acordando, tô fazendo chá",
+      "tip": "I'm = I am. Fala 'aim', numa sílaba só, nada de 'ai-em'."
+    },
+    {
+      "section": "Verse",
+      "text": "I'm talking to a teacher on my phone",
+      "pt": "Tô falando com uma professora no celular"
+    },
+    {
+      "section": "Verse",
+      "text": "She's angry, but she's helping me",
+      "pt": "Ela tá brava, mas tá me ajudando",
+      "tip": "She's = she is. O 's' sai junto: 'xiz'."
+    },
+    {
+      "section": "Verse",
+      "text": "I'm getting better on my own",
+      "pt": "Tô melhorando sozinho",
+      "tip": "On my own = sozinho, por conta própria."
+    },
+    {
+      "section": "Chorus",
+      "text": "Word by word, I'm learning",
+      "pt": "Palavra por palavra, tô aprendendo",
+      "tip": "O -ing termina num 'n' suave do nariz. Nada de 'lerningui'."
+    },
+    {
+      "section": "Chorus",
+      "text": "Day by day, I'm trying",
+      "pt": "Dia após dia, tô tentando"
+    },
+    {
+      "section": "Chorus",
+      "text": "Every mistake is a step I'm taking",
+      "pt": "Cada erro é um passo que eu tô dando",
+      "tip": "Mistake: força no 'stêik'. E é 'make a mistake', nunca 'do'."
+    },
+    {
+      "section": "Chorus",
+      "text": "Word by word, I'm flying",
+      "pt": "Palavra por palavra, tô voando"
+    }
+  ],
+  "active": true
+}

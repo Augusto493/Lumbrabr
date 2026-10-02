@@ -1,0 +1,25 @@
+{
+  "id": "06-perguntas-com-do",
+  "title": "Fazer perguntas de verdade (do / does)",
+  "level": "A2",
+  "focus": "Perguntar com 'Do you…?' e 'Does she…?' em vez de só subir o tom da frase — em português 'você gosta?' funciona, em inglês 'you like?' não é pergunta",
+  "warmup": {
+    "instruction": "Em português, mostre o erro na cara do aluno: 'You like coffee?' não é pergunta, é afirmação com tom. Em inglês a pergunta começa com DO. Faça ele transformar três afirmações em perguntas: 'you like coffee' → 'Do you like coffee?'. Depois entra o 'does' pra ele/ela.",
+    "examples": [
+      { "en": "Do you like coffee?", "pt": "Você gosta de café?" },
+      { "en": "Does she work here?", "pt": "Ela trabalha aqui?" },
+      { "en": "Where do you live?", "pt": "Onde você mora?" }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Entrevistando a Mel",
+    "instruction": "Inverta o jogo: o aluno tem que fazer as perguntas e você responde em inglês, curto. Ele precisa fazer pelo menos seis perguntas sobre você (do you like, where do you live, does your family…). Toda pergunta sem 'do/does' você recusa a responder até ele consertar."
+  },
+  "review": {
+    "checklist": [
+      "Todas as perguntas do aluno começaram com do/does/where do?",
+      "Ele usou 'does' pra terceira pessoa pelo menos uma vez?"
+    ],
+    "closing": "Diga em português que hoje ele aprendeu a perguntar, o que é metade de qualquer conversa, e que a outra metade (ouvir a resposta) fica pra próxima."
+  }
+}

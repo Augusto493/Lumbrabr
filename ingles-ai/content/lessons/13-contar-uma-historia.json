@@ -1,0 +1,26 @@
+{
+  "id": "13-contar-uma-historia",
+  "title": "Contar uma história que prende",
+  "level": "C1",
+  "focus": "Narrar com ritmo: past continuous pra cenário ('I was walking when…'), past perfect pra o que veio antes ('I had already left'), e conectores de narrativa (suddenly, meanwhile, in the end)",
+  "warmup": {
+    "instruction": "Em português, diga que contar história é o que separa quem 'fala inglês' de quem é interessante em inglês. Ensine a receita: cenário no past continuous, virada com 'when', o que veio antes no past perfect. Faça ele montar uma mini-história de três frases sobre algo que deu errado numa viagem.",
+    "examples": [
+      { "en": "I was waiting for the bus when it started to rain.", "pt": "Eu estava esperando o ônibus quando começou a chover." },
+      { "en": "By the time I arrived, the store had already closed.", "pt": "Quando eu cheguei, a loja já tinha fechado." },
+      { "en": "In the end, we just ordered pizza.", "pt": "No fim, a gente só pediu pizza." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "A melhor (ou pior) história de viagem do aluno",
+    "instruction": "Peça em inglês a história completa e não aceite resumo: 'and then what happened?', 'what were you doing?', 'had you been there before?'. Cobre um conector de narrativa a cada duas frases e o past perfect pelo menos uma vez. Interrompa só pra corrigir tempo verbal — deixe ele terminar a história."
+  },
+  "review": {
+    "checklist": [
+      "O aluno usou past continuous pra montar o cenário?",
+      "Usou past perfect pelo menos uma vez, no lugar certo?",
+      "A história teve começo, virada e fim?"
+    ],
+    "closing": "Reconte a história dele em três frases, em inglês, do jeito que um nativo contaria — pra ele ouvir a diferença. Depois, em português, diga que essa é a história que ele vai contar na próxima viagem."
+  }
+}

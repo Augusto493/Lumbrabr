@@ -1,0 +1,25 @@
+{
+  "id": "01-se-apresentar",
+  "title": "Se apresentar sem travar",
+  "level": "A1",
+  "focus": "Dizer nome, de onde é, o que faz e idade com 'I am / I'm from / I work' — as quatro frases que todo mundo precisa e todo mundo erra",
+  "warmup": {
+    "instruction": "Em português, diga que hoje é o básico do básico: se apresentar. Ensine uma frase de cada vez e mande repetir: nome, de onde é, o que faz. Erro clássico a caçar: 'I have 25 years' (idade com have) — em inglês é 'I am 25'.",
+    "examples": [
+      { "en": "Hi, I'm Augusto. I'm from Brazil.", "pt": "Oi, eu sou o Augusto. Sou do Brasil." },
+      { "en": "I work with websites.", "pt": "Eu trabalho com sites." },
+      { "en": "I'm 25 years old.", "pt": "Eu tenho 25 anos." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Quem é você",
+    "instruction": "Faça o papel de alguém que acabou de conhecer o aluno numa festa. Pergunte em inglês, uma coisa por vez: what's your name, where are you from, what do you do, how old are you. Se ele responder em português, cobra a frase em inglês. Corrija 'I have X years' na hora, sempre."
+  },
+  "review": {
+    "checklist": [
+      "O aluno disse nome, origem e trabalho em frases inteiras?",
+      "Usou 'I am' pra idade, e não 'I have'?"
+    ],
+    "closing": "Feche mandando ele repetir as três frases seguidas, de uma vez, como se fosse a apresentação real. Depois diga em português que essa é a apresentação dele daqui pra frente."
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "12-e-se",
+  "title": "E se…? Hipóteses e conselhos",
+  "level": "B2",
+  "focus": "Falar de situações imaginárias com o segundo condicional ('If I had more time, I would…') e dar conselho com 'If I were you, I'd…' — sem 'if I would'",
+  "warmup": {
+    "instruction": "Em português, apresente a estrutura em uma linha: 'if + passado, would + verbo'. Mostre o erro que todo brasileiro comete ('if I would have') e enterre ele. Faça o aluno completar três 'if' sobre a vida dele: dinheiro, tempo, lugar pra morar.",
+    "examples": [
+      { "en": "If I had more time, I would travel more.", "pt": "Se eu tivesse mais tempo, viajaria mais." },
+      { "en": "If I were you, I'd take the job.", "pt": "Se eu fosse você, aceitaria o emprego." },
+      { "en": "What would you do if you won the lottery?", "pt": "O que você faria se ganhasse na loteria?" }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Dilemas: você pede conselho, o aluno dá",
+    "instruction": "Apresente dilemas seus em inglês (mudar de cidade, aceitar um emprego, comprar um carro velho) e exija conselho com 'If I were you…'. Depois inverta e faça perguntas hipotéticas pra ele ('what would you do if…'). Cada 'if I would' que aparecer você para e corrige."
+  },
+  "review": {
+    "checklist": [
+      "O aluno montou condicionais com 'if + passado, would' sem 'if I would'?",
+      "Deu conselho com 'If I were you, I'd…' pelo menos duas vezes?"
+    ],
+    "closing": "Diga em português que hoje ele saiu do mundo real: agora consegue falar do que poderia ser, o que é onde toda conversa boa acontece."
+  }
+}

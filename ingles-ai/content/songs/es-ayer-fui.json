@@ -1,0 +1,59 @@
+{
+  "id": "es-ayer-fui",
+  "language": "es",
+  "title": "Ayer fui",
+  "artist": "Mel",
+  "source": "original",
+  "level": "A2",
+  "icon": "compass",
+  "focus": "Pretérito indefinido: fui, comí, hablé, bailé, fue — e a sílaba forte no fim.",
+  "description": "Um dia de praia contado no passado. Com força na sílaba certa.",
+  "style": "Summery reggaeton-lite pop, soft dembow beat and guitar, breezy female vocal, 95 bpm",
+  "lines": [
+    {
+      "section": "Verso",
+      "text": "Ayer fui a la playa",
+      "pt": "Ontem fui à praia",
+      "tip": "Fui = passado de ir (e de ser). Igual ao português, o resto não."
+    },
+    {
+      "section": "Verso",
+      "text": "Comí pescado y pan",
+      "pt": "Comi peixe e pão",
+      "tip": "Comí: força no 'mí'. 'Como' sem acento é 'eu como'."
+    },
+    {
+      "section": "Verso",
+      "text": "Hablé con una chica",
+      "pt": "Conversei com uma garota",
+      "tip": "Hablé: o H é mudo e a força vai no 'blé'."
+    },
+    {
+      "section": "Verso",
+      "text": "Que no paraba de hablar",
+      "pt": "Que não parava de falar"
+    },
+    {
+      "section": "Coro",
+      "text": "Fui, comí, hablé",
+      "pt": "Fui, comi, falei"
+    },
+    {
+      "section": "Coro",
+      "text": "Bailé hasta las tres",
+      "pt": "Dancei até as três"
+    },
+    {
+      "section": "Coro",
+      "text": "Ayer fue un buen día",
+      "pt": "Ontem foi um dia bom",
+      "tip": "Fue = ele/ela/aquilo foi. Fui = eu fui. Não troca."
+    },
+    {
+      "section": "Coro",
+      "text": "Y hoy lo canto otra vez",
+      "pt": "E hoje eu canto de novo"
+    }
+  ],
+  "active": true
+}

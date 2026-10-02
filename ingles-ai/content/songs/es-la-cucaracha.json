@@ -1,0 +1,40 @@
+{
+  "id": "es-la-cucaracha",
+  "language": "es",
+  "title": "La cucaracha",
+  "artist": "Tradicional",
+  "source": "dominio-publico",
+  "credit": "Canção popular mexicana tradicional — domínio público",
+  "level": "A0",
+  "icon": "guitar",
+  "focus": "Ritmo e o 'ch' (cucaracha), mais 'no puede' e 'le falta'.",
+  "description": "A barata que não anda mais. Clássico absoluto do México.",
+  "style": "Festive mariachi, trumpets, guitarrón and violins, cheerful female vocal, 120 bpm",
+  "lines": [
+    {
+      "section": "Coro",
+      "text": "La cucaracha, la cucaracha",
+      "pt": "A barata, a barata",
+      "tip": "Cucaracha: o 'ch' é igual ao 'tch' de 'tchau'."
+    },
+    {
+      "section": "Coro",
+      "text": "Ya no puede caminar",
+      "pt": "Já não consegue andar",
+      "tip": "Ya no = já não. Caminar = andar, caminhar."
+    },
+    {
+      "section": "Coro",
+      "text": "Porque no tiene, porque le falta",
+      "pt": "Porque não tem, porque falta a ela",
+      "tip": "Le falta = falta pra ela. Igual a 'me gusta', a coisa é o sujeito."
+    },
+    {
+      "section": "Coro",
+      "text": "Una pata para andar",
+      "pt": "Uma perninha pra andar",
+      "tip": "Pata = perna de animal. 'Pierna' é a de gente."
+    }
+  ],
+  "active": true
+}

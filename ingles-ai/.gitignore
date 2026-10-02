@@ -1,0 +1,6 @@
+node_modules/
+.env
+# tudo em data/ e estado de producao (alunos, pedidos, prints, audios gerados)
+data/*
+!data/.gitkeep
+public/audio/*.tmp

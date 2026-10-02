@@ -1,0 +1,28 @@
+{
+  "id": "es-07-dar-opiniao",
+  "language": "es",
+  "icon": "chat-circle-dots",
+  "title": "Dar opinião sem 'eu acho que'",
+  "level": "B1",
+  "focus": "Opinar em espanhol: creo que, me parece que, en mi opinión, estoy de acuerdo / no estoy de acuerdo — e o 'no creo que' que pede subjuntivo",
+  "warmup": {
+    "instruction": "Em português, explique que 'acho que' em espanhol é 'creo que' ou 'me parece que' — nunca 'acho que'. E dê um gostinho do subjuntivo: 'creo que es caro', mas 'NO creo que SEA caro'. Faça ele dar 3 opiniões curtas, uma concordando, uma discordando e uma com 'no creo que'.",
+    "examples": [
+      { "es": "Creo que trabajar desde casa es mejor.", "pt": "Acho que trabalhar de casa é melhor." },
+      { "es": "No estoy de acuerdo contigo.", "pt": "Não concordo com você." },
+      { "es": "No creo que sea tan difícil.", "pt": "Não acho que seja tão difícil." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Debate rápido: redes sociais, trabalho remoto, aprender idioma com IA",
+    "instruction": "Jogue uma opinião polêmica em espanhol de cada vez (las redes sociales nos hacen más felices; trabajar desde casa es mejor) e peça pra ele concordar ou discordar e justificar com 'porque'. Discorde de propósito pra ele defender o ponto. Cobre 'creo que' no lugar de 'acho que' e o subjuntivo depois de 'no creo que'."
+  },
+  "review": {
+    "checklist": [
+      "Usou 'creo que' ou 'me parece que' pra opinar?",
+      "Disse 'estoy de acuerdo' / 'no estoy de acuerdo' corretamente?",
+      "Arriscou o subjuntivo depois de 'no creo que'?"
+    ],
+    "closing": "Feche em português dizendo qual argumento dele foi o melhor e qual expressão de opinião ele mais precisa treinar. Lembre que 'no creo que' sempre puxa subjuntivo."
+  }
+}

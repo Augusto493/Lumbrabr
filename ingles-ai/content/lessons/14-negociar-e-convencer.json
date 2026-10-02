@@ -1,0 +1,26 @@
+{
+  "id": "14-negociar-e-convencer",
+  "title": "Negociar e convencer como adulto",
+  "level": "C1",
+  "focus": "Linguagem de negociação: suavizar ('I was wondering if…', 'would it be possible…'), ceder e condicionar ('I could do X if you…'), e fechar ('so we're agreed that…')",
+  "warmup": {
+    "instruction": "Em português, explique que em inglês negociar é 90% jeito e 10% conteúdo: pedido direto soa agressivo. Ensine três níveis de suavização e faça ele pedir um desconto, um prazo e um aumento usando cada um. Depois a moeda de troca: 'I could… if you…'.",
+    "examples": [
+      { "en": "I was wondering if you could give me a better price.", "pt": "Será que você conseguiria um preço melhor?" },
+      { "en": "I could deliver it sooner if you paid upfront.", "pt": "Eu poderia entregar antes se você pagasse adiantado." },
+      { "en": "So we're agreed that I'll send the proposal on Friday.", "pt": "Então combinamos que eu mando a proposta na sexta." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Negociação real: você é o cliente difícil, ele é o fornecedor",
+    "instruction": "Faça o cliente difícil em inglês: quer desconto, quer prazo menor, ameaça procurar outro. O aluno precisa segurar preço, oferecer alternativas condicionais e fechar o acordo com uma frase de resumo. Cobre suavização em cada pedido dele e recuse tudo que vier em tom bruto ('give me', 'I want') até ele reformular."
+  },
+  "review": {
+    "checklist": [
+      "O aluno suavizou os pedidos com 'I was wondering' / 'would it be possible'?",
+      "Ofereceu pelo menos uma troca condicional ('I could… if…')?",
+      "Fechou o acordo resumindo o combinado?"
+    ],
+    "closing": "Aceite o acordo dele (ou não) e, em português, dê o veredito: onde ele foi bem, onde um cliente de verdade teria ido embora. Diga que essa é a última lição do currículo e que agora ele não tem mais desculpa."
+  }
+}

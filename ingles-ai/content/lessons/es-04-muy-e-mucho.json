@@ -1,0 +1,27 @@
+{
+  "id": "es-04-muy-e-mucho",
+  "language": "es",
+  "icon": "coffee",
+  "title": "Muy ou mucho? A rotina sem tropeçar",
+  "level": "A2",
+  "focus": "Descrever a rotina com 'muy' (antes de adjetivo/advérbio) e 'mucho' (com verbo e substantivo), e o 'tengo QUE' que brasileiro engole",
+  "warmup": {
+    "instruction": "Em português, explique: 'muy' vai antes de adjetivo ('muy cansado'), 'mucho' vai com verbo ou substantivo ('trabajo mucho', 'mucho trabajo'). E 'tengo que' nunca perde o 'que' — 'tengo trabajar' não existe. Faça ele descrever o dia dele em 4 frases: hora que acorda, o que faz, como se sente, o que tem que fazer amanhã.",
+    "examples": [
+      { "es": "Me levanto muy temprano.", "pt": "Eu acordo muito cedo." },
+      { "es": "Trabajo mucho y duermo poco.", "pt": "Trabalho muito e durmo pouco." },
+      { "es": "Mañana tengo que ir al médico.", "pt": "Amanhã tenho que ir ao médico." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Um dia normal e o que precisa fazer essa semana",
+    "instruction": "Pergunte em espanhol como é um dia normal dele (¿a qué hora te levantas?, ¿qué haces después del trabajo?) e o que ele tem que fazer essa semana. Use você mesma 'muy' e 'mucho' nas perguntas. Se ele disser 'mucho cansado' ou 'tengo trabajar', pare tudo e conserte."
+  },
+  "review": {
+    "checklist": [
+      "Usou 'muy' antes de adjetivo e 'mucho' com verbo/substantivo?",
+      "Disse 'tengo que' com o 'que'?"
+    ],
+    "closing": "Feche em português com a regra resumida: muy + adjetivo, verbo + mucho. E 'tengo que' sempre com 'que'. Diga que portunhol mora nesses detalhes."
+  }
+}

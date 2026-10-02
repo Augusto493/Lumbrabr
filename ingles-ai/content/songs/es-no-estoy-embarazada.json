@@ -1,0 +1,60 @@
+{
+  "id": "es-no-estoy-embarazada",
+  "language": "es",
+  "title": "No estoy embarazada",
+  "artist": "Mel",
+  "source": "original",
+  "level": "B1",
+  "icon": "mask-sad",
+  "focus": "Falsos amigos: embarazada (grávida), avergonzada (envergonhada), oficina (escritório), exquisito (delicioso).",
+  "description": "Baseada em fatos reais de toda brasileira na Espanha.",
+  "style": "Comedic cumbia pop, accordion and guiro, playful dramatic female vocal, 98 bpm",
+  "lines": [
+    {
+      "section": "Verso",
+      "text": "Llegué tarde a la oficina",
+      "pt": "Cheguei atrasada no escritório",
+      "tip": "Oficina = escritório. Oficina mecânica é 'taller'."
+    },
+    {
+      "section": "Verso",
+      "text": "Y me puse colorada",
+      "pt": "E fiquei vermelha",
+      "tip": "Ponerse colorado = ficar vermelho de vergonha."
+    },
+    {
+      "section": "Verso",
+      "text": "Dije: estoy embarazada",
+      "pt": "Eu disse: estou grávida",
+      "tip": "Embarazada = GRÁVIDA. A gafe clássica."
+    },
+    {
+      "section": "Verso",
+      "text": "Y mi jefe no dijo nada",
+      "pt": "E meu chefe não disse nada"
+    },
+    {
+      "section": "Coro",
+      "text": "No, no, no estoy embarazada",
+      "pt": "Não, não, não estou grávida"
+    },
+    {
+      "section": "Coro",
+      "text": "Estoy avergonzada, nada más",
+      "pt": "Estou envergonhada, só isso",
+      "tip": "Vergonha = avergonzada. Guarda essa."
+    },
+    {
+      "section": "Coro",
+      "text": "La comida estaba exquisita",
+      "pt": "A comida estava deliciosa",
+      "tip": "Exquisito = delicioso. É elogio, não ofensa."
+    },
+    {
+      "section": "Coro",
+      "text": "Y yo, roja, sin poder hablar",
+      "pt": "E eu, vermelha, sem conseguir falar"
+    }
+  ],
+  "active": true
+}
