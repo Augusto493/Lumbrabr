@@ -12,6 +12,7 @@ const FILE = {
   plans: path.join(DATA_DIR, "plans.json"),
   orders: path.join(DATA_DIR, "orders.json"),
   missions: path.join(DATA_DIR, "missions.json"),
+  songScores: path.join(DATA_DIR, "song-scores.json"),
 };
 
 function readJson(file, fallback) {
@@ -150,6 +151,40 @@ export function saveMission(mission) {
   else missions.push(mission);
   writeJson(FILE.missions, missions);
   return mission;
+}
+
+// ---------- modo cantando: notas por aluno ----------
+// { [email]: { [songId]: { best, bestAt, plays, lines: { [i]: { score, at } } } } }
+
+export function getSongScores() {
+  return readJson(FILE.songScores, {});
+}
+
+export function userSongRecord(email, songId) {
+  return getSongScores()[email]?.[songId] ?? null;
+}
+
+export function saveLineScore(email, songId, line, score) {
+  const all = getSongScores();
+  const rec = ((all[email] ??= {})[songId] ??= { best: null, bestAt: null, plays: 0, lines: {} });
+  rec.lines[line] = { score, at: new Date().toISOString() };
+  writeJson(FILE.songScores, all);
+  return rec;
+}
+
+// fecha uma rodada: nota final = media dos versos cantados nesta rodada
+export function finishSong(email, songId, lineCount) {
+  const all = getSongScores();
+  const rec = all[email]?.[songId];
+  if (!rec) return null;
+  const scores = Object.entries(rec.lines).filter(([i]) => Number(i) < lineCount).map(([, v]) => v.score);
+  if (!scores.length) return null;
+  const final = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+  rec.plays += 1;
+  if (rec.best == null || final > rec.best) { rec.best = final; rec.bestAt = new Date().toISOString(); }
+  rec.lines = {};
+  writeJson(FILE.songScores, all);
+  return { final, best: rec.best, sung: scores.length, plays: rec.plays };
 }
 
 // ---------- planos ----------

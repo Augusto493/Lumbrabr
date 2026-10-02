@@ -1,0 +1,59 @@
+{
+  "id": "en-have-you-ever",
+  "language": "en",
+  "title": "Have You Ever",
+  "artist": "Mel",
+  "source": "original",
+  "level": "B1",
+  "icon": "airplane-tilt",
+  "focus": "Present perfect pra experiências: Have you ever...?, I've never been to..., haven't ... yet.",
+  "description": "Pra perguntar da vida dos outros do jeito certo. E admitir que nunca foi pra Tóquio.",
+  "style": "Dreamy synth pop, airy pads and soft electronic drums, gentle female vocal, 96 bpm",
+  "lines": [
+    {
+      "section": "Verse",
+      "text": "Have you ever missed a plane?",
+      "pt": "Você já perdeu um avião?",
+      "tip": "Have you ever...? = você já... alguma vez? Pergunta de experiência na vida."
+    },
+    {
+      "section": "Verse",
+      "text": "Have you ever danced in the rain?",
+      "pt": "Você já dançou na chuva?"
+    },
+    {
+      "section": "Verse",
+      "text": "I've never been to Tokyo",
+      "pt": "Eu nunca fui pra Tóquio",
+      "tip": "Been to, não 'went to': I've never been to = nunca estive em."
+    },
+    {
+      "section": "Verse",
+      "text": "But I've been learning, don't you know",
+      "pt": "Mas eu tenho aprendido, sabia?"
+    },
+    {
+      "section": "Chorus",
+      "text": "I have lived and I have tried",
+      "pt": "Eu já vivi e já tentei"
+    },
+    {
+      "section": "Chorus",
+      "text": "I've made mistakes I couldn't hide",
+      "pt": "Cometi erros que não consegui esconder",
+      "tip": "Make a mistake. 'Do a mistake' não existe."
+    },
+    {
+      "section": "Chorus",
+      "text": "I haven't finished yet, you'll see",
+      "pt": "Ainda não terminei, você vai ver",
+      "tip": "Yet no fim da negativa = ainda. Haven't ... yet = ainda não."
+    },
+    {
+      "section": "Chorus",
+      "text": "The best is still ahead of me",
+      "pt": "O melhor ainda tá pela frente"
+    }
+  ],
+  "active": true
+}

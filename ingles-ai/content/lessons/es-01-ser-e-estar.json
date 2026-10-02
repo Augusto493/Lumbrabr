@@ -1,0 +1,27 @@
+{
+  "id": "es-01-ser-e-estar",
+  "language": "es",
+  "icon": "users",
+  "title": "Se apresentar sem portunhol",
+  "level": "A1",
+  "focus": "Me llamo / soy / tengo ... años / estoy: se apresentar direito e acertar a idade com 'tengo', não com 'soy'",
+  "warmup": {
+    "instruction": "Em português, mostre os dois tropeços clássicos: brasileiro diz 'soy 25 años' (errado, em espanhol idade é com TENER: 'tengo 25 años') e 'mi nombre es' o tempo todo (certo, mas nativo fala 'me llamo'). Faça ele montar uma apresentação curta, uma frase por vez: nome, de onde é, idade, o que faz, como está hoje. Cada frase, ele repete até sair sem sotaque de novela.",
+    "examples": [
+      { "es": "Me llamo Pedro y tengo treinta años.", "pt": "Me chamo Pedro e tenho trinta anos." },
+      { "es": "Soy de Brasil, pero vivo en Madrid.", "pt": "Sou do Brasil, mas moro em Madri." },
+      { "es": "Hoy estoy un poco cansado.", "pt": "Hoje estou um pouco cansado." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Conhecendo alguém numa festa",
+    "instruction": "Faça o papel de alguém numa festa em espanhol e pergunte nome, idade, de onde é, o que faz e se está gostando da festa (¿lo estás pasando bien?). Toda vez que ele disser 'soy X años', pare tudo e cobre o 'tengo'. Se ele usar 'eu' ou 'você' no meio da frase, corrija pra 'yo' e 'tú'."
+  },
+  "review": {
+    "checklist": [
+      "Usou 'tengo ... años' pra idade (e não 'soy')?",
+      "Conseguiu dizer nome, origem, idade e profissão em frases inteiras?"
+    ],
+    "closing": "Feche em português lembrando a regra do dia: idade em espanhol é com tener. 'Soy 30 años' nunca mais. Diga que da próxima vez você vai cobrar a apresentação inteira de cabeça."
+  }
+}

@@ -8,6 +8,7 @@ import { router as lessonsRouter } from "./lessons.js";
 import { router as adminRouter } from "./admin.js";
 import { router as payRouter, handleWebhook } from "./pay.js";
 import { router as viralRouter } from "./viral.js";
+import { router as songsRouter } from "./songs.js";
 import { attachVoiceServer } from "./voice.js";
 import { rateLimit } from "./ratelimit.js";
 import { securityHeaders, gzip } from "./http-extras.js";
@@ -33,6 +34,14 @@ app.use(gzip);
 // webhook da AbacatePay (autenticado pelo ?webhookSecret= e reconfirmado na API)
 app.post("/api/pay/webhook", express.json({ type: "*/*", limit: "1mb" }), handleWebhook);
 
+// rotas que recebem arquivo em JSON (print das missoes, audio do verso cantado)
+// precisam do parser grande ANTES do global de 100 KB — senao o global recusa
+// o corpo primeiro e o parser grande nunca roda (bug: prints de story reais
+// de ~300 KB voltavam "arquivo grande demais")
+const bigJson = express.json({ limit: "5mb" });
+app.use("/api/viral", bigJson);
+app.use("/api/songs", bigJson);
+app.use("/api/admin/songs", bigJson);
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public"), {
   etag: true,
@@ -48,13 +57,15 @@ app.use("/api/lessons", lessonsRouter);
 app.use("/api/admin/login", rateLimit({ windowMs: 10 * 60000, max: 10 }));
 app.use("/api/admin", adminRouter);
 app.use("/api/pay", payRouter);
-app.use("/api/viral", express.json({ limit: "5mb" }), rateLimit({ windowMs: 60 * 60000, max: 60 }), viralRouter);
+app.use("/api/viral", rateLimit({ windowMs: 60 * 60000, max: 60 }), viralRouter);
+app.use("/api/songs", songsRouter);
 app.get("/admin", (_req, res) => res.sendFile(path.join(__dirname, "..", "public", "admin.html")));
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
 // erro inesperado numa rota: responde 500 em JSON em vez de derrubar a conexao
 app.use((err, _req, res, _next) => {
+  if (err?.status === 404) return res.status(404).json({ error: err.message });
   console.error("[http]", err?.message ?? err);
   if (res.headersSent) return;
   res.status(err?.status ?? 500).json({ error: err?.type === "entity.too.large" ? "arquivo grande demais" : "erro interno" });

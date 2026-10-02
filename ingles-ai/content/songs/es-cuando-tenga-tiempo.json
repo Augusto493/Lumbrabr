@@ -1,0 +1,58 @@
+{
+  "id": "es-cuando-tenga-tiempo",
+  "language": "es",
+  "title": "Cuando tenga tiempo",
+  "artist": "Mel",
+  "source": "original",
+  "level": "B2",
+  "icon": "lightning",
+  "focus": "Subjuntivo depois de cuando e ojalá: cuando tenga, cuando llegue, ojalá pueda.",
+  "description": "Uma lista de planos e um subjuntivo que ninguém ensina direito.",
+  "style": "Romantic Latin ballad turning upbeat, nylon guitar and strings, heartfelt female vocal, 88 bpm",
+  "lines": [
+    {
+      "section": "Verso",
+      "text": "Cuando tenga tiempo, voy a viajar",
+      "pt": "Quando eu tiver tempo, vou viajar",
+      "tip": "Cuando + futuro = subjuntivo: tenga. Nunca 'cuando tendré'."
+    },
+    {
+      "section": "Verso",
+      "text": "Cuando llegue el verano, quiero ver el mar",
+      "pt": "Quando chegar o verão, quero ver o mar"
+    },
+    {
+      "section": "Verso",
+      "text": "Ojalá que el lunes no llegue jamás",
+      "pt": "Tomara que a segunda nunca chegue",
+      "tip": "Ojalá = tomara. Sempre com subjuntivo: llegue."
+    },
+    {
+      "section": "Verso",
+      "text": "Ojalá mañana pueda descansar",
+      "pt": "Tomara que amanhã eu possa descansar"
+    },
+    {
+      "section": "Coro",
+      "text": "Cuando sea grande, cuando pueda más",
+      "pt": "Quando eu for grande, quando eu puder mais"
+    },
+    {
+      "section": "Coro",
+      "text": "Cuando tenga suerte, me vas a escuchar",
+      "pt": "Quando eu tiver sorte, você vai me ouvir"
+    },
+    {
+      "section": "Coro",
+      "text": "No digas cuando tendré",
+      "pt": "Não diga 'cuando tendré'"
+    },
+    {
+      "section": "Coro",
+      "text": "Di cuando tenga, y ya está",
+      "pt": "Diga 'cuando tenga', e pronto",
+      "tip": "Y ya está = e pronto, e acabou."
+    }
+  ],
+  "active": true
+}

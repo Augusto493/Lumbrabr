@@ -15,7 +15,10 @@ const state = {
   name: store.get("name", ""),
   role: store.get("role", "user"),
   onboarding: store.get("onboarding", {}),
+  lang: store.get("lang", null) ?? store.get("onboarding", {}).language ?? "en", // "en" | "es"
+  homeTab: store.get("homeTab", "lessons"), // "lessons" | "songs"
   lessons: [],
+  songs: [],
   currentLesson: null,
   ws: null,
   audioCtx: null,
@@ -34,12 +37,32 @@ const state = {
 // ---------- conteudo do onboarding ----------
 
 const SLIDES = [
-  { orbit: "icons", mood: "grumpy", clip: "intro1", h: "Oi. Eu sou a Mel.", p: "A professora de inglês que não tem paciência nenhuma — mas que faz você falar." },
+  { orbit: "icons", mood: "grumpy", clip: "intro1", h: "Oi. Eu sou a Mel.", p: "A professora de inglês e espanhol que não tem paciência nenhuma — mas que faz você falar. E cantar." },
   { orbit: "flags", mood: "neutral", clip: "intro2", h: "3 minutos por dia de conversa. Sem enrolação.", p: "" },
   { orbit: "glow", mood: "happy", clip: "intro3", tag: "🇧🇷 BRASIL", h: "Sua professora de IA particular.", p: "Disponível a qualquer hora, em qualquer lugar. Mal-humorada em todos eles." },
 ];
 
+const LANG_INFO = {
+  en: { label: "Inglês", flag: "🇺🇸", name: "inglês", speech: "en-US" },
+  es: { label: "Espanhol", flag: "🇪🇸", name: "espanhol", speech: "es-ES" },
+};
+const langName = (code = state.lang) => (LANG_INFO[code] ?? LANG_INFO.en).name;
+
+function setLang(code) {
+  state.lang = LANG_INFO[code] ? code : "en";
+  store.set("lang", state.lang);
+}
+
 const QUESTIONS = [
+  {
+    id: "language",
+    q: "Primeiro: qual idioma você quer destravar comigo?",
+    hint: "Dá pra trocar depois, na tela inicial.",
+    opts: [
+      { v: "en", flag: "🇺🇸", t: "Inglês", d: "Do zero ao avançado, com a Mel no seu pé." },
+      { v: "es", flag: "🇪🇸", t: "Espanhol", d: "E chega de portunhol." },
+    ],
+  },
   {
     id: "voiceMode", clip: "q_voice",
     q: "Antes de começar: como você prefere me ouvir?",
@@ -50,9 +73,11 @@ const QUESTIONS = [
     ],
   },
   {
-    id: "level", clip: "q_level",
+    id: "level",
+    // o clipe gravado fala "ingles": pra quem escolheu espanhol, sem audio nessa tela
+    clip: (a) => (a.language === "es" ? null : "q_level"),
     eyebrow: (a) => (a.voiceMode === "exercicios" ? "voz só nos exercícios" : "voz em tudo"),
-    q: "Quanto você entende de inglês?",
+    q: (a) => `Quanto você entende de ${langName(a.language)}?`,
     opts: [
       { v: "zero", bars: 0, t: "Não sei nada de inglês" },
       { v: "basico", bars: 1, t: "Conheço algumas palavras comuns" },
@@ -167,6 +192,8 @@ function topMini() {
 function render(html, clip) {
   stopVoiceSession();
   voice.stop();
+  // a tela de musica deixa microfone e audio abertos: fecha ao sair dela
+  if (state.songCleanup) { const c = state.songCleanup; state.songCleanup = null; c(); }
   app.innerHTML = html;
   $$("[data-mascot]").forEach((el) => {
     Mascot.build(el, { size: Number(el.dataset.mascot), mood: el.dataset.mood || "grumpy" });
@@ -326,6 +353,7 @@ function goProof() {
 // ---------- perguntas ----------
 
 function optionIcon(opt) {
+  if (opt.flag) return `<span class="flag-ic">${opt.flag}</span>`;
   if (opt.mascot) return `<span data-mascot="40" data-mood="${opt.mascot}"></span>`;
   if (opt.icon) return icon(opt.icon, 22);
   const bars = [0, 1, 2, 3].map((i) => `<i class="${i < opt.bars ? "on" : ""}" style="height:${6 + i * 4}px"></i>`).join("");
@@ -335,7 +363,8 @@ function optionIcon(opt) {
 function goQuestion(index) {
   const q = QUESTIONS[index];
   const answers = state.onboarding;
-  let selected = answers[q.id] ?? null;
+  // idioma ja vem marcado se a pessoa chegou por heymel.online/?lang=es
+  let selected = answers[q.id] ?? (q.id === "language" && store.get("lang", null) ? state.lang : null);
   render(`
     <section class="screen">
       ${topMini("onb")}
@@ -343,17 +372,17 @@ function goQuestion(index) {
         ${q.eyebrow ? `<p class="eyebrow">${esc(q.eyebrow(answers))}</p>` : ""}
         <div class="ask">
           <div data-mascot="70" data-mood="grumpy"></div>
-          <div class="bubble">${esc(q.q)}</div>
+          <div class="bubble">${esc(typeof q.q === "function" ? q.q(answers) : q.q)}</div>
         </div>
         <div id="opts">
-          ${q.opts.map((o) => `<button class="opt ${o.v === selected ? "on" : ""}" data-v="${o.v}"><span class="ic ${o.mascot ? "big" : ""}">${optionIcon(o)}</span><span>${esc(o.t)}${o.d ? `<small>${esc(o.d)}</small>` : ""}</span></button>`).join("")}
+          ${q.opts.map((o) => `<button class="opt ${o.v === selected ? "on" : ""}" data-v="${o.v}"><span class="ic ${o.mascot || o.flag ? "big" : ""}">${optionIcon(o)}</span><span>${esc(o.t)}${o.d ? `<small>${esc(o.d)}</small>` : ""}</span></button>`).join("")}
         </div>
         ${q.hint ? `<p class="hint">${esc(q.hint)}</p>` : ""}
       </div>
       <div class="screen-foot">
         <button class="btn" id="next" ${selected ? "" : "disabled"}>Continuar</button>
       </div>
-    </section>`, q.clip);
+    </section>`, typeof q.clip === "function" ? q.clip(answers) : q.clip);
 
   $$("#opts .opt").forEach((btn) => {
     btn.onclick = () => {
@@ -365,6 +394,7 @@ function goQuestion(index) {
   $("#next").onclick = () => {
     state.onboarding = { ...state.onboarding, [q.id]: selected };
     store.set("onboarding", state.onboarding);
+    if (q.id === "language") setLang(selected);
     index + 1 < QUESTIONS.length ? goQuestion(index + 1) : goPlan();
   };
 }
@@ -484,7 +514,7 @@ function goAuth(mode) {
     if (!body.email || !body.password) { $("#err").textContent = "Preenche e-mail e senha."; return; }
     if (!isLogin) {
       const { voiceMode, level, blocker, tone } = state.onboarding;
-      body.profile = { voiceMode, level, blocker, tone };
+      body.profile = { voiceMode, level, blocker, tone, language: state.lang };
       const ref = store.get("ref", null);
       if (ref) body.ref = ref;
     }
@@ -505,6 +535,8 @@ function goAuth(mode) {
       store.set("name", state.name);
       store.set("role", state.role);
       store.del("ref");
+      // login em aparelho novo: idioma vem do perfil salvo na conta
+      if (isLogin && data.profile?.language && !store.get("lang", null)) setLang(data.profile.language);
       if (!isLogin && data.promo) goWelcome(data.promo, data.referred);
       else goHome();
     } catch (err) {
@@ -557,14 +589,26 @@ async function goHome() {
           <div data-mascot="64" data-mood="grumpy"></div>
           <div class="bubble">${esc(GREETINGS[Math.floor(Math.random() * GREETINGS.length)])}</div>
         </div>
+        <div class="lang-switch" role="tablist" aria-label="idioma">
+          ${Object.entries(LANG_INFO).map(([code, l]) => `<button class="${code === state.lang ? "on" : ""}" data-lang="${code}" role="tab">${l.flag} ${l.label}</button>`).join("")}
+        </div>
         <div class="home-row">
-          <span class="eyebrow-inline">cenários <b id="trailCount"></b></span>
+          <div class="seg" role="tablist">
+            <button class="${state.homeTab === "lessons" ? "on" : ""}" data-tab="lessons">cenários <b id="trailCount"></b></button>
+            <button class="${state.homeTab === "songs" ? "on" : ""}" data-tab="songs">${icon("guitar", 14)} músicas</button>
+          </div>
           <div class="plan-line" id="planLine"></div>
         </div>
         <button class="invite-strip" id="inviteStrip">${icon("users", 18)}<span><b>Indica um amigo, ganha minutos.</b> Ele também ganha.</span>${icon("arrow-right", 16)}</button>
         <div id="list"><p class="small">carregando…</p></div>
       </div>
     </section>`);
+  $$(".lang-switch [data-lang]").forEach((b) => (b.onclick = () => { if (b.dataset.lang !== state.lang) { setLang(b.dataset.lang); goHome(); } }));
+  $$(".seg [data-tab]").forEach((b) => (b.onclick = () => {
+    state.homeTab = b.dataset.tab; store.set("homeTab", state.homeTab);
+    $$(".seg [data-tab]").forEach((x) => x.classList.toggle("on", x === b));
+    state.homeTab === "songs" ? loadSongs() : renderTrail();
+  }));
   $("#logout").onclick = logout;
   $("#menuInvite").onclick = goInvite;
   $("#inviteStrip").onclick = goInvite;
@@ -583,11 +627,333 @@ async function goHome() {
     if ($("#upgrade")) $("#upgrade").onclick = () => goPaywall("upgrade");
   });
 
-  const res = await fetch("/api/lessons", { headers: authHeaders() });
+  const res = await fetch(`/api/lessons?lang=${state.lang}`, { headers: authHeaders() });
   if (res.status === 401) return logout();
   state.lessons = await res.json();
 
-  renderTrail();
+  if (state.homeTab === "songs") loadSongs();
+  else renderTrail();
+}
+
+// ---------- musicas (modo cantando) ----------
+
+async function loadSongs() {
+  const box = $("#list");
+  if (!box) return;
+  // contador da aba de cenarios continua certo mesmo vendo as musicas
+  if ($("#trailCount") && state.lessons.length) $("#trailCount").textContent = `${state.lessons.filter((l) => l.completed).length}/${state.lessons.length}`;
+  box.innerHTML = `<p class="small">carregando…</p>`;
+  const res = await fetch(`/api/songs?lang=${state.lang}`, { headers: authHeaders() });
+  if (res.status === 401) return logout();
+  state.songs = await res.json();
+  if (state.homeTab !== "songs" || !$("#list")) return;
+  const card = (s) => `
+    <button class="song-card" data-song="${esc(s.id)}">
+      <span class="song-ic">${icon(s.icon && window.ICONS[s.icon] ? s.icon : "guitar", 22)}</span>
+      <span class="song-txt">
+        <b>${esc(s.title)}</b>
+        <small>${esc(s.artist)} · ${esc(s.level)} · ${s.lineCount} versos${s.hasTrack ? " · com música" : ""}</small>
+        <span class="song-desc">${esc(s.description || s.focus || "")}</span>
+      </span>
+      ${s.best != null ? `<span class="song-best ${scoreTier(s.best).cls}">${s.best}</span>` : `<span class="song-new">nova</span>`}
+    </button>`;
+  const originals = state.songs.filter((s) => s.source !== "dominio-publico");
+  const classics = state.songs.filter((s) => s.source === "dominio-publico");
+  box.innerHTML = `
+    <div class="songs-hero">
+      <div data-mascot="54" data-mood="happy"></div>
+      <p><b>Aprenda ${langName()} cantando.</b> Você ouve a Mel, canta o verso, ganha uma nota e entende a letra frase por frase.</p>
+    </div>
+    ${originals.length ? `<p class="eyebrow-inline songs-group">músicas da Mel</p>${originals.map(card).join("")}` : ""}
+    ${classics.length ? `<p class="eyebrow-inline songs-group">clássicos (domínio público)</p>${classics.map(card).join("")}` : ""}
+    ${state.songs.length ? "" : `<p class="small">nenhuma música em ${langName()} ainda.</p>`}`;
+  Mascot.build($(".songs-hero [data-mascot]"), { size: 54, mood: "happy" });
+  $$(".song-card").forEach((b) => (b.onclick = () => openSong(b.dataset.song)));
+}
+
+function scoreTier(n) {
+  if (n >= 85) return { cls: "great", label: "Muito bem!", mood: "happy" };
+  if (n >= 65) return { cls: "good", label: "Quase lá", mood: "neutral" };
+  return { cls: "bad", label: "De novo", mood: "grumpy" };
+}
+
+const SONG_REACTIONS = {
+  great: ["Ok, impressionou. Não se acostuma.", "Tá, essa foi boa. Pode respirar.", "Até eu dançaria. Próximo verso."],
+  good: ["Passou. Dava pra ser melhor.", "Quase. Mais uma e você acerta.", "Não foi feio. Também não foi lindo."],
+  bad: ["Isso foi um crime contra a música. De novo.", "Ouve de novo e capricha, por favor.", "Respira e tenta de novo. Sem pressa."],
+};
+const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+// ---------- tela da musica: ouvir o verso, cantar, receber nota ----------
+
+async function openSong(songId) {
+  // AudioContext nasce no clique (senao o navegador deixa o microfone mudo)
+  ensureCapture();
+  const res = await fetch(`/api/songs/${encodeURIComponent(songId)}`, { headers: authHeaders() });
+  if (res.status === 401) return logout();
+  if (!res.ok) return goHome();
+  const song = await res.json();
+  const sess = { song, i: 0, results: {}, busy: false, stream: null, audio: null, alive: true };
+
+  render(`
+    <section class="screen song-screen">
+      <div class="talk-head"><button class="iconbtn" id="back" aria-label="voltar">${icon("arrow-left", 20)}</button><span class="t">${esc(song.title)}</span></div>
+      <div class="screen-body top">
+        <div class="song-head">
+          <div data-mascot="64" data-mood="neutral" id="songMel"></div>
+          <div>
+            <b>${esc(song.title)}</b>
+            <small>${esc(song.artist)} · ${esc(song.level)}${song.best != null ? ` · sua melhor: ${song.best}` : ""}</small>
+            <small class="muted">${esc(song.credit || (song.source === "original" ? "música original da Mel" : ""))}</small>
+          </div>
+        </div>
+        ${song.hasTrack ? `<div class="track-row"><span class="eyebrow-inline">música completa</span><audio id="track" controls preload="none" src="/api/songs/${encodeURIComponent(song.id)}/track?token=${encodeURIComponent(state.token)}"></audio></div>` : ""}
+        <div class="verse-card" id="verse"></div>
+        <div id="scoreBox"></div>
+        <div class="verse-actions" id="actions"></div>
+        <p class="eyebrow-inline lyrics-title">a letra · ${esc(song.lines.length)} versos</p>
+        <ol class="lyrics" id="lyrics"></ol>
+      </div>
+    </section>`);
+
+  const stopAll = () => {
+    sess.alive = false;
+    try { sess.audio?.pause(); } catch {}
+    try { speechSynthesis.cancel(); } catch {}
+    sess.stream?.getTracks().forEach((t) => t.stop());
+    sess.processor?.disconnect();
+  };
+  state.songCleanup = stopAll;
+  $("#back").onclick = goHome;
+
+  const drawLyrics = () => {
+    $("#lyrics").innerHTML = song.lines.map((l, n) => {
+      const r = sess.results[n];
+      return `<li class="${n === sess.i ? "on" : ""}" data-line="${n}">
+        <span class="ly-en">${esc(l.text)}</span><span class="ly-pt">${esc(l.pt)}</span>
+        ${r ? `<span class="ly-score ${scoreTier(r.score).cls}">${r.score}</span>` : ""}
+      </li>`;
+    }).join("");
+    $$("#lyrics li").forEach((li) => (li.onclick = () => { if (!sess.busy) goLine(Number(li.dataset.line), true); }));
+  };
+
+  const drawVerse = () => {
+    const l = song.lines[sess.i];
+    $("#verse").innerHTML = `
+      <p class="eyebrow-inline">verso ${sess.i + 1} de ${song.lines.length}${l.section ? ` · ${esc(l.section)}` : ""}</p>
+      <p class="verse-en">${esc(l.text)}</p>
+      <p class="verse-pt">${esc(l.pt)}</p>
+      ${l.tip ? `<p class="verse-tip">${icon("star-four", 14)} ${esc(l.tip)}</p>` : ""}`;
+  };
+
+  const setActions = (html) => { $("#actions").innerHTML = html; };
+  const mel = (mood) => Mascot.setMood($("#songMel"), mood);
+
+  // corta a fala da Mel (o "cantar" nao espera ela terminar)
+  const stopPlayback = () => {
+    try { sess.audio?.pause(); } catch {}
+    try { speechSynthesis.cancel(); } catch {}
+    sess.endPlayback?.();
+  };
+
+  // toca a voz da Mel no verso; se a voz gerada nao vier a tempo, usa a voz do celular
+  const playLine = async () => {
+    stopPlayback();
+    const l = song.lines[sess.i];
+    const token = (sess.playToken = (sess.playToken ?? 0) + 1); // so a ultima chamada vale
+    sess.playing = true;
+    mel("talking");
+    const until = (setup) => new Promise((resolve) => { sess.endPlayback = resolve; setup(resolve); });
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 6000);
+      const r = await fetch(`/api/songs/${encodeURIComponent(song.id)}/line/${sess.i}`, { headers: authHeaders(), signal: ctrl.signal });
+      clearTimeout(timer);
+      if (!r.ok) throw new Error("sem voz");
+      const url = URL.createObjectURL(await r.blob());
+      if (!sess.alive || token !== sess.playToken) return URL.revokeObjectURL(url);
+      sess.audio = new Audio(url);
+      await until((done) => { sess.audio.onended = done; sess.audio.onerror = done; sess.audio.onpause = done; sess.audio.play().catch(done); });
+      URL.revokeObjectURL(url);
+    } catch {
+      if (sess.alive && token === sess.playToken && "speechSynthesis" in window) {
+        await until((done) => {
+          const u = new SpeechSynthesisUtterance(l.text);
+          u.lang = (LANG_INFO[song.language] ?? LANG_INFO.en).speech;
+          u.rate = 0.9;
+          u.onend = done; u.onerror = done;
+          speechSynthesis.cancel(); speechSynthesis.speak(u);
+          setTimeout(done, 9000);
+        });
+      }
+    }
+    if (token === sess.playToken) { sess.playing = false; if (sess.alive && !sess.busy) mel("neutral"); }
+  };
+
+  const goLine = async (n, autoplay) => {
+    stopPlayback();
+    sess.i = n;
+    $("#scoreBox").innerHTML = "";
+    drawVerse(); drawLyrics();
+    $("#lyrics li.on")?.scrollIntoView({ block: "nearest" });
+    setActions(`
+      <button class="btn btn-ghost" id="listen">${icon("speaker-high", 18)} ouvir a Mel</button>
+      <button class="btn" id="sing">${icon("microphone", 18)} cantar</button>`);
+    $("#listen").onclick = () => { if (!sess.busy) playLine(); };
+    $("#sing").onclick = () => sing();
+    if (autoplay) playLine();
+  };
+
+  const sing = async () => {
+    if (sess.busy) return;
+    sess.busy = true;
+    stopPlayback();
+    setActions(`<div class="rec-state"><span class="rec-dot"></span><span id="recLabel">canta agora!</span><button class="pill small" id="stopRec">parar</button></div>`);
+    mel("listening");
+    const take = await recordTake(sess);
+    if (!sess.alive) return;
+    if (!take) {
+      sess.busy = false;
+      mel("grumpy");
+      $("#scoreBox").innerHTML = `<p class="error">Não ouvi nada. Chega perto do microfone e canta de verdade.</p>`;
+      return goLine(sess.i, false);
+    }
+    setActions(`<div class="rec-state"><span class="spinner"></span><span>a Mel tá ouvindo…</span></div>`);
+    const r = await fetch(`/api/songs/${encodeURIComponent(song.id)}/score`, {
+      method: "POST", headers: { ...authHeaders(), "Content-Type": "application/json" },
+      body: JSON.stringify({ line: sess.i, audio: int16ToBase64(take) }),
+    }).catch(() => null);
+    const data = r ? await r.json().catch(() => ({})) : {};
+    sess.busy = false;
+    if (!sess.alive) return;
+    if (!r || !r.ok) {
+      $("#scoreBox").innerHTML = `<p class="error">${esc(data.error || "deu ruim na conexão, tenta de novo")}</p>`;
+      return goLine(sess.i, false);
+    }
+    sess.results[sess.i] = data;
+    showScore(data);
+  };
+
+  const showScore = (d) => {
+    const tier = scoreTier(d.score);
+    mel(tier.mood);
+    const bar = (label, v) => `<div class="sc-bar"><span>${label}</span><i><b style="width:${v}%"></b></i><em>${v}</em></div>`;
+    $("#scoreBox").innerHTML = `
+      <div class="score-card ${tier.cls}">
+        <div class="sc-top"><span class="sc-num">${d.score}</span><span class="sc-of">/100</span><span class="sc-label">${tier.label}</span></div>
+        <p class="sc-react">${esc(pick(SONG_REACTIONS[tier.cls]))}</p>
+        ${d.tip ? `<p class="sc-tip">${esc(d.tip)}</p>` : ""}
+        ${bar("Pronúncia", d.pronunciation)}${bar("Ritmo", d.rhythm)}${bar("Entonação", d.intonation)}
+        ${d.lyrics != null && d.lyrics < 90 ? `<p class="sc-heard">a Mel ouviu: “${esc(d.heard)}”</p>` : ""}
+      </div>`;
+    drawLyrics();
+    const last = sess.i === song.lines.length - 1;
+    setActions(`
+      <button class="btn btn-ghost" id="again">${icon("microphone", 18)} de novo</button>
+      <button class="btn" id="next">${last ? `${icon("check", 18)} ver minha nota` : `próximo verso ${icon("arrow-right", 18)}`}</button>`);
+    $("#again").onclick = () => goLine(sess.i, false).then(() => sing());
+    $("#next").onclick = () => (last ? finish() : goLine(sess.i + 1, true));
+  };
+
+  const finish = async () => {
+    const r = await fetch(`/api/songs/${encodeURIComponent(song.id)}/finish`, { method: "POST", headers: authHeaders() });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) { $("#scoreBox").innerHTML = `<p class="error">${esc(data.error || "erro")}</p>`; return; }
+    goSongResult(song, data);
+  };
+
+  drawVerse(); drawLyrics();
+  goLine(0, true);
+}
+
+// grava um verso: espera a voz, para sozinho depois de ~1,3 s de silencio
+// (ou em 12 s, ou no botao "parar"). Devolve PCM16 16 kHz ou null se nao houve voz.
+async function recordTake(sess, { maxMs = 12000, silenceMs = 1300, waitVoiceMs = 7000 } = {}) {
+  const ctx = ensureCapture();
+  await resumeCtx(ctx);
+  if (!sess.stream) {
+    try {
+      sess.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+    } catch {
+      $("#scoreBox").innerHTML = `<p class="error">Libera o microfone no navegador pra cantar.</p>`;
+      return null;
+    }
+  }
+  const source = ctx.createMediaStreamSource(sess.stream);
+  const proc = ctx.createScriptProcessor(4096, 1, 1);
+  sess.processor = proc;
+  const chunks = [];
+  const pre = [];
+  let floor = 0.01, heard = false, lastVoice = 0;
+  const t0 = performance.now();
+  return new Promise((resolve) => {
+    let done = false;
+    const end = (ok) => {
+      if (done) return; done = true;
+      try { proc.disconnect(); source.disconnect(); } catch {}
+      if (!ok || !heard) return resolve(null);
+      const total = chunks.reduce((a, c) => a + c.length, 0);
+      const out = new Int16Array(total);
+      let o = 0; for (const c of chunks) { out.set(c, o); o += c.length; }
+      resolve(out);
+    };
+    const stopBtn = $("#stopRec");
+    if (stopBtn) stopBtn.onclick = () => end(true);
+    proc.onaudioprocess = (e) => {
+      if (!sess.alive) return end(false);
+      const input = e.inputBuffer.getChannelData(0);
+      const pcm = downsampleTo16kHz(input, ctx.sampleRate);
+      let sum = 0;
+      for (let i = 0; i < input.length; i += 8) sum += input[i] * input[i];
+      const rms = Math.sqrt(sum / (input.length / 8));
+      floor = rms < floor ? rms : floor + (rms - floor) * 0.002;
+      const now = performance.now();
+      if (rms > Math.max(0.012, floor * 2.5)) {
+        if (!heard) { heard = true; chunks.push(...pre); const lbl = $("#recLabel"); if (lbl) lbl.textContent = "ouvindo…"; }
+        lastVoice = now;
+      }
+      if (heard) {
+        chunks.push(pcm);
+        if (now - lastVoice > silenceMs || now - t0 > maxMs) end(true);
+      } else {
+        pre.push(pcm); if (pre.length > 4) pre.shift();
+        if (now - t0 > waitVoiceMs) end(false);
+      }
+    };
+    source.connect(proc);
+    proc.connect(ctx.destination);
+  });
+}
+
+function goSongResult(song, r) {
+  const tier = scoreTier(r.final);
+  render(`
+    <section class="screen">
+      <div class="talk-head"><button class="iconbtn" id="back" aria-label="voltar">${icon("arrow-left", 20)}</button><span class="t">${esc(song.title)}</span></div>
+      <div class="screen-body">
+        <div data-mascot="140" data-mood="${tier.mood}"></div>
+        <div class="final-score ${tier.cls}"><span>${r.final}</span><small>/100</small></div>
+        <h2 class="title">${tier.label}</h2>
+        <p class="sub">${esc(pick(SONG_REACTIONS[tier.cls]))} Você cantou ${r.sung} de ${r.lineCount} versos.${r.best > r.final ? ` Sua melhor nota nessa música é ${r.best}.` : r.plays > 1 ? " Novo recorde seu nessa música." : ""}</p>
+      </div>
+      <div class="screen-foot">
+        ${r.final >= 65
+          ? `<button class="btn" id="share">${icon("arrow-right", 18)} postar minha nota</button>
+             <div class="btn-row" style="margin-top:10px">
+               <button class="btn btn-ghost" id="again">${icon("microphone", 18)} cantar de novo</button>
+               <button class="btn btn-ghost" id="more">${icon("guitar", 18)} outras músicas</button>
+             </div>`
+          : `<button class="btn" id="again">${icon("microphone", 18)} cantar de novo</button>
+             <div class="btn-row" style="margin-top:10px">
+               <button class="btn btn-ghost" id="more">${icon("guitar", 18)} outras músicas</button>
+               <button class="btn btn-ghost" id="share">postar mesmo assim</button>
+             </div>`}
+      </div>
+    </section>`);
+  $("#back").onclick = goHome;
+  $("#more").onclick = () => { state.homeTab = "songs"; store.set("homeTab", "songs"); goHome(); };
+  $("#again").onclick = () => openSong(song.id);
+  $("#share").onclick = () => goShare(0, { kicker: "TIREI", headline: `${r.final}/100`, line: `cantando ‘${song.title}’ com a Mel`, title: song.artist === "Mel" ? "MÚSICA ORIGINAL DA MEL" : song.title, happy: r.final >= 85 });
 }
 
 // ---------- trilha de cenários (home) ----------
@@ -661,7 +1027,7 @@ async function loadViral() {
 }
 
 function shareText(v) {
-  return `Tô aprendendo inglês levando bronca de uma IA mal-humorada 😂 A Mel te faz falar em 3 minutos por dia. Entra pelo meu link que você ganha minutos de bônus: ${v.link}`;
+  return `Tô aprendendo ${langName()} levando bronca de uma IA mal-humorada 😂 A Mel te faz falar (e até cantar) em 3 minutos por dia. Entra pelo meu link que você ganha minutos de bônus: ${v.link}`;
 }
 
 async function copyText(text, btn) {
@@ -758,13 +1124,17 @@ const SHARE_LINES = [
   "A professora mais mal-humorada do Brasil. E funciona.",
 ];
 
-async function goShare(seconds) {
+// custom: card do modo cantando ({ kicker: "TIREI", headline: "92/100", line, title })
+async function goShare(seconds, custom = null) {
   const lesson = state.currentLesson;
+  const intro = custom
+    ? `Tirou ${custom.headline}. Posta isso e me marca — cada amigo que entrar pelo seu link te dá minutos de bônus.`
+    : `Sobreviveu a ${Math.max(1, Math.round(seconds / 60))} min comigo. Posta isso e marca a Mel: cada amigo que entrar te dá minutos a mais pra eu te xingar.`;
   render(`
     <section class="screen">
       <div class="talk-head"><button class="iconbtn" id="back" aria-label="voltar">${icon("arrow-left", 20)}</button><span class="t">mostra pros amigos</span></div>
       <div class="screen-body top">
-        <div class="ask"><div data-mascot="64" data-mood="neutral"></div><div class="bubble">Sobreviveu a ${Math.max(1, Math.round(seconds / 60))} min comigo. Posta isso e marca a Mel: cada amigo que entrar te dá minutos a mais pra eu te xingar.</div></div>
+        <div class="ask"><div data-mascot="64" data-mood="neutral"></div><div class="bubble">${esc(intro)}</div></div>
         <canvas id="card" class="share-card" width="1080" height="1920"></canvas>
         <div class="btn-row" style="margin-top:14px">
           <button class="btn" id="shareBtn">${icon("arrow-right", 18)} compartilhar</button>
@@ -777,7 +1147,9 @@ async function goShare(seconds) {
   $("#skip").onclick = goHome;
   const v = state.viral ?? (await loadViral().catch(() => null));
   const line = SHARE_LINES[Math.floor(Math.random() * SHARE_LINES.length)];
-  await drawShareCard($("#card"), { minutes: Math.max(1, Math.round(seconds / 60)), title: lesson?.title ?? "", line, link: v?.link ?? "heymel.online", launch: state.launch });
+  await drawShareCard($("#card"), custom
+    ? { kicker: custom.kicker, headline: custom.headline, line: custom.line, title: custom.title, happy: custom.happy, link: v?.link ?? "heymel.online", launch: state.launch }
+    : { minutes: Math.max(1, Math.round(seconds / 60)), title: lesson?.title ?? "", line, link: v?.link ?? "heymel.online", launch: state.launch });
   const toBlob = () => new Promise((r) => $("#card").toBlob(r, "image/png"));
   $("#dl").onclick = async () => { const a = document.createElement("a"); a.href = URL.createObjectURL(await toBlob()); a.download = "mel.png"; a.click(); };
   $("#shareBtn").onclick = async () => {
@@ -789,7 +1161,7 @@ async function goShare(seconds) {
   };
 }
 
-async function drawShareCard(canvas, { minutes, title, line, link, launch }) {
+async function drawShareCard(canvas, { minutes, title, line, link, launch, kicker = "SOBREVIVI A", headline = `${minutes} min com a Mel`, happy = false }) {
   const ctx = canvas.getContext("2d");
   const W = canvas.width, H = canvas.height;
   try { await Promise.all([document.fonts.load("700 96px 'Bricolage Grotesque'"), document.fonts.load("500 36px 'DM Mono'"), document.fonts.load("500 44px 'DM Sans'")]); } catch {}
@@ -804,18 +1176,22 @@ async function drawShareCard(canvas, { minutes, title, line, link, launch }) {
   const sphere = ctx.createRadialGradient(cx - 90, cy - 110, 30, cx, cy, r);
   sphere.addColorStop(0, "#FFC9AE"); sphere.addColorStop(0.55, "#F2865E"); sphere.addColorStop(1, "#B8482A");
   ctx.fillStyle = sphere; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
-  // cara brava
+  // cara: brava por padrao; nota alta no modo cantando = sorriso de canto (ainda com sobrancelha)
   ctx.strokeStyle = "#14100E"; ctx.lineWidth = 22; ctx.lineCap = "round";
-  ctx.beginPath(); ctx.moveTo(cx - 130, cy - 70); ctx.lineTo(cx - 40, cy - 40); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx + 130, cy - 70); ctx.lineTo(cx + 40, cy - 40); ctx.stroke();
+  const brow = happy ? 15 : 0;
+  ctx.beginPath(); ctx.moveTo(cx - 130, cy - 70 + brow); ctx.lineTo(cx - 40, cy - 40 - brow); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx + 130, cy - 70 + brow); ctx.lineTo(cx + 40, cy - 40 - brow); ctx.stroke();
   ctx.fillStyle = "#14100E";
   for (const dx of [-85, 85]) { ctx.beginPath(); ctx.ellipse(cx + dx, cy + 10, 20, 34, 0, 0, Math.PI * 2); ctx.fill(); }
-  ctx.beginPath(); ctx.moveTo(cx - 70, cy + 120); ctx.quadraticCurveTo(cx, cy + 80, cx + 70, cy + 120); ctx.stroke();
+  ctx.beginPath();
+  if (happy) { ctx.moveTo(cx - 80, cy + 95); ctx.quadraticCurveTo(cx, cy + 150, cx + 80, cy + 95); }
+  else { ctx.moveTo(cx - 70, cy + 120); ctx.quadraticCurveTo(cx, cy + 80, cx + 70, cy + 120); }
+  ctx.stroke();
   // textos
   ctx.textAlign = "center"; ctx.fillStyle = "rgba(255,255,255,0.55)";
-  ctx.font = "500 34px 'DM Mono', monospace"; ctx.fillText("SOBREVIVI A", cx, 1010);
+  ctx.font = "500 34px 'DM Mono', monospace"; ctx.fillText(kicker, cx, 1010);
   ctx.fillStyle = "#fff"; ctx.font = "700 130px 'Bricolage Grotesque', sans-serif";
-  ctx.fillText(`${minutes} min com a Mel`, cx, 1140);
+  ctx.fillText(headline, cx, 1140);
   ctx.fillStyle = "rgba(255,255,255,0.75)"; ctx.font = "500 44px 'DM Sans', sans-serif";
   wrapText(ctx, `“${line}”`, cx, 1240, 900, 56);
   if (title) { ctx.fillStyle = "rgba(255,255,255,0.45)"; ctx.font = "500 32px 'DM Mono', monospace"; ctx.fillText(title.toUpperCase().slice(0, 40), cx, 1420); }
@@ -1305,10 +1681,14 @@ function flushPlayback() {
 
 // ---------- bootstrap ----------
 
-// link de indicacao: guarda o codigo pra mandar no cadastro e limpa a URL
+// link de indicacao (?ref=) e de idioma (?lang=es): guarda e limpa a URL
 {
-  const ref = new URLSearchParams(location.search).get("ref");
-  if (ref) { store.set("ref", ref.toUpperCase().slice(0, 12)); history.replaceState(null, "", location.pathname); }
+  const params = new URLSearchParams(location.search);
+  const ref = params.get("ref");
+  if (ref) store.set("ref", ref.toUpperCase().slice(0, 12));
+  const l = params.get("lang");
+  if (l && LANG_INFO[l]) setLang(l);
+  if (ref || l) history.replaceState(null, "", location.pathname);
 }
 
 // deslogado = sempre a Mel na porta, como no app de referencia

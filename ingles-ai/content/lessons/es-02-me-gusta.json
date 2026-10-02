@@ -1,0 +1,27 @@
+{
+  "id": "es-02-me-gusta",
+  "language": "es",
+  "icon": "star-four",
+  "title": "Me gusta (e nunca mais 'yo gusto')",
+  "level": "A1",
+  "focus": "O verbo gustar ao contrário do português: me gusta + singular, me gustan + plural, e o fim do 'yo gusto de'",
+  "warmup": {
+    "instruction": "Em português, explique a pegadinha número um do brasileiro: em espanhol não é 'eu gosto DE café', é 'me gusta el café' — a coisa é que agrada você. E se for plural, 'me gustan los perros'. Nada de 'de'. Peça uma frase de cada vez: uma coisa que ele gosta, uma no plural, uma que ele não gosta. Toda vez que escapar 'yo gusto' ou 'gusta de', reaja e mande repetir certo.",
+    "examples": [
+      { "es": "Me gusta mucho el café.", "pt": "Eu gosto muito de café." },
+      { "es": "Me gustan las películas de terror.", "pt": "Eu gosto de filmes de terror." },
+      { "es": "No me gusta levantarme temprano.", "pt": "Não gosto de acordar cedo." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Gostos: comida, música, fim de semana",
+    "instruction": "Pergunte em espanhol do que ele gosta de comer, que música ouve e o que gosta de fazer no fim de semana (¿qué te gusta hacer los fines de semana?). Depois pergunte do que ele NÃO gosta. Puxe também 'a mí también' e 'a mí tampoco' quando você concordar. Cada 'yo gusto' que aparecer, pare tudo."
+  },
+  "review": {
+    "checklist": [
+      "Usou 'me gusta' com singular e 'me gustan' com plural?",
+      "Parou de colocar 'de' depois de gustar?"
+    ],
+    "closing": "Feche em português: 'yo gusto' morreu hoje. Repita a regra — a coisa agrada você, então é me gusta / me gustan. Diga que vai cobrar isso em todas as aulas daqui pra frente."
+  }
+}

@@ -11,6 +11,11 @@ let tab = sessionStorage.getItem("adminTab") || "overview";
 let preview = null;
 
 const LEVELS = ["A0", "A1", "A2", "B1", "B2", "C1"];
+const LANG_LABEL = { en: "🇺🇸 inglês", es: "🇪🇸 espanhol" };
+const LANG_FLAG = { en: "🇺🇸", es: "🇪🇸" };
+let lessonLangFilter = "all";
+// "07-x" -> 07 ; "es-07-x" -> 07
+const lessonOrder = (id) => (/^(?:[a-z]{2}-)?(\d+)/.exec(id)?.[1] ?? "—");
 const LEVEL_LABEL = { A0: "iniciante", A1: "iniciante", A2: "básico", B1: "intermediário", B2: "avançado", C1: "avançado" };
 const TONE_LABEL = { braba: "braba", deboa: "de boa" };
 const BLOCKER_LABEL = { vergonha: "vergonha", congelo: "congelo", nao_sei: "não sei por onde começar", falta_gente: "falta gente" };
@@ -124,6 +129,7 @@ const TABS = [
   ["overview", "Visão geral", "chart-line"],
   ["users", "Usuários", "users"],
   ["lessons", "Lições", "book-open"],
+  ["songs", "Músicas", "guitar"],
   ["plans", "Planos", "credit-card"],
   ["payments", "Pagamentos", "receipt"],
   ["viral", "Viral", "fire"],
@@ -149,7 +155,7 @@ function renderShell() {
   $$(".side-btn").forEach((b) => (b.onclick = () => { tab = b.dataset.tab; sessionStorage.setItem("adminTab", tab); renderShell(); }));
   $(".side-btn.on")?.scrollIntoView({ inline: "center", block: "nearest" }); // nav horizontal no celular
   window.scrollTo(0, 0);
-  ({ overview: renderOverview, users: renderUsers, lessons: renderLessons, plans: renderPlans, payments: renderPayments, viral: renderViral, settings: renderSettings })[tab]();
+  ({ overview: renderOverview, users: renderUsers, lessons: renderLessons, songs: renderSongs, plans: renderPlans, payments: renderPayments, viral: renderViral, settings: renderSettings })[tab]();
 }
 
 // ---------- visao geral ----------
@@ -262,7 +268,8 @@ function renderLessons() {
     <section class="panel">
       <h2 class="title">Gerar lição nova <span class="muted">com IA</span></h2>
       <p class="muted" style="margin:0 0 12px">A Mel escreve uma lição no formato das outras: foco, frases-alvo, roteiro de conversa e revisão. Você lê, ajusta se quiser e publica — só aí ela aparece pros alunos.</p>
-      <form id="gen" class="gen-row">
+      <form id="gen" class="gen-row gen-row-4">
+        <select name="language">${Object.entries(LANG_LABEL).map(([v, t]) => `<option value="${v}">${t}</option>`).join("")}</select>
         <select name="level">${LEVELS.map((l) => `<option value="${l}" ${l === "A2" ? "selected" : ""}>${l} · ${LEVEL_LABEL[l]}</option>`).join("")}</select>
         <input name="theme" placeholder="tema (opcional): ex. marcar consulta médica, viagem de avião…" />
         <button class="btn narrow" type="submit" id="genBtn">${icon("lightning", 16)} gerar lição</button>
@@ -270,16 +277,18 @@ function renderLessons() {
       <div id="preview"></div>
     </section>
     <section class="panel">
-      <h2 class="title">Lições publicadas <span class="muted">(${data.lessons.length})</span></h2>
+      <div class="panel-head"><h2 class="title">Lições publicadas <span class="muted">(${data.lessons.length})</span></h2>
+        <div class="seg-admin">${[["all", "todas"], ...Object.entries(LANG_LABEL)].map(([v, t]) => `<button class="pill small ${lessonLangFilter === v ? "on" : ""}" data-lfilter="${v}">${t}</button>`).join("")}</div></div>
       <div class="tablewrap"><table>
-        <thead><tr><th>#</th><th>lição</th><th>nível</th><th>sessões</th><th>concluídas</th><th>min</th><th>visível</th><th></th></tr></thead>
-        <tbody>${data.lessons.map((l) => `<tr class="${l.active ? "" : "row-blocked"}">
-          <td class="mono">${esc(l.id.slice(0, 2))}</td><td>${esc(l.title)}</td><td>${esc(l.level)} <span class="muted">${LEVEL_LABEL[l.level] ?? ""}</span></td>
+        <thead><tr><th>#</th><th>lição</th><th>idioma</th><th>nível</th><th>sessões</th><th>concluídas</th><th>min</th><th>visível</th><th></th></tr></thead>
+        <tbody>${data.lessons.filter((l) => lessonLangFilter === "all" || (l.language ?? "en") === lessonLangFilter).map((l) => `<tr class="${l.active ? "" : "row-blocked"}">
+          <td class="mono">${esc(lessonOrder(l.id))}</td><td>${esc(l.title)}</td><td>${LANG_FLAG[l.language ?? "en"]}</td><td>${esc(l.level)} <span class="muted">${LEVEL_LABEL[l.level] ?? ""}</span></td>
           <td>${l.sessions}</td><td>${l.completions}</td><td>${l.minutes}</td>
           <td><button class="switch ${l.active ? "on" : ""}" data-toggle="${esc(l.id)}" aria-label="visível"></button></td>
           <td><button class="pill small" data-view="${esc(l.id)}">ver</button> <button class="pill small danger" data-del="${esc(l.id)}">excluir</button></td></tr>`).join("")}</tbody>
       </table></div>
     </section>`;
+  $$("[data-lfilter]").forEach((b) => (b.onclick = () => { lessonLangFilter = b.dataset.lfilter; renderLessons(); }));
   $$("[data-toggle]").forEach((b) => (b.onclick = async () => {
     try { await api("PUT", `/lessons/${b.dataset.toggle}`, { active: !b.classList.contains("on") }); load(); } catch (err) { toast(err.message, true); }
   }));
@@ -297,7 +306,7 @@ function renderLessons() {
     btn.disabled = true; btn.textContent = "a Mel está escrevendo…";
     $("#preview").innerHTML = "";
     try {
-      preview = await api("POST", "/lessons/generate", { level: f.level, theme: f.theme });
+      preview = await api("POST", "/lessons/generate", { level: f.level, theme: f.theme, language: f.language });
       $("#preview").innerHTML = `<div class="preview">${lessonHtml(preview)}
         <div class="modal-actions">
           <button class="btn narrow" id="publish">${icon("check", 16)} publicar</button>
@@ -319,13 +328,109 @@ function renderLessons() {
 
 function lessonHtml(l) {
   return `
-    <p class="eyebrow" style="text-align:left;margin:0 0 4px">${esc(l.level)} · ${LEVEL_LABEL[l.level] ?? ""}${l.id ? ` · ${esc(l.id)}` : ""}</p>
+    <p class="eyebrow" style="text-align:left;margin:0 0 4px">${LANG_FLAG[l.language ?? "en"]} ${esc(l.level)} · ${LEVEL_LABEL[l.level] ?? ""}${l.id ? ` · ${esc(l.id)}` : ""}</p>
     <h3 class="lesson-title">${esc(l.title)}</h3>
     <p class="muted">${esc(l.focus)}</p>
     <div class="lesson-block"><b>Aquecimento</b><p>${esc(l.warmup?.instruction)}</p>
-      <ul>${(l.warmup?.examples ?? []).map((ex) => `<li><span class="en">${esc(ex.en)}</span> <span class="muted">— ${esc(ex.pt)}</span></li>`).join("")}</ul></div>
+      <ul>${(l.warmup?.examples ?? []).map((ex) => `<li><span class="en">${esc(ex.target ?? ex.es ?? ex.en)}</span> <span class="muted">— ${esc(ex.pt)}</span></li>`).join("")}</ul></div>
     <div class="lesson-block"><b>Conversa livre — ${esc(l.freeConversation?.topic)}</b><p>${esc(l.freeConversation?.instruction)}</p></div>
     <div class="lesson-block"><b>Revisão</b><ul>${(l.review?.checklist ?? []).map((c) => `<li>${esc(c)}</li>`).join("")}</ul><p>${esc(l.review?.closing)}</p></div>`;
+}
+
+// ---------- musicas (modo cantando) ----------
+
+let songPreview = null;
+
+function songHtml(s) {
+  let section = null;
+  const lines = s.lines.map((l) => {
+    const head = l.section && l.section !== section ? `<li class="song-sec">[${esc((section = l.section))}]</li>` : "";
+    return `${head}<li><span class="en">${esc(l.text)}</span> <span class="muted">— ${esc(l.pt)}</span>${l.tip ? `<br><small class="muted">💡 ${esc(l.tip)}</small>` : ""}</li>`;
+  }).join("");
+  return `
+    <p class="eyebrow" style="text-align:left;margin:0 0 4px">${LANG_FLAG[s.language]} ${esc(s.level)} · ${esc(s.artist ?? "Mel")} · ${s.source === "dominio-publico" ? "domínio público" : "original"}${s.id ? ` · ${esc(s.id)}` : ""}</p>
+    <h3 class="lesson-title">${esc(s.title)}</h3>
+    <p class="muted">${esc(s.focus ?? "")}</p>
+    ${s.description ? `<p style="margin:6px 0">${esc(s.description)}</p>` : ""}
+    ${s.style ? `<p class="muted" style="font-size:12px">estilo musical: ${esc(s.style)}</p>` : ""}
+    <ol class="song-lines">${lines}</ol>`;
+}
+
+async function renderSongs() {
+  $("#tabBody").innerHTML = `<p class="muted">carregando…</p>`;
+  let songs;
+  try { songs = await api("GET", "/songs"); } catch (err) { toast(err.message, true); return; }
+  $("#tabBody").innerHTML = `
+    <section class="panel">
+      <h2 class="title">Compor música nova <span class="muted">com IA</span></h2>
+      <p class="muted" style="margin:0 0 12px">A Mel escreve uma música <b>original</b> (letra, tradução e dica por verso) que ensina um ponto do idioma. A voz da Mel em cada verso é gerada sozinha ao publicar. Letra de música famosa não entra aqui — direito autoral; o modelo também é proibido de copiar ou citar artistas.</p>
+      <form id="sgen" class="gen-row gen-row-5">
+        <select name="language">${Object.entries(LANG_LABEL).map(([v, t]) => `<option value="${v}">${t}</option>`).join("")}</select>
+        <select name="level">${LEVELS.map((l) => `<option value="${l}" ${l === "A2" ? "selected" : ""}>${l} · ${LEVEL_LABEL[l]}</option>`).join("")}</select>
+        <input name="focus" placeholder="ensina o quê? ex. passado simples, verbo gustar" />
+        <input name="theme" placeholder="tema: ex. férias, segunda-feira, café" />
+        <button class="btn narrow" type="submit" id="sgenBtn">${icon("guitar", 16)} compor</button>
+      </form>
+      <div id="spreview"></div>
+    </section>
+    <section class="panel">
+      <h2 class="title">Músicas <span class="muted">(${songs.length})</span></h2>
+      <div class="tablewrap"><table>
+        <thead><tr><th>música</th><th>idioma</th><th>nível</th><th>versos</th><th>voz pronta</th><th>alunos</th><th>média</th><th>faixa</th><th>visível</th><th></th></tr></thead>
+        <tbody>${songs.map((s) => `<tr class="${s.active ? "" : "row-blocked"}">
+          <td>${esc(s.title)}<div class="muted" style="font-size:11px">${esc(s.artist)} · ${s.source === "dominio-publico" ? "domínio público" : "original"}</div></td>
+          <td>${LANG_FLAG[s.language]}</td><td>${esc(s.level)}</td><td>${s.lines.length}</td>
+          <td>${s.ready}/${s.lines.length}</td><td>${s.singers}</td><td>${s.avgBest ?? "—"}</td>
+          <td>${s.hasTrack ? `<span class="badge green">tem</span>` : `<button class="pill small" data-track="${esc(s.id)}">gerar</button>`}</td>
+          <td><button class="switch ${s.active ? "on" : ""}" data-stoggle="${esc(s.id)}" aria-label="visível"></button></td>
+          <td><button class="pill small" data-sview="${esc(s.id)}">ver</button> ${s.ready < s.lines.length ? `<button class="pill small" data-warm="${esc(s.id)}">gerar vozes</button> ` : ""}<button class="pill small danger" data-sdel="${esc(s.id)}">excluir</button></td></tr>`).join("")}</tbody>
+      </table></div>
+      <p class="muted" style="margin-top:10px;font-size:12px">"Faixa" = música completa cantada (Lyria). Só funciona com faturamento ativo no Google AI Studio; demora até 2 min. Sem faixa o aluno canta verso a verso com a voz da Mel normalmente.</p>
+    </section>`;
+
+  const byId = Object.fromEntries(songs.map((s) => [s.id, s]));
+  $$("[data-sview]").forEach((b) => (b.onclick = () => modal(songHtml(byId[b.dataset.sview]) + `<div class="modal-actions"><button class="btn btn-ghost" onclick="document.getElementById('modal').remove()">Fechar</button></div>`)));
+  $$("[data-stoggle]").forEach((b) => (b.onclick = async () => {
+    try { await api("PUT", `/songs/${b.dataset.stoggle}`, { active: !b.classList.contains("on") }); renderSongs(); } catch (err) { toast(err.message, true); }
+  }));
+  $$("[data-sdel]").forEach((b) => (b.onclick = async () => {
+    if (!confirm("Excluir essa música? (pra só esconder, use o botão de visível)")) return;
+    try { await api("DELETE", `/songs/${b.dataset.sdel}`); toast("música excluída"); renderSongs(); } catch (err) { toast(err.message, true); }
+  }));
+  $$("[data-warm]").forEach((b) => (b.onclick = async () => {
+    try { await api("POST", `/songs/${b.dataset.warm}/warm`); toast("gerando as vozes em segundo plano (≈3 por minuto no plano grátis)"); } catch (err) { toast(err.message, true); }
+  }));
+  $$("[data-track]").forEach((b) => (b.onclick = async () => {
+    b.disabled = true; b.textContent = "gerando… (até 2 min)";
+    try { await api("POST", `/songs/${b.dataset.track}/track`); toast("faixa pronta"); renderSongs(); }
+    catch (err) { toast(err.message, true); b.disabled = false; b.textContent = "gerar"; }
+  }));
+
+  $("#sgen").onsubmit = async (e) => {
+    e.preventDefault();
+    const f = Object.fromEntries(new FormData(e.target).entries());
+    const btn = $("#sgenBtn");
+    btn.disabled = true; btn.textContent = "a Mel está compondo…";
+    $("#spreview").innerHTML = "";
+    try {
+      songPreview = await api("POST", "/songs/generate", f);
+      $("#spreview").innerHTML = `<div class="preview">${songHtml(songPreview)}
+        <div class="modal-actions">
+          <button class="btn narrow" id="spublish">${icon("check", 16)} publicar</button>
+          <button class="btn btn-ghost narrow" id="sagain">compor outra</button>
+          <button class="btn btn-ghost narrow" id="sdiscard">descartar</button>
+        </div></div>`;
+      $("#spublish").onclick = async () => {
+        try { const saved = await api("POST", "/songs", songPreview); toast(`publicada: ${saved.title} — gerando as vozes`); songPreview = null; renderSongs(); } catch (err) { toast(err.message, true); }
+      };
+      $("#sagain").onclick = () => $("#sgen").requestSubmit();
+      $("#sdiscard").onclick = () => { songPreview = null; $("#spreview").innerHTML = ""; };
+    } catch (err) {
+      $("#spreview").innerHTML = `<p class="error">${esc(err.message)}</p>`;
+    } finally {
+      btn.disabled = false; btn.innerHTML = `${icon("guitar", 16)} compor`;
+    }
+  };
 }
 
 // ---------- planos ----------
@@ -456,6 +561,7 @@ async function renderViral() {
 
 const GROUP_META = {
   ia: { title: "Inteligência artificial (Gemini)", icon: "sliders-horizontal", desc: "Chave e modelos usados na conversa por voz e na geração de lições." },
+  musica: { title: "Modo Cantando", icon: "guitar", desc: "Voz da Mel nos versos (TTS), música completa (Lyria) e limite de notas por aluno." },
   acesso: { title: "Acesso ao painel", icon: "key", desc: "Quem consegue entrar em /admin." },
   limites: { title: "Limites de uso", icon: "chart-line", desc: "Quanto quem não paga pode conversar, e quantas conversas ao mesmo tempo o servidor aceita." },
   lancamento: { title: "Promoção de lançamento", icon: "fire", desc: "Os primeiros N cadastros ganham minutos grátis por um período. O app mostra as vagas restantes na tela inicial." },

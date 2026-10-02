@@ -1,0 +1,28 @@
+{
+  "id": "es-05-ayer-fui",
+  "language": "es",
+  "icon": "compass",
+  "title": "Contar o que aconteceu ontem (fui, comí, hablé)",
+  "level": "A2",
+  "focus": "Pretérito indefinido pra contar o que aconteceu: hablé, comí, fui, tuve, hice — e o acento que muda tudo (hablo x habló)",
+  "warmup": {
+    "instruction": "Em português, mostre que em espanhol o acento muda o tempo do verbo: 'hablo' é eu falo, 'habló' é ele falou. E os irregulares mais usados: fui (fui/ir e ser), tuve, hice, dije. Faça ele contar o dia de ontem em 4 frases, uma por vez, forçando pelo menos dois irregulares. Cobre a sílaba tônica: hablÉ, comÍ.",
+    "examples": [
+      { "es": "Ayer fui al supermercado.", "pt": "Ontem eu fui ao supermercado." },
+      { "es": "Comí con mis amigos y hablamos mucho.", "pt": "Comi com meus amigos e conversamos muito." },
+      { "es": "Tuve un día muy largo.", "pt": "Tive um dia muito longo." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "O último fim de semana",
+    "instruction": "Pergunte em espanhol o que ele fez no último fim de semana (¿qué hiciste el sábado?), onde foi, com quem, o que comeu. Puxe detalhes pra ele usar vários verbos no passado. Quando ele usar presente no lugar de passado ou errar o irregular ('yo fue'), pare e corrija."
+  },
+  "review": {
+    "checklist": [
+      "Usou o pretérito indefinido pra contar o passado?",
+      "Acertou pelo menos dois irregulares (fui, tuve, hice)?",
+      "Colocou a força na última sílaba (hablé, comí)?"
+    ],
+    "closing": "Feche em português listando os irregulares que ele usou hoje. Diga que 'yo fue' é o equivalente espanhol de 'nós vai' e que você vai cobrar."
+  }
+}

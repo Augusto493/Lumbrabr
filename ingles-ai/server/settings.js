@@ -30,6 +30,26 @@ export const DEFINITIONS = [
     help: "Se o modelo de texto principal estiver sobrecarregado (503) ou não existir mais (404), tenta estes na ordem.",
   },
   {
+    key: "GEMINI_TTS_MODEL", group: "musica", label: "Modelo de voz dos versos (TTS)",
+    default: "gemini-3.8-flash-lite-tts",
+    help: "Gera a Mel falando cada verso no modo Cantando. Cada verso é gerado uma vez só e fica guardado (data/songs-audio). No plano grátis cada modelo de TTS aceita só 3 pedidos por minuto: o sistema reveza entre os modelos e, se nenhum responder na hora, o app usa a voz do próprio celular.",
+  },
+  {
+    key: "GEMINI_TTS_VOICE", group: "musica", label: "Voz da Mel nos versos",
+    default: "Kore",
+    help: "Nome de uma voz pronta do Gemini TTS (ex.: Kore, Aoede, Leda, Zephyr). Trocar a voz regera os áudios na próxima vez que alguém ouvir.",
+  },
+  {
+    key: "GEMINI_MUSIC_MODEL", group: "musica", label: "Modelo de música (faixa completa)",
+    default: "lyria-3.5",
+    help: "Lyria gera a música inteira (instrumental + voz cantando a letra) a partir da letra original. Só funciona com faturamento ativo no Google AI Studio — no plano grátis o limite é zero. Bloqueia letras com direito autoral e imitação de artista.",
+  },
+  {
+    key: "SONG_SCORES_PER_DAY", group: "musica", label: "Notas por aluno por dia (máximo)", type: "number", min: 1,
+    default: "150",
+    help: "Cada verso cantado vira uma avaliação no Gemini (≈ R$ 0,003 cada). Limite pra ninguém abusar.",
+  },
+  {
     key: "ADMIN_EMAIL", group: "acesso", label: "E-mails com acesso de admin",
     help: "Contas com estes e-mails ganham o botão \"painel\" no app e entram aqui sem senha extra. Separe vários por vírgula.",
   },

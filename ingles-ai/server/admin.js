@@ -9,13 +9,15 @@ import { listLessons, getLesson, saveLesson, deleteLesson } from "./lessons.js";
 import { generateLesson } from "./generate.js";
 import { entitlement, launchPromo } from "./pay.js";
 import { MISSIONS, missionReward } from "./viral.js";
+import { listSongs, getSong, saveSong, deleteSong, composeSong, generateTrack, warmSong, adminSongView } from "./songs.js";
+import { getSongScores } from "./store.js";
 import { activeVoiceSessions } from "./voice.js";
 import * as abacate from "./abacatepay.js";
 import * as settings from "./settings.js";
 import { jwtSecret } from "./auth.js";
 
 const COST_PER_MINUTE_BRL = 0.07;
-const PROFILE_KEYS = ["voiceMode", "level", "blocker", "tone"];
+const PROFILE_KEYS = ["voiceMode", "level", "blocker", "tone", "language"];
 const START_TIME = Date.now();
 
 export const router = express.Router();
@@ -67,7 +69,7 @@ router.get("/stats", (_req, res) => {
 
   const minutesByEmail = {};
   const lastSeenByEmail = {};
-  const perLesson = Object.fromEntries(lessons.map((l) => [l.id, { id: l.id, title: l.title, level: l.level, active: l.active !== false, completions: 0, minutes: 0, sessions: 0 }]));
+  const perLesson = Object.fromEntries(lessons.map((l) => [l.id, { id: l.id, title: l.title, level: l.level, language: l.language, active: l.active !== false, completions: 0, minutes: 0, sessions: 0 }]));
   for (const s of sessions) {
     const min = s.seconds / 60;
     minutesByEmail[s.email] = (minutesByEmail[s.email] ?? 0) + min;
@@ -246,14 +248,14 @@ router.get("/lessons/:id", (req, res) => {
 
 router.post("/lessons/generate", async (req, res) => {
   try {
-    const lesson = await generateLesson({ level: req.body?.level, theme: req.body?.theme });
+    const lesson = await generateLesson({ level: req.body?.level, theme: req.body?.theme, language: req.body?.language });
     res.json(lesson);
   } catch (err) {
     res.status(502).json({ error: err.message });
   }
 });
 
-const LESSON_KEYS = ["id", "title", "level", "focus", "warmup", "freeConversation", "review", "active"];
+const LESSON_KEYS = ["id", "title", "level", "focus", "warmup", "freeConversation", "review", "active", "language", "icon"];
 
 router.post("/lessons", (req, res) => {
   const input = req.body ?? {};
@@ -279,6 +281,57 @@ router.put("/lessons/:id", (req, res) => {
 
 router.delete("/lessons/:id", (req, res) => {
   try { deleteLesson(req.params.id); res.json({ ok: true }); } catch { res.status(404).json({ error: "licao nao encontrada" }); }
+});
+
+// ---------- musicas (modo cantando) ----------
+
+router.get("/songs", (_req, res) => {
+  const scores = getSongScores();
+  const stats = {};
+  for (const perSong of Object.values(scores)) {
+    for (const [id, rec] of Object.entries(perSong)) {
+      const s = (stats[id] ??= { singers: 0, plays: 0, bestSum: 0, bestN: 0 });
+      s.singers += 1; s.plays += rec.plays ?? 0;
+      if (rec.best != null) { s.bestSum += rec.best; s.bestN += 1; }
+    }
+  }
+  res.json(listSongs(true).map((s) => {
+    const st = stats[s.id] ?? { singers: 0, plays: 0, bestN: 0 };
+    return { ...adminSongView(s), singers: st.singers, plays: st.plays, avgBest: st.bestN ? Math.round(st.bestSum / st.bestN) : null };
+  }));
+});
+
+router.post("/songs/generate", async (req, res) => {
+  try { res.json(await composeSong(req.body ?? {})); } catch (err) { res.status(502).json({ error: err.message }); }
+});
+
+router.post("/songs", (req, res) => {
+  try {
+    const song = saveSong({ ...(req.body ?? {}) });
+    warmSong(song); // ja gera a voz dos versos pro primeiro aluno nao esperar
+    res.json(adminSongView(song));
+  } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+router.put("/songs/:id", (req, res) => {
+  try {
+    const song = getSong(req.params.id);
+    if (typeof req.body?.active === "boolean") song.active = req.body.active;
+    res.json(adminSongView(saveSong(song)));
+  } catch (err) { res.status(err.status ?? 400).json({ error: err.message }); }
+});
+
+router.delete("/songs/:id", (req, res) => {
+  try { deleteSong(req.params.id); res.json({ ok: true }); } catch (err) { res.status(404).json({ error: err.message }); }
+});
+
+router.post("/songs/:id/warm", (req, res) => {
+  try { const song = getSong(req.params.id); warmSong(song); res.json({ ok: true, lines: song.lines.length }); } catch (err) { res.status(404).json({ error: err.message }); }
+});
+
+// faixa completa com Lyria: demora (30s–2min) e exige faturamento ativo
+router.post("/songs/:id/track", async (req, res) => {
+  try { res.json(await generateTrack(getSong(req.params.id))); } catch (err) { res.status(502).json({ error: err.message }); }
 });
 
 // ---------- viral: promocao, indicacoes e missoes ----------

@@ -1,0 +1,27 @@
+{
+  "id": "es-09-cuando-e-ojala",
+  "language": "es",
+  "icon": "lightning",
+  "title": "Planos e desejos: cuando llegue, ojalá",
+  "level": "B2",
+  "focus": "Subjuntivo presente pra falar do futuro e de desejos: cuando + subjuntivo (cuando tenga dinero), ojalá + subjuntivo, para que",
+  "warmup": {
+    "instruction": "Em português, explique a regra que trava todo brasileiro: em espanhol 'quando eu tiver dinheiro' é 'cuando TENGA dinero' — nunca 'cuando tendré'. E 'ojalá' (tomara) sempre pede subjuntivo: 'ojalá llueva'. Faça ele falar 3 planos com 'cuando' e 2 desejos com 'ojalá', uma frase por vez.",
+    "examples": [
+      { "es": "Cuando tenga vacaciones, voy a viajar a México.", "pt": "Quando eu tiver férias, vou viajar pro México." },
+      { "es": "Ojalá consiga ese trabajo.", "pt": "Tomara que eu consiga esse emprego." },
+      { "es": "Te llamo cuando llegue a casa.", "pt": "Te ligo quando chegar em casa." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Os planos pros próximos anos",
+    "instruction": "Pergunte em espanhol o que ele vai fazer quando terminar os estudos ou o projeto atual, onde quer morar, o que deseja pro ano que vem (¿qué harás cuando...?, ¿qué esperas del año que viene?). Puxe 'cuando' e 'ojalá' o tempo todo. Cada 'cuando tendré' ou 'ojalá tengo', pare e corrija."
+  },
+  "review": {
+    "checklist": [
+      "Usou subjuntivo depois de 'cuando' falando do futuro?",
+      "Usou 'ojalá' com subjuntivo?"
+    ],
+    "closing": "Feche em português com a regra em uma frase: futuro depois de 'cuando' é subjuntivo. Diga que essa é a linha que separa quem 'se vira' de quem fala espanhol de verdade."
+  }
+}

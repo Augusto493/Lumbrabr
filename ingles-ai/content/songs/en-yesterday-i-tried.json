@@ -1,0 +1,61 @@
+{
+  "id": "en-yesterday-i-tried",
+  "language": "en",
+  "title": "Yesterday I Tried",
+  "artist": "Mel",
+  "source": "original",
+  "level": "A2",
+  "icon": "compass",
+  "focus": "Passado simples: regulares com -ed (opened, tried) e irregulares (went, bought, saw, said).",
+  "description": "Sobre aquele dia que você abriu a boca e travou. Todo mundo já.",
+  "style": "Bittersweet pop rock, electric guitar and steady beat, confident female vocal, 108 bpm",
+  "lines": [
+    {
+      "section": "Verse",
+      "text": "Yesterday I went to the store",
+      "pt": "Ontem eu fui na loja",
+      "tip": "Went = passado de go. Irregular, decora e pronto."
+    },
+    {
+      "section": "Verse",
+      "text": "I bought some bread and nothing more",
+      "pt": "Comprei um pão e nada mais",
+      "tip": "Bought: o 'gh' é mudo. Soa 'bót'."
+    },
+    {
+      "section": "Verse",
+      "text": "I saw a man, he said hello",
+      "pt": "Vi um homem, ele disse olá",
+      "tip": "Said soa 'séd', não 'seid'."
+    },
+    {
+      "section": "Verse",
+      "text": "I opened my mouth and said I don't know",
+      "pt": "Abri a boca e disse: não sei",
+      "tip": "Opened: o -ed aqui é só um 'd'. 'ôu-pend', duas sílabas."
+    },
+    {
+      "section": "Chorus",
+      "text": "Yesterday I tried and tried and tried",
+      "pt": "Ontem eu tentei, tentei e tentei",
+      "tip": "Tried = 'traid', uma sílaba. Nada de 'trai-ed'."
+    },
+    {
+      "section": "Chorus",
+      "text": "Today I'm talking, I'm not shy",
+      "pt": "Hoje eu falo, não tô com vergonha",
+      "tip": "Shy = tímido, envergonhado."
+    },
+    {
+      "section": "Chorus",
+      "text": "Yesterday I tried and tried and tried",
+      "pt": "Ontem eu tentei, tentei e tentei"
+    },
+    {
+      "section": "Chorus",
+      "text": "Tomorrow I'll say more than hi",
+      "pt": "Amanhã eu vou dizer mais que oi"
+    }
+  ],
+  "active": true
+}

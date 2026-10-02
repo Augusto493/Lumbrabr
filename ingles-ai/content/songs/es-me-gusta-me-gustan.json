@@ -1,0 +1,59 @@
+{
+  "id": "es-me-gusta-me-gustan",
+  "language": "es",
+  "title": "Me gusta, me gustan",
+  "artist": "Mel",
+  "source": "original",
+  "level": "A1",
+  "icon": "star-four",
+  "focus": "O verbo gustar: me gusta + singular, me gustan + plural. Adeus ao 'yo gusto'.",
+  "description": "A música que mata o portunhol mais famoso do Brasil.",
+  "style": "Bright Latin pop, acoustic guitar, congas and claps, joyful female vocal, 104 bpm",
+  "lines": [
+    {
+      "section": "Verso",
+      "text": "Me gusta el café por la mañana",
+      "pt": "Gosto de café de manhã",
+      "tip": "Me gusta + singular. Sem 'de' depois e sem 'yo gusto'."
+    },
+    {
+      "section": "Verso",
+      "text": "Me gustan los días sin prisa",
+      "pt": "Gosto dos dias sem pressa",
+      "tip": "Plural (los días) → me gustan."
+    },
+    {
+      "section": "Verso",
+      "text": "No me gusta el lunes, no me gusta nada",
+      "pt": "Não gosto de segunda, não gosto nada"
+    },
+    {
+      "section": "Verso",
+      "text": "Pero me encanta tu sonrisa",
+      "pt": "Mas eu amo o seu sorriso",
+      "tip": "Encantar funciona igual a gustar: me encanta."
+    },
+    {
+      "section": "Coro",
+      "text": "Me gusta, me gustan, no es tan difícil",
+      "pt": "Gosto, gosto, não é tão difícil"
+    },
+    {
+      "section": "Coro",
+      "text": "No digas yo gusto, di a mí me gusta",
+      "pt": "Não diga 'yo gusto', diga 'a mí me gusta'",
+      "tip": "A coisa agrada você: a mí me gusta."
+    },
+    {
+      "section": "Coro",
+      "text": "Me gusta, me gustan, repite conmigo",
+      "pt": "Gosto, gosto, repete comigo"
+    },
+    {
+      "section": "Coro",
+      "text": "Y adiós al portuñol",
+      "pt": "E tchau, portunhol"
+    }
+  ],
+  "active": true
+}

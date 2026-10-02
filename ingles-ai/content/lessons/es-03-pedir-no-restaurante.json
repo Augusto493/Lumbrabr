@@ -1,0 +1,28 @@
+{
+  "id": "es-03-pedir-no-restaurante",
+  "language": "es",
+  "icon": "fork-knife",
+  "title": "Pedir no restaurante (la leche, el agua, la cuenta)",
+  "level": "A1",
+  "focus": "Pedir comida e a conta, e os heterogenéricos que entregam brasileiro: la leche, la sal, el agua, la miel",
+  "warmup": {
+    "instruction": "Em português, conte que várias palavras mudam de gênero do português pro espanhol: o leite é LA leche, o sal é LA sal, a ponte é EL puente, a viagem é EL viaje. E 'el agua' é feminino mas usa 'el' (agua fría). Faça ele pedir uma coisa de cada vez como se estivesse num café em Madri, sempre com 'quisiera' ou 'me pone' em vez de 'quero'. Errou o gênero, corrige e manda repetir.",
+    "examples": [
+      { "es": "Quisiera un café con leche, por favor.", "pt": "Eu queria um café com leite, por favor." },
+      { "es": "¿Me trae la sal y un vaso de agua?", "pt": "Pode me trazer o sal e um copo d'água?" },
+      { "es": "La cuenta, por favor.", "pt": "A conta, por favor." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Um almoço inteiro: pedir, reclamar e pagar",
+    "instruction": "Seja a garçonete em espanhol. Pergunte o que ele quer de entrada, prato principal e bebida. Traga um pedido errado de propósito ('aquí tiene su sopa fría') pra ele reclamar ('perdone, la sopa está fría'). No fim ele pede a conta e pergunta se pode pagar com cartão (¿puedo pagar con tarjeta?). Cobre o gênero das palavras a cada pedido."
+  },
+  "review": {
+    "checklist": [
+      "Acertou 'la leche' e 'la sal'?",
+      "Pediu com 'quisiera' ou 'me pone' em vez de 'quiero' seco?",
+      "Conseguiu reclamar do pedido errado em espanhol?"
+    ],
+    "closing": "Feche em português listando as palavras que trocam de gênero que apareceram hoje. Diga que 'el leche' é o jeito mais rápido de alguém saber que ele é brasileiro."
+  }
+}

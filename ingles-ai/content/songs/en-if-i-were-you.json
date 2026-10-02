@@ -1,0 +1,59 @@
+{
+  "id": "en-if-i-were-you",
+  "language": "en",
+  "title": "If I Were You",
+  "artist": "Mel",
+  "source": "original",
+  "level": "B2",
+  "icon": "lightning",
+  "focus": "Segunda condicional: if + passado → would (If I had time, I would...; If I were you, I'd...).",
+  "description": "A Mel dando conselho que ninguém pediu. Em segunda condicional.",
+  "style": "Sassy retro soul pop, horns and groovy bass, powerful female vocal, 104 bpm",
+  "lines": [
+    {
+      "section": "Verse",
+      "text": "If I spoke English every day",
+      "pt": "Se eu falasse inglês todo dia",
+      "tip": "Hipótese: if + passado (spoke), depois would."
+    },
+    {
+      "section": "Verse",
+      "text": "I would travel far away",
+      "pt": "Eu viajaria pra longe"
+    },
+    {
+      "section": "Verse",
+      "text": "If I had a little more time",
+      "pt": "Se eu tivesse um pouco mais de tempo"
+    },
+    {
+      "section": "Verse",
+      "text": "I wouldn't waste another line",
+      "pt": "Eu não desperdiçaria nem mais um verso",
+      "tip": "Wouldn't = would not. 'uú-dent'."
+    },
+    {
+      "section": "Chorus",
+      "text": "If I were you, I'd start today",
+      "pt": "Se eu fosse você, começaria hoje",
+      "tip": "If I were you: com I usa were, não was. É a frase mais famosa da gramática."
+    },
+    {
+      "section": "Chorus",
+      "text": "I'd stop the excuses and find a way",
+      "pt": "Pararia com as desculpas e acharia um jeito",
+      "tip": "I'd = I would. Fala 'aid'."
+    },
+    {
+      "section": "Chorus",
+      "text": "If I were brave, I'd open my mouth",
+      "pt": "Se eu fosse corajosa, abriria a boca"
+    },
+    {
+      "section": "Chorus",
+      "text": "And let the words come out",
+      "pt": "E deixaria as palavras saírem"
+    }
+  ],
+  "active": true
+}

@@ -13,7 +13,7 @@ const TOKEN_TTL = "30d";
 
 export const router = express.Router();
 
-const PROFILE_KEYS = ["voiceMode", "level", "blocker", "tone"];
+const PROFILE_KEYS = ["voiceMode", "level", "blocker", "tone", "language"];
 
 // le sempre o valor atual (nao trava no boot) pra editar pelo painel funcionar sem reiniciar
 export function jwtSecret() {

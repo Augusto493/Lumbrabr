@@ -1,6 +1,6 @@
-# Mel — MVP de conversação em inglês com IA
+# Mel — conversação em inglês e espanhol com IA
 
-App de prática de inglês por voz com uma tutora de IA mal-humorada (a Mel),
+App de prática de inglês e espanhol por voz (e cantando) com uma tutora de IA mal-humorada (a Mel),
 inspirado na estrutura do Oddi, feito pra rodar gastando quase nada: uma VPS
 simples e a API do Gemini.
 
@@ -23,6 +23,71 @@ simples e a API do Gemini.
   variáveis no topo de `public/style.css` (`--mascot*`).
 - **Conteúdo**: lições em JSON em `content/lessons/` (aquecimento → conversa
   livre → revisão). Lição nova = arquivo novo, sem tocar em código.
+
+## Idiomas: inglês e espanhol
+
+A Mel ensina **inglês** e **espanhol**. Tudo que muda por idioma (nome,
+exemplos de bronca, armadilhas típicas de brasileiro — no espanhol, o
+portunhol: *yo gusto*, *embarazada*, *el leche*, *tengo trabajar*…) fica
+em `server/languages.js`; o prompt da Mel (`buildSystemInstruction`) e o
+gerador de lições leem dali.
+
+- Cada lição tem `language` (`"en"` se faltar) e a frase-alvo com a chave
+  do idioma: `{ "en": …, "pt": … }` ou `{ "es": …, "pt": … }`. As de
+  espanhol começam com `es-` (`es-00-…` a `es-09-…`, A0→B2).
+- O aluno escolhe o idioma na **primeira pergunta do onboarding**, troca
+  quando quiser no seletor 🇺🇸/🇪🇸 da tela inicial, e o link
+  `heymel.online/?lang=es` já chega com espanhol marcado (bom pra anúncio
+  separado). A escolha vai pro perfil (`profile.language`).
+- O painel gera lição em qualquer um dos dois idiomas e filtra por idioma.
+
+## Modo Cantando (aprenda cantando)
+
+Aba **Músicas** na tela inicial. O aluno escolhe a música, **ouve a Mel**
+no verso, **canta**, recebe uma **nota** (pronúncia, ritmo, entonação +
+uma dica citando o som exato a ajustar) e lê a **letra traduzida** com o
+"porquê" de cada verso. No fim, nota final e card pra postar.
+
+Como funciona (`server/songs.js`):
+
+- **Catálogo**: `content/songs/*.json` (de fábrica) + `data/songs/` (o que
+  o painel compõe). Cada verso tem `text`, `pt`, `tip` opcional e
+  `section` ([Verse]/[Chorus]).
+- **Voz da Mel no verso**: Gemini TTS (`GEMINI_TTS_MODEL`, padrão
+  `gemini-3.8-flash-lite-tts`). Gerada uma vez por verso e guardada em
+  `data/songs-audio/`; o servidor já começa a gerar o resto da música
+  quando o aluno abre. O texto vai **puro** — com instrução de estilo
+  ("diga devagar…") o modelo lê a instrução em voz alta (medido: 20 s
+  pra um verso de 6 palavras). No plano grátis cada modelo de TTS aceita
+  **3 pedidos por minuto**: o servidor reveza entre três modelos e, se a
+  voz não chegar em 6 s, o app usa a voz do próprio celular
+  (`speechSynthesis`) — nunca trava.
+- **Nota**: o navegador grava o verso (para sozinho após ~1,3 s de
+  silêncio), manda PCM 16 kHz e o Gemini de texto ouve o áudio e devolve
+  pronúncia/ritmo/entonação/dica em JSON. **O servidor confere a letra**:
+  a nota não passa da porcentagem de palavras do verso que o modelo
+  ouviu — sem isso, cantar o verso errado tirava 83 (com o teto, tira 10).
+  Custa ~R$ 0,003 por verso; limite `SONG_SCORES_PER_DAY` (150).
+- **Música completa** (opcional): o painel gera a faixa cantada com
+  **Lyria** (`GEMINI_MUSIC_MODEL`, padrão `lyria-3.5`) a partir da letra
+  original. **Só funciona com faturamento ativo** no Google AI Studio (no
+  plano grátis o limite é zero — o painel avisa). Sem faixa, o modo
+  funciona verso a verso normalmente.
+- **Direito autoral**: as músicas de fábrica são **originais da Mel** (8)
+  ou **clássicos em domínio público** (7: Twinkle Twinkle, Row Your Boat,
+  Amazing Grace, Arroz con leche, La cucaracha, De colores…). Letra de
+  hit comercial **não** entra: reproduzir letra e áudio exige licença
+  (editora/ECAD; letras licenciadas via provedores como Musixmatch), e o
+  próprio Lyria bloqueia letra protegida e imitação de artista. O
+  compositor do painel é instruído a escrever letra 100% original.
+
+## Conteúdo criado pelo painel sobrevive ao deploy
+
+Lições e músicas de fábrica ficam em `content/`; o que o painel cria ou
+edita vai pra `data/lessons/` e `data/songs/` (`server/content.js`), que
+é o volume do Docker. Antes disso o painel gravava em `content/` dentro
+do container — e **cada `update-vps.sh` apagava** as lições publicadas
+pelo painel, porque o container é reconstruído a partir do GitHub.
 
 ## Voz da Mel nas telas de entrada
 

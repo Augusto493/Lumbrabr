@@ -1,0 +1,39 @@
+{
+  "id": "en-amazing-grace",
+  "language": "en",
+  "title": "Amazing Grace",
+  "artist": "Tradicional",
+  "source": "dominio-publico",
+  "credit": "Letra: John Newton (1779) — domínio público",
+  "level": "B1",
+  "icon": "fire",
+  "focus": "Vogais longas (sweet, me, see) e passado em inglês antigo (was lost, am found).",
+  "description": "A música mais cantada da história. Ótima pra treinar vogal longa.",
+  "style": "Slow soulful gospel ballad, warm piano and organ, emotional female vocal, 70 bpm",
+  "lines": [
+    {
+      "section": "Verse",
+      "text": "Amazing grace, how sweet the sound",
+      "pt": "Graça maravilhosa, que som tão doce",
+      "tip": "Sweet tem 'i' longo: 'suiiit'. Se ficar curto vira outra palavra."
+    },
+    {
+      "section": "Verse",
+      "text": "That saved a wretch like me",
+      "pt": "Que salvou um miserável como eu",
+      "tip": "Wretch = miserável, coitado. O 'w' é mudo: 'rétch'."
+    },
+    {
+      "section": "Verse",
+      "text": "I once was lost, but now am found",
+      "pt": "Eu já estive perdido, mas agora fui encontrado",
+      "tip": "Once = uma vez, antigamente. Soa 'uâns'."
+    },
+    {
+      "section": "Verse",
+      "text": "Was blind, but now I see",
+      "pt": "Era cego, mas agora eu vejo"
+    }
+  ],
+  "active": true
+}

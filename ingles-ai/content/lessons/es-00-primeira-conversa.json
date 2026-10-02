@@ -1,0 +1,28 @@
+{
+  "id": "es-00-primeira-conversa",
+  "language": "es",
+  "icon": "microphone",
+  "title": "Sua primeira conversa em espanhol (ela te diz o que falar)",
+  "level": "A0",
+  "focus": "Sobreviver a uma conversa real em espanhol repetindo exatamente o que a Mel manda — e já perceber que espanhol não é português com sotaque",
+  "warmup": {
+    "instruction": "Explique em português, na lata: o aluno acabou de chegar num hostel em Buenos Aires, você é a recepcionista, e ele NÃO precisa saber espanhol — você vai dizer exatamente o que ele deve falar, e ele só repete. Avise logo de cara: 'espanhol parece fácil, e é por isso que brasileiro fala portunhol. Aqui não.' Depois entre no papel da recepcionista em espanhol. Antes de CADA fala do aluno, diga em português 'Diz:' seguido da frase exata. Se ele nasalizar as vogais ou trocar por palavra em português, corrija na hora e mande repetir.",
+    "examples": [
+      { "es": "Buenas noches. Tengo una reserva.", "pt": "Boa noite. Tenho uma reserva." },
+      { "es": "Me llamo Ana. Soy de Brasil.", "pt": "Meu nome é Ana. Sou do Brasil." },
+      { "es": "Tres noches, por favor.", "pt": "Três noites, por favor." }
+    ]
+  },
+  "freeConversation": {
+    "topic": "Check-in no hostel: nome, de onde vem, quantas noites, wi-fi e café da manhã",
+    "instruction": "Ainda no papel da recepcionista, faça 3 ou 4 perguntas curtas em espanhol (¿de dónde eres?, ¿cuántas noches?, ¿necesitas toalla?, el desayuno es a las ocho). Continue ditando a resposta antes de cada fala ('Diz: Sí, por favor.'), mas na última pergunta mande ele tentar sozinho. Se ele disser 'obrigado' em vez de 'gracias' ou 'tchau' em vez de 'chau', zoa e corrige. Objetivo: 6 ou 7 frases inteiras em espanhol."
+  },
+  "review": {
+    "checklist": [
+      "O aluno repetiu as frases inteiras, sem misturar palavras em português?",
+      "Pronunciou 'noches' e 'reserva' sem nasalizar as vogais?",
+      "Na última pergunta ele arriscou uma resposta própria?"
+    ],
+    "closing": "Encerre a cena: 'Habitación doce. Bienvenido.' Depois, em português, diga que ele acabou de ter a primeira conversa dele em espanhol de verdade — não em portunhol — e que amanhã você vai começar a caçar os vícios."
+  }
+}
